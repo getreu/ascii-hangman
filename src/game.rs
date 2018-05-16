@@ -96,7 +96,7 @@ impl Game {
 
 impl fmt::Display for Game {
     fn fmt(&self, f: &mut fmt::Formatter) -> Result<(), fmt::Error> {
-        try!(writeln!(f, "\x1b[KLives:\t{}\tLast guess: {}\n", self.lives, self.last_guess));
+        writeln!(f, "\x1b[KLives:\t{}\tLast guess: {}\n", self.lives, self.last_guess)?;
 
         let mut  linebreak = false;
         for (n,c) in self.word.iter().enumerate() {
@@ -104,9 +104,9 @@ impl fmt::Display for Game {
             if n == 0 {linebreak = false};
             if linebreak && (c.char_== ' ') {
                 linebreak = false;
-                try!(write!(f, " {}\n",c))
+                write!(f, " {}\n",c)?
             } else {
-                try!(write!(f, " {}", c))
+                write!(f, " {}", c)?
             }
         }
         writeln!(f, "")

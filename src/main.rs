@@ -147,16 +147,16 @@ const CONF_DEMO: &'static str =
 
 
 pub fn read_config(pathstr: &PathBuf) -> Result<String, io::Error> {
-        let mut f = try!(File::open(pathstr));
+        let mut f = File::open(pathstr)?;
         let mut s = String::new();
-        try!(f.read_to_string(&mut s));
+        f.read_to_string(&mut s)?;
         Ok(s)
 }
 
 
 pub fn write_config_template(pathstr: &PathBuf) -> Result<(), io::Error> {
-        let mut file = try!(File::create(&pathstr));
-        try!(file.write_all( CONF_TEMPLATE.as_bytes() ));
+        let mut file = File::create(&pathstr)?;
+        file.write_all( CONF_TEMPLATE.as_bytes() )?;
         Ok(())
 }
 
