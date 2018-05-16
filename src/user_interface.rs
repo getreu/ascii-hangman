@@ -1,6 +1,5 @@
 use image::{Image};
 use std::fmt;
-use std::io::prelude::*;
 
 const TITLE: &'static str = "ASCII-ART HANGMAN FOR KIDS";
 

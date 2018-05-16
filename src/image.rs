@@ -1,6 +1,6 @@
 extern crate rand;
 use std::fmt;
-use std::cmp::{Ord,Ordering,Eq};
+use std::cmp::{Ord,Ordering};
 use rand::Rng;
 
 // comands in config-file start with

@@ -1,5 +1,4 @@
 use std::fmt;
-use std::ascii::AsciiExt;
 
 const LINE_WIDTH: usize = 20;
 
