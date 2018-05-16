@@ -1,5 +1,6 @@
 use std::fmt;
 
+use dictionary::CONF_LINE_WORD_MODIFIER__VISIBLE;
 const LINE_WIDTH: usize = 20;
 
 #[derive(Debug)]
@@ -48,15 +49,15 @@ impl Game {
     }
 
     pub fn new(wordstr: &str, l: u8) -> Game {
-        // parse wordsstr, filp 'visible' every '*'
+        // parse wordsstr, filp 'visible' every CONF_LINE_WORD_MODIFIER__VISIBLE
         let w = wordstr.chars()
                 // for every * found flip v_acc
                 .scan(false, | v_acc, c | {
-                        *v_acc = *v_acc ^ (c == '*');
+                        *v_acc = *v_acc ^ (c == CONF_LINE_WORD_MODIFIER__VISIBLE);
                        Some((c,*v_acc))}
                 )
                 // omit *, we do not need them any more
-                .filter(|&(c,_)|c!='*')
+                .filter(|&(c,_)|c!=CONF_LINE_WORD_MODIFIER__VISIBLE)
                 // construct objects
                 .map(|(c,v)|HangmanChar{char_: c,  visible: v})
                 //.inspect(|ref x| println!("after scan:\t{:?}", x))

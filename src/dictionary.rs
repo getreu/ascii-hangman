@@ -24,7 +24,9 @@ pub const CONF_LINE_IDENTIFIER__CONTROL: char = ':';
 // guessing strings in config-file start with
 pub const CONF_LINE_IDENTIFIER__WORD: char = '-';
 
-
+// a modifier tagging parts of the string to be visible from the start, e.g. 
+// "guess*-me*: will be shown as "_ _ _ _ _ - m e"
+pub const CONF_LINE_WORD_MODIFIER__VISIBLE: char = '*';
 
 
 #[derive(Debug)]
