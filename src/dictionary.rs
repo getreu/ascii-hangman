@@ -44,7 +44,8 @@ impl Dict {
     pub fn new(lines: &str) -> Dict {
 
         Dict{wordlist :
-            lines
+          // remove Unicode BOM if present (\u{feff} has in UTF8 3 bytes).
+          if lines.starts_with('\u{feff}') { &lines[3..] } else { &lines[..] }
             .lines()
             .enumerate()
             .filter(|&(_,l)|!( l.trim().len() == 0 ||
@@ -53,7 +54,7 @@ impl Dict {
                           l.starts_with(CONF_LINE_IDENTIFIER__IMAGE)
                         )
             )
-        .map(|(n,l)| if l.starts_with(CONF_LINE_IDENTIFIER__WORD) {
+            .map(|(n,l)| if l.starts_with(CONF_LINE_IDENTIFIER__WORD) {
                              l[1..].trim().to_string()
                          } else {
                              panic!("{}\nError in line: {}: \"{}\"\n\n",
