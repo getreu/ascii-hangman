@@ -1,6 +1,6 @@
 extern crate rand;
 use rand::Rng;
-use image::CONF_LINE_IDENTIFIER__IMAGE;
+use crate::image::CONF_LINE_IDENTIFIER__IMAGE;
 
 
 

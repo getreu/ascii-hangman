@@ -1,6 +1,6 @@
 use std::fmt;
 
-use dictionary::CONF_LINE_WORD_MODIFIER__VISIBLE;
+use crate::dictionary::CONF_LINE_WORD_MODIFIER__VISIBLE;
 const LINE_WIDTH: usize = 20;
 
 #[derive(Debug)]

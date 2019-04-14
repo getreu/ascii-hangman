@@ -1,4 +1,4 @@
-use image::{Image};
+use crate::image::Image;
 use std::fmt;
 
 const TITLE: &'static str = "ASCII-ART HANGMAN FOR KIDS";

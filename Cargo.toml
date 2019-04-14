@@ -2,7 +2,7 @@
 name = "hangman"
 version = "2.1.0"
 authors = ["Jens Getreu <getreu@web.de>"]
-
+edition = "2018"
 
 [dependencies]
 rand = "*"
