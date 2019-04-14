@@ -164,7 +164,10 @@ fn main() {
     // READ CONFIG
 
     // Read all config files given on command line
-    let mut conf_file_paths: Vec<PathBuf> = env::args().skip(1).map(|s| PathBuf::from(s)).collect();
+    let mut conf_file_paths = env::args()
+                .skip(1)
+                .map(|s| PathBuf::from(s))
+                .collect::<Vec<PathBuf>>();
 
     // if no conf_file_paths are given then use default config path
     if conf_file_paths.is_empty() {
