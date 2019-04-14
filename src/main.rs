@@ -304,7 +304,7 @@ fn main() {
         reader.read_line(&mut line_buffer).unwrap();
         println!{"(c) Jens Getreu, 2016."};
 
-        match line_buffer.trim_right().chars().next() {
+        match line_buffer.trim_end().chars().next() {
                 Some(char_) if char_ == 'N' || char_ == 'n'=> {break 'playing}
                 Some(_) => {}
                 None => {}
