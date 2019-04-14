@@ -11,11 +11,11 @@ const DEFAULT_REWARDING_SCHEME: RewardingScheme = RewardingScheme::UnhideWhenGue
 
 // Keyword to switch rewarding scheme
 // :traditional-rewarding
-const UNHIDE_WHEN_LOST_LIVE_IDENTIFIER: &'static str = "traditional-rewarding";
+const UNHIDE_WHEN_LOST_LIVE_IDENTIFIER: &str = "traditional-rewarding";
 
 // Keyword to switch rewarding scheme
 // :success-rewarding
-const UNHIDE_WHEN_GUESSED_CHAR_IDENTIFIER: &'static str = "success-rewarding";
+const UNHIDE_WHEN_GUESSED_CHAR_IDENTIFIER: &str = "success-rewarding";
 
 // images in config file start with
 pub const CONF_LINE_IDENTIFIER__IMAGE: char = '|';
@@ -23,7 +23,7 @@ pub const CONF_LINE_IDENTIFIER__IMAGE: char = '|';
 const BIG_IMAGE: usize = 100; // sort algorithm <-> random algorithm
 
 // first char of image lines must be '|'
-const DEFAULT_IMAGES: &'static [&'static str] = &[
+const DEFAULT_IMAGES: & [&str] = &[
     "
 |    ,,,,,
 |   (o   o)

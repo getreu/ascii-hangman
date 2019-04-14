@@ -15,7 +15,7 @@ use std::io;
 use std::io::prelude::*;
 use std::path::PathBuf;
 
-const COMMANDLINE_HELP: &'static str = "\
+const COMMANDLINE_HELP: &str = "\
 Hangman is a paper and pencil guessing game for two or more players.  One player
 thinks of a word, phrase or sentence and the other tries to guess it by
 suggesting letters or numbers, within a certain number of guesses. In this
@@ -82,10 +82,10 @@ written into the current working directory. Multiple `[FILE]`s are concatted.
 ";
 
 const LIVES: u8 = 7;
-const PATHSTR: &'static str = "hangman-words.txt";
+const PATHSTR: &str = "hangman-words.txt";
 const OFFSET: (usize, usize) = (1, 1);
 
-const CONF_TEMPLATE: &'static str = "\
+const CONF_TEMPLATE: &str = "\
 ### This is a sample word-list for the hangman game
 
 ### Sample word-list
@@ -134,7 +134,7 @@ const CONF_TEMPLATE: &'static str = "\
 #||_________|
 ";
 
-const CONF_DEMO: &'static str = "- *Demo: add own words to config file and *start* again!*";
+const CONF_DEMO: &str = "- *Demo: add own words to config file and *start* again!*";
 
 // ------------------ MAIN ---------------------------------------------
 

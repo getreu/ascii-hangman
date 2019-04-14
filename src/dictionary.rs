@@ -3,7 +3,7 @@ use crate::image::CONF_LINE_IDENTIFIER__IMAGE;
 use rand::Rng;
 
 // Config file syntax error message
-pub const CONF_SYNTAX_ERROR: &'static str = "
+pub const CONF_SYNTAX_ERROR: &str = "
 
 SYNTAX ERROR in config file!
 Every line has to start with one of the following characters:

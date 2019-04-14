@@ -1,7 +1,7 @@
 use crate::image::Image;
 use std::fmt;
 
-const TITLE: &'static str = "ASCII-ART HANGMAN FOR KIDS";
+const TITLE: &str = "ASCII-ART HANGMAN FOR KIDS";
 
 #[derive(Debug)]
 pub struct UserInterface {
