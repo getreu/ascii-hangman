@@ -76,7 +76,7 @@ impl Game {
         };
         self.last_guess = char_;
         let mut found = false;
-        for h_char in self.word.iter_mut() {
+        for h_char in  &mut self.word {
             if h_char.char_.eq_ignore_ascii_case(&char_) {
                 h_char.visible = true;
                 found = true;
@@ -88,7 +88,7 @@ impl Game {
         }
 
         if self.lives == 0 {
-            for hc in self.word.iter_mut() {
+            for hc in &mut self.word {
                 hc.visible = true;
             }
         }
