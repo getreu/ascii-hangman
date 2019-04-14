@@ -5,16 +5,16 @@
 #
 # Before every game one line is randomly chosen.
 # Empty lines and lines starting with # are ignored.
-# Lines with guessing strings must start with '-'.
-# Words enclosed with * are not hidden when the game starts:
-#   - *guess *me
-# shows in the game:
+# Lines with guessing strings must start with `-`.
+# Words enclosed with `_` are not hidden when the game starts, e.g.:
+#   - _guess _me
+# appears in the game as:
 #   g u e s s   _ _
 #
 
-- *guess* me
-- hang*man*
-- good luck
+- _guess _me
+- hang_man_
+- _good l_uck
 
 
 # Lines starting with ':' are game modifier. They change

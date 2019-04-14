@@ -76,8 +76,8 @@ written into the current working directory. Multiple `[FILE]`s are concatted.
 - lines starting with `-` are _guessing strings_. At the beginning of the game
   one line is randomly chosen and all characters are hidden.  In
   order to give additional hints it is possible to enclose some characters with
-  `+*+`.  These words are then displayed in clear. For example a config line:
-  `+- Guess *me*+` is shown in the game as: `_ _ _ _ _ _ m e`.
+  `+_+`.  These words are then displayed in clear. For example a config line:
+  `+- Guess _me_+` is shown in the game as: `_ _ _ _ _ _ m e`.
 
 ";
 
@@ -94,15 +94,15 @@ const CONF_TEMPLATE: &str = "\
 # Before every game one line is randomly chosen.
 # Empty lines and lines starting with # are ignored.
 # Lines with guessing strings must start with '-'.
-# Words enclosed with * are not hidden when the game starts:
-#   - *guess *me
-# shows in the game:
+# Words enclosed with _ are not hidden when the game starts:
+#   - _guess _me
+# appears in the game as:
 #   g u e s s   _ _
 #
 
-- *guess* me
-- hang*man*
-- good luck
+- _guess _me
+- hang_man_
+- _good l_uck
 
 
 # Lines starting with ':' are game modifier. They change
@@ -134,7 +134,7 @@ const CONF_TEMPLATE: &str = "\
 #||_________|
 ";
 
-const CONF_DEMO: &str = "- *Demo: add own words to config file and *start* again!*";
+const CONF_DEMO: &str = "- _Demo: add own words to config file and start a_gain_!";
 
 // ------------------ MAIN ---------------------------------------------
 

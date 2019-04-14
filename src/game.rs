@@ -48,7 +48,7 @@ impl Game {
         let w = wordstr
             .chars()
             // for every * found flip v_acc
-            .scan(true, |v_acc, c| {
+            .scan(false, |v_acc, c| {
                 *v_acc ^= c == CONF_LINE_WORD_MODIFIER__VISIBLE;
                 if c == CONF_LINE_WORD_MODIFIER__VISIBLE {
                     Some(None)
