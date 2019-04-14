@@ -1,6 +1,6 @@
 extern crate rand;
 mod game;
-use game::{Game, GameState};
+use game::{Game, State};
 mod user_interface;
 use user_interface::UserInterface;
 mod dictionary;
@@ -256,12 +256,12 @@ fn main() {
             ui.message = format!("{}", game);
             println!("{}", ui);
 
-            match game.state() {
-                GameState::Victory => {
+            match game.get_state() {
+                State::Victory => {
                     println!("Congratulations! You won!");
                     break 'running_game;
                 }
-                GameState::Defeat => {
+                State::Defeat => {
                     println!("Sorry, you lost! Better luck next time!");
                     break 'running_game;
                 }

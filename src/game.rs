@@ -19,7 +19,7 @@ impl fmt::Display for HangmanChar {
     }
 }
 
-pub enum GameState {
+pub enum State {
     Ongoing,
     Victory,
     Defeat,
@@ -33,13 +33,13 @@ pub struct Game {
 }
 
 impl Game {
-    pub fn state(&self) -> GameState {
+    pub fn get_state(&self) -> State {
         if self.lives == 0 {
-            GameState::Defeat
+            State::Defeat
         } else if self.word.iter().all(|c| c.visible) {
-            GameState::Victory
+            State::Victory
         } else {
-            GameState::Ongoing
+            State::Ongoing
         }
     }
 

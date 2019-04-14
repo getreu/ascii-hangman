@@ -312,7 +312,7 @@ impl Image {
             Image {
                 ichars: v,
                 offset: offset,
-                dimension: (x_max,y_maxx),
+                dimension: (x_max,y_max),
                 visible_points: v_len,
                 rewarding_scheme: rewarding_scheme,
             }
