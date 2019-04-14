@@ -190,7 +190,7 @@ impl Ord for ImageChar {
         fn weight(ic: &ImageChar) -> isize {
             let &ImageChar {
                 point: (x, y),
-                char_: _,
+                ..
             } = ic;
             // points near the lower left corner are light
             x as isize - y as isize
@@ -220,7 +220,7 @@ impl fmt::Display for Image {
         for ic in self.ichars.iter().take(self.visible_points) {
             let &ImageChar {
                 point: (x, y),
-                char_: c,
+                ..
             } = ic;
             s = s
                 + "\x1b["
@@ -288,7 +288,7 @@ impl Image {
         for i in v.iter() {
             let &ImageChar {
                 point: (x, y),
-                char_: _,
+                ..
             } = i;
             if x > x_max {
                 x_max = x
