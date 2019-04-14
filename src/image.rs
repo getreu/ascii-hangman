@@ -285,7 +285,7 @@ impl Image {
         // find dimensions
         let mut x_max = 0;
         let mut y_max = 0;
-        for i in v.iter() {
+        for i in &v {
             let &ImChar {
                 point: (x, y),
                 ..
@@ -306,7 +306,7 @@ impl Image {
             rand::thread_rng().shuffle(&mut v); // points appear randomly.
         }
 
-        if v.len() == 0 {
+        if v.is_empty() {
             Self::new(rand::thread_rng().choose(&DEFAULT_IMAGES).unwrap(), offset)
         } else {
             Self {
@@ -322,7 +322,7 @@ impl Image {
     pub fn disclose(&mut self, lives_frac: (usize, usize), guessed_chars_frac: (usize, usize)) {
         let l = self.ichars.len();
 
-        let as_points = |(n, d)| (3 * l * (d - n) as usize / d as usize + 1 * l) / 4;
+        let as_points = |(n, d)| (3 * l * (d - n) as usize / d as usize + l) / 4;
 
         self.visible_points = match self.rewarding_scheme {
             RewardingScheme::UnhideWhenGuessedChar => as_points(guessed_chars_frac),

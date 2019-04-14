@@ -168,7 +168,7 @@ fn main() {
     let mut conf_file_paths: Vec<PathBuf> = env::args().skip(1).map(|s| PathBuf::from(s)).collect();
 
     // if no conf_file_paths are given then use default config path
-    if conf_file_paths.len() == 0 {
+    if conf_file_paths.is_empty() {
         conf_file_paths.push(PathBuf::from(PATHSTR))
     };
 
