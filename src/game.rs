@@ -64,8 +64,6 @@ impl Game {
             //.inspect(|ref x| println!("after scan:\t{:?}", x))
             .collect();
 
-        println!("{:?}", w);
-
         Self {
             word: w,
             lives: l,
