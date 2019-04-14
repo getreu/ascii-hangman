@@ -283,18 +283,18 @@ impl Image {
         }
 
         // find dimensions
-        let mut xmax = 0;
-        let mut ymax = 0;
+        let mut x_max = 0;
+        let mut y_max = 0;
         for i in v.iter() {
             let &ImageChar {
                 point: (x, y),
                 char_: _,
             } = i;
-            if x > xmax {
-                xmax = x
+            if x > x_max {
+                x_max = x
             };
-            if y > ymax {
-                ymax = y
+            if y > y_max {
+                y_max = y
             };
         }
 
@@ -312,7 +312,7 @@ impl Image {
             Image {
                 ichars: v,
                 offset: offset,
-                dimension: (xmax, ymax),
+                dimension: (x_max,y_maxx),
                 visible_points: v_len,
                 rewarding_scheme: rewarding_scheme,
             }
