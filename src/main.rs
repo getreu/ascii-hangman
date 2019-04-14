@@ -156,7 +156,7 @@ fn main() {
     match env::args().nth(1) {
         Some(ref a) if a == "-h" || a == "--help" => {
             println!("{}", COMMANDLINE_HELP);
-            return ();
+            return;
         }
         Some(_) => {}
         None => {}
