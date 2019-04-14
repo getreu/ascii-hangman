@@ -175,12 +175,12 @@ const DEFAULT_IMAGES: & [&str] = &[
 #[derive(PartialOrd, Eq, PartialEq, Debug, Copy, Clone)] //omitting Ord
 pub struct ImageChar {
     pub point: (u8, u8),
-    pub char_: char,
+    pub code: char,
 }
 
 impl fmt::Display for ImageChar {
     fn fmt(&self, f: &mut fmt::Formatter) -> Result<(), fmt::Error> {
-        write!(f, "{}", self.char_)
+        write!(f, "{}", self.code)
     }
 }
 
@@ -220,7 +220,7 @@ impl fmt::Display for Image {
         for ic in self.ichars.iter().take(self.visible_points) {
             let &ImageChar {
                 point: (x, y),
-                ..
+                code: c,
             } = ic;
             s = s
                 + "\x1b["
@@ -276,7 +276,7 @@ impl Image {
                 // save in ImageChar object
                 .map(|(x, c)| ImageChar {
                     point: (x as u8, y as u8),
-                    char_: c,
+                    code: c,
                 })
                 .collect();
             v.append(&mut ii);
