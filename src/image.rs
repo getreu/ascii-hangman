@@ -173,22 +173,22 @@ const DEFAULT_IMAGES: & [&str] = &[
 ];
 
 #[derive(PartialOrd, Eq, PartialEq, Debug, Copy, Clone)] //omitting Ord
-pub struct ImageChar {
+pub struct ImChar {
     pub point: (u8, u8),
     pub code: char,
 }
 
-impl fmt::Display for ImageChar {
+impl fmt::Display for ImChar {
     fn fmt(&self, f: &mut fmt::Formatter) -> Result<(), fmt::Error> {
         write!(f, "{}", self.code)
     }
 }
 
 // Ord enables us to v.sort()
-impl Ord for ImageChar {
+impl Ord for ImChar {
     fn cmp(&self, other: &Self) -> Ordering {
-        fn weight(ic: &ImageChar) -> isize {
-            let &ImageChar {
+        fn weight(ic: &ImChar) -> isize {
+            let &ImChar {
                 point: (x, y),
                 ..
             } = ic;
@@ -207,7 +207,7 @@ pub enum RewardingScheme {
 
 #[derive(Debug)]
 pub struct Image {
-    pub ichars: Vec<ImageChar>,
+    pub ichars: Vec<ImChar>,
     pub offset: (usize, usize),
     pub dimension: (u8, u8),
     pub visible_points: usize,
@@ -218,7 +218,7 @@ impl fmt::Display for Image {
     fn fmt(&self, f: &mut fmt::Formatter) -> Result<(), fmt::Error> {
         let mut s = String::new();
         for ic in self.ichars.iter().take(self.visible_points) {
-            let &ImageChar {
+            let &ImChar {
                 point: (x, y),
                 code,
             } = ic;
@@ -242,7 +242,7 @@ impl fmt::Display for Image {
 
 impl Image {
     pub fn new(string: &str, offset: (usize, usize)) -> Self {
-        let mut v: Vec<ImageChar> = Vec::new();
+        let mut v: Vec<ImChar> = Vec::new();
 
         let mut rewarding_scheme: RewardingScheme = DEFAULT_REWARDING_SCHEME;
         for (y, line) in string
@@ -274,7 +274,7 @@ impl Image {
                 // consider only chars != ' '
                 .filter(|&(_, c)| c != ' ')
                 // save in ImageChar object
-                .map(|(x, c)| ImageChar {
+                .map(|(x, c)| ImChar {
                     point: (x as u8, y as u8),
                     code: c,
                 })
@@ -286,7 +286,7 @@ impl Image {
         let mut x_max = 0;
         let mut y_max = 0;
         for i in v.iter() {
-            let &ImageChar {
+            let &ImChar {
                 point: (x, y),
                 ..
             } = i;
