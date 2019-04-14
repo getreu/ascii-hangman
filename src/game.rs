@@ -115,11 +115,11 @@ impl fmt::Display for Game {
             };
             if linebreak && (c.char_ == ' ') {
                 linebreak = false;
-                write!(f, " {}\n", c)?
+                writeln!(f, " {}", c)?
             } else {
                 write!(f, " {}", c)?
             }
         }
-        writeln!(f, "")
+        writeln!(f)
     }
 }
