@@ -23,7 +23,7 @@ pub const CONF_LINE_IDENTIFIER__IMAGE: char = '|';
 const BIG_IMAGE: usize = 100; // sort algorithm <-> random algorithm
 
 // first char of image lines must be '|'
-const DEFAULT_IMAGES: & [&str] = &[
+const DEFAULT_IMAGES: &[&str] = &[
     "
 |    ,,,,,
 |   (o   o)
@@ -188,10 +188,7 @@ impl fmt::Display for ImChar {
 impl Ord for ImChar {
     fn cmp(&self, other: &Self) -> Ordering {
         fn weight(ic: &ImChar) -> isize {
-            let &ImChar {
-                point: (x, y),
-                ..
-            } = ic;
+            let &ImChar { point: (x, y), .. } = ic;
             // points near the lower left corner are light
             x as isize - y as isize
         }
@@ -286,10 +283,7 @@ impl Image {
         let mut x_max = 0;
         let mut y_max = 0;
         for i in &v {
-            let &ImChar {
-                point: (x, y),
-                ..
-            } = i;
+            let &ImChar { point: (x, y), .. } = i;
             if x > x_max {
                 x_max = x
             };
@@ -312,7 +306,7 @@ impl Image {
             Self {
                 ichars: v,
                 offset,
-                dimension: (x_max,y_max),
+                dimension: (x_max, y_max),
                 visible_points: v_len,
                 rewarding_scheme,
             }

@@ -52,16 +52,19 @@ impl Game {
                 *v_acc ^= c == CONF_LINE_WORD_MODIFIER__VISIBLE;
                 if c == CONF_LINE_WORD_MODIFIER__VISIBLE {
                     Some(None)
-                } else { 
-                    Some(Some(HangmanChar{char_: c, visible: *v_acc}))
+                } else {
+                    Some(Some(HangmanChar {
+                        char_: c,
+                        visible: *v_acc,
+                    }))
                 }
             })
             // ommit None and unwrap
-            .filter_map(|s|s)
+            .filter_map(|s| s)
             //.inspect(|ref x| println!("after scan:\t{:?}", x))
             .collect();
 
-        println!("{:?}",w);
+        println!("{:?}", w);
 
         Self {
             word: w,
@@ -76,7 +79,7 @@ impl Game {
         };
         self.last_guess = char_;
         let mut found = false;
-        for h_char in  &mut self.word {
+        for h_char in &mut self.word {
             if h_char.char_.eq_ignore_ascii_case(&char_) {
                 h_char.visible = true;
                 found = true;

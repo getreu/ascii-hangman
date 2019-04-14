@@ -165,9 +165,9 @@ fn main() {
 
     // Read all config files given on command line
     let mut conf_file_paths = env::args()
-                .skip(1)
-                .map(|s| PathBuf::from(s))
-                .collect::<Vec<PathBuf>>();
+        .skip(1)
+        .map(|s| PathBuf::from(s))
+        .collect::<Vec<PathBuf>>();
 
     // if no conf_file_paths are given then use default config path
     if conf_file_paths.is_empty() {
@@ -289,7 +289,7 @@ fn main() {
         // Read next char
         line_buffer.clear();
         reader.read_line(&mut line_buffer).unwrap();
-        println! {"(c) Jens Getreu, 2016."};
+        println! {"(c) Jens Getreu, 2016-2019."};
 
         match line_buffer.trim_end().chars().next() {
             Some(char_) if char_ == 'N' || char_ == 'n' => break 'playing,
