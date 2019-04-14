@@ -1,7 +1,7 @@
 extern crate rand;
-use std::fmt;
-use std::cmp::{Ord,Ordering};
 use rand::Rng;
+use std::cmp::{Ord, Ordering};
+use std::fmt;
 
 // comands in config-file start with
 pub const CONF_LINE_IDENTIFIER__CONTROL: char = ':';
@@ -11,24 +11,20 @@ const DEFAULT_REWARDING_SCHEME: RewardingScheme = RewardingScheme::UnhideWhenGue
 
 // Keyword to switch rewarding scheme
 // :traditional-rewarding
-const UNHIDE_WHEN_LOST_LIVE_IDENTIFIER: &'static str  = "traditional-rewarding";
+const UNHIDE_WHEN_LOST_LIVE_IDENTIFIER: &'static str = "traditional-rewarding";
 
 // Keyword to switch rewarding scheme
 // :success-rewarding
-const UNHIDE_WHEN_GUESSED_CHAR_IDENTIFIER: &'static str  = "success-rewarding";
-
+const UNHIDE_WHEN_GUESSED_CHAR_IDENTIFIER: &'static str = "success-rewarding";
 
 // images in config file start with
 pub const CONF_LINE_IDENTIFIER__IMAGE: char = '|';
 
-
-
-const BIG_IMAGE: usize = 100;  // sort algorithm <-> random algorithm
-
+const BIG_IMAGE: usize = 100; // sort algorithm <-> random algorithm
 
 // first char of image lines must be '|'
 const DEFAULT_IMAGES: &'static [&'static str] = &[
-"
+    "
 |    ,,,,,
 |   (o   o)
 |    /. .\\
@@ -45,9 +41,7 @@ const DEFAULT_IMAGES: &'static [&'static str] = &[
 |   / \\ / \\
 |   \"\"\" \"\"\"
 ",
-
-
-"
+    "
 |    |\\_|X|_/|
 |   /         \\
 | =(  O     O  )=
@@ -58,9 +52,7 @@ const DEFAULT_IMAGES: &'static [&'static str] = &[
 |   _|_     _|_
 |  (   )---(   )
 ",
-
-
-"
+    "
 |        _.---._    /\\\\
 |     ./'       \"--`\\//
 |   ./              o \\
@@ -69,9 +61,7 @@ const DEFAULT_IMAGES: &'static [&'static str] = &[
 |    / /  \\ \\  | |\\ \\  \\7
 |     \"     \"    \"  \"        VK
 ",
-
-
-"
+    "
 |       ,.
 |      (_|,.
 |     ,' /, )_______   _
@@ -84,9 +74,7 @@ const DEFAULT_IMAGES: &'static [&'static str] = &[
 |         /_]'  /_]'
 # Author: hjw
 ",
-
-
-"
+    "
 |        _
 |       [ ]
 |      (   )
@@ -98,9 +86,7 @@ const DEFAULT_IMAGES: &'static [&'static str] = &[
 |    / / | \\ \\
 |   <_________>
 ",
-
-
-"
+    "
 |                          (_)(_)
 |                          /     \\
 |                         /       |
@@ -112,8 +98,7 @@ const DEFAULT_IMAGES: &'static [&'static str] = &[
 |V  \\ \\/  /      \\       /
 |    \\___/        \\_____/
 ",
-
-"
+    "
 |         .-.
 |        (. .)__,')
 |        / V      )
@@ -123,9 +108,7 @@ const DEFAULT_IMAGES: &'static [&'static str] = &[
 |   C-'`(>
 # Author: hjw
 ",
-
-
-"
+    "
 | >(. )
 |  |  (     /)
 |  |   \\___/ )
@@ -133,9 +116,7 @@ const DEFAULT_IMAGES: &'static [&'static str] = &[
 |   \\_______/    (__)     (__)    (__)    (__)
 |~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 ",
-
-
-"
+    "
 |           __
 |           /(`o
 |     ,-,  //  \\\\
@@ -150,9 +131,7 @@ const DEFAULT_IMAGES: &'static [&'static str] = &[
 |     \\ |
 |\\,/  ,\\|,.  \\,/
 ",
-
-
-"
+    "
 |o
 | \\_/\\o
 |( Oo)                    \\|/
@@ -166,9 +145,7 @@ const DEFAULT_IMAGES: &'static [&'static str] = &[
 | (__\\\\
 # Author: ac
 ",
-
-
-"
+    "
 |      ______
 |     /     /\\
 |    /     /  \\
@@ -178,9 +155,7 @@ const DEFAULT_IMAGES: &'static [&'static str] = &[
 |(@))_))        o ~/~~\\~ o
 |                o  o  o
 ",
-
-
-"
+    "
 |                             _______     |\\
 |                            |License|    | \\
 |  _____                     | ~~*~~ |    |  \\
@@ -194,138 +169,139 @@ const DEFAULT_IMAGES: &'static [&'static str] = &[
 |_|__||_|_||_||_____||||||____|__o__|_____|
 |    ||  (_) (_)    ||||||                \\
 |    []             [(_)(_)
-"
-
+",
 ];
 
-
-
-#[derive(PartialOrd,Eq,PartialEq,Debug,Copy,Clone)] //omitting Ord
+#[derive(PartialOrd, Eq, PartialEq, Debug, Copy, Clone)] //omitting Ord
 pub struct ImageChar {
-    pub point : (u8,u8),
+    pub point: (u8, u8),
     pub char_: char,
 }
 
-
-
 impl fmt::Display for ImageChar {
     fn fmt(&self, f: &mut fmt::Formatter) -> Result<(), fmt::Error> {
-            write!(f, "{}", self.char_)
+        write!(f, "{}", self.char_)
     }
 }
-
-
-
 
 // Ord enables us to v.sort()
 impl Ord for ImageChar {
     fn cmp(&self, other: &Self) -> Ordering {
         fn weight(ic: &ImageChar) -> isize {
-            let &ImageChar{point: (x,y),char_: _} = ic;
+            let &ImageChar {
+                point: (x, y),
+                char_: _,
+            } = ic;
             // points near the lower left corner are light
-            x as isize  - y as isize
+            x as isize - y as isize
         }
         weight(&self).cmp(&weight(&other))
     }
 }
 
-#[derive(Debug,PartialEq)]
+#[derive(Debug, PartialEq)]
 pub enum RewardingScheme {
     UnhideWhenLostLife,
     UnhideWhenGuessedChar,
 }
 
-
-
 #[derive(Debug)]
 pub struct Image {
-    pub ichars : Vec<ImageChar>,
-    pub offset: (usize,usize),
-    pub dimension : (u8,u8),
+    pub ichars: Vec<ImageChar>,
+    pub offset: (usize, usize),
+    pub dimension: (u8, u8),
     pub visible_points: usize,
     pub rewarding_scheme: RewardingScheme,
 }
 
-
-
-
 impl fmt::Display for Image {
     fn fmt(&self, f: &mut fmt::Formatter) -> Result<(), fmt::Error> {
-        let mut  s = String::new();
-        for ic in self.ichars.iter().take(self.visible_points)
-        {
-            let &ImageChar{point:(x,y), char_:c } = ic;
+        let mut s = String::new();
+        for ic in self.ichars.iter().take(self.visible_points) {
+            let &ImageChar {
+                point: (x, y),
+                char_: c,
+            } = ic;
             s = s
                 + "\x1b["
-                + &(y as usize+1+self.offset.1).to_string()
+                + &(y as usize + 1 + self.offset.1).to_string()
                 + ";"
-                + &(x as usize+1+self.offset.0).to_string()
-                + "f"+&c.to_string();
-        };
+                + &(x as usize + 1 + self.offset.0).to_string()
+                + "f"
+                + &c.to_string();
+        }
         // after printing the image s, bring the cursor below
-        write!(f, "{}\x1b[{};0f", s,
-                (self.dimension.1 as usize + 1 + self.offset.1).to_string()
+        write!(
+            f,
+            "{}\x1b[{};0f",
+            s,
+            (self.dimension.1 as usize + 1 + self.offset.1).to_string()
         )
     }
 }
 
-
-
-
 impl Image {
-
-    pub fn new(string: &str, offset: (usize,usize)) -> Image {
-        let mut v:Vec<ImageChar> = Vec::new();
+    pub fn new(string: &str, offset: (usize, usize)) -> Image {
+        let mut v: Vec<ImageChar> = Vec::new();
 
         let mut rewarding_scheme: RewardingScheme = DEFAULT_REWARDING_SCHEME;
-        for (y,line) in string
-                // split in lines
-                .lines()
-        // interpret identifier line
-        .filter_map(|l|{
-           if l.starts_with(CONF_LINE_IDENTIFIER__CONTROL) {
-              if l[1..].trim().contains(UNHIDE_WHEN_LOST_LIVE_IDENTIFIER){
-                rewarding_scheme = RewardingScheme::UnhideWhenLostLife;
-              }
-              if l[1..].trim().contains(UNHIDE_WHEN_GUESSED_CHAR_IDENTIFIER){
-                rewarding_scheme = RewardingScheme::UnhideWhenGuessedChar;
-              }
-              None
-           } else {
-              Some(l)
-                   }
-        })
-                // consider only lines starting with '|'
-                .filter(|&l| l.starts_with(CONF_LINE_IDENTIFIER__IMAGE) )
-                .enumerate()
+        for (y, line) in string
+            // split in lines
+            .lines()
+            // interpret identifier line
+            .filter_map(|l| {
+                if l.starts_with(CONF_LINE_IDENTIFIER__CONTROL) {
+                    if l[1..].trim().contains(UNHIDE_WHEN_LOST_LIVE_IDENTIFIER) {
+                        rewarding_scheme = RewardingScheme::UnhideWhenLostLife;
+                    }
+                    if l[1..].trim().contains(UNHIDE_WHEN_GUESSED_CHAR_IDENTIFIER) {
+                        rewarding_scheme = RewardingScheme::UnhideWhenGuessedChar;
+                    }
+                    None
+                } else {
+                    Some(l)
+                }
+            })
+            // consider only lines starting with '|'
+            .filter(|&l| l.starts_with(CONF_LINE_IDENTIFIER__IMAGE))
+            .enumerate()
         //.inspect(|&(n,l)| println!("line {:?}: {:?} ", n,l))
-                {
-            let mut ii: Vec<_> =  line
+        {
+            let mut ii: Vec<_> = line
                 .char_indices()
                 // skip first char '|'
                 .skip(1)
                 // consider only chars != ' '
-                .filter(|&(_,c)|{c != ' '})
+                .filter(|&(_, c)| c != ' ')
                 // save in ImageChar object
-                .map(|(x,c)|{ImageChar { point: (x as u8, y as u8), char_: c}})
+                .map(|(x, c)| ImageChar {
+                    point: (x as u8, y as u8),
+                    char_: c,
+                })
                 .collect();
             v.append(&mut ii);
-        };
-
+        }
 
         // find dimensions
         let mut xmax = 0;
         let mut ymax = 0;
         for i in v.iter() {
-            let &ImageChar{point: (x,y),char_:_} = i;
-            if x > xmax {xmax = x};
-            if y > ymax {ymax = y};
+            let &ImageChar {
+                point: (x, y),
+                char_: _,
+            } = i;
+            if x > xmax {
+                xmax = x
+            };
+            if y > ymax {
+                ymax = y
+            };
         }
 
         // order points
         let v_len = v.len();
         if v_len <= BIG_IMAGE {
-            v.sort();  // Sort algorithm, see "impl Ord for ImageChar"
+            v.sort(); // Sort algorithm, see "impl Ord for ImageChar"
         } else {
             rand::thread_rng().shuffle(&mut v); // points appear randomly.
         }
@@ -333,29 +309,24 @@ impl Image {
         if v.len() == 0 {
             Image::new(rand::thread_rng().choose(&DEFAULT_IMAGES).unwrap(), offset)
         } else {
-            Image{  ichars: v, offset: offset ,
-                    dimension: (xmax,ymax),
-                    visible_points: v_len,
-                    rewarding_scheme: rewarding_scheme,
+            Image {
+                ichars: v,
+                offset: offset,
+                dimension: (xmax, ymax),
+                visible_points: v_len,
+                rewarding_scheme: rewarding_scheme,
             }
         }
     }
 
-
-
-
-    pub fn disclose(&mut self, lives_frac: (usize,usize), guessed_chars_frac: (usize,usize)) {
-
+    pub fn disclose(&mut self, lives_frac: (usize, usize), guessed_chars_frac: (usize, usize)) {
         let l = self.ichars.len();
 
-        let as_points = |(n,d) | (3*l*(d - n ) as usize / d as usize + 1*l) / 4 ;
+        let as_points = |(n, d)| (3 * l * (d - n) as usize / d as usize + 1 * l) / 4;
 
-        self.visible_points =   match self.rewarding_scheme {
+        self.visible_points = match self.rewarding_scheme {
             RewardingScheme::UnhideWhenGuessedChar => as_points(guessed_chars_frac),
-            RewardingScheme::UnhideWhenLostLife    => as_points(lives_frac),
+            RewardingScheme::UnhideWhenLostLife => as_points(lives_frac),
         };
     }
-
 }
-
-
