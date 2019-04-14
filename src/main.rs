@@ -158,8 +158,7 @@ fn main() {
             println!("{}", COMMANDLINE_HELP);
             return;
         }
-        Some(_) => {}
-        None => {}
+        Some(_) | None => {}
     };
 
     // READ CONFIG
@@ -291,8 +290,7 @@ fn main() {
 
         match line_buffer.trim_end().chars().next() {
             Some(char_) if char_ == 'N' || char_ == 'n' => break 'playing,
-            Some(_) => {}
-            None => {}
+            Some(_) | None => {}
         }
     }
 }
