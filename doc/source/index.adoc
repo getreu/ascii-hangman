@@ -59,7 +59,7 @@ https://blog.getreu.net/_downloads/asciiart-hangman-for-kids.zip[binaries].
 === Linux
 
 . Download the binary `hangman` from 
-http://getreu.net/public/downloads/doc/asciiart-hangman-for-kids.rs/bin/[here].
+https://blog.getreu.net/_downloads/asciiart-hangman-for-kids.zip[here].
 
 . Copy it in `$PATH`
 
@@ -85,7 +85,7 @@ http://getreu.net/public/downloads/doc/asciiart-hangman-for-kids.rs/bin/[here].
   from http://www.fosshub.com/ConEmu.html[here].
 
 . Download the binary `hangman.exe` from 
-http://getreu.net/public/downloads/doc/asciiart-hangman-for-kids.rs/bin/[here].
+https://blog.getreu.net/_downloads/asciiart-hangman-for-kids.zip[here].
 
 . Copy `hangman.exe` in a directory of your choice, for example `c:\99-tools\`
 
