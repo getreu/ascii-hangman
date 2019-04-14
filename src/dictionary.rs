@@ -1,3 +1,4 @@
+#![allow(clippy::filter_map)]
 extern crate rand;
 use crate::image::CONF_LINE_IDENTIFIER__IMAGE;
 use rand::Rng;
@@ -32,14 +33,13 @@ impl Dict {
     pub fn len(&self) -> usize {
         self.wordlist.len()
     }
-
     pub fn new(lines: &str) -> Self {
         Self{wordlist :
           // remove Unicode BOM if present (\u{feff} has in UTF8 3 bytes).
           if lines.starts_with('\u{feff}') { &lines[3..] } else { &lines[..] }
             .lines()
             .enumerate()
-            .filter(|&(_,l)|!( l.trim().len() == 0 ||
+            .filter(|&(_,l)|!( l.trim().is_empty() ||
                           l.starts_with(CONF_LINE_IDENTIFIER__COMMENT) ||
                           l.starts_with(CONF_LINE_IDENTIFIER__CONTROL) ||
                           l.starts_with(CONF_LINE_IDENTIFIER__IMAGE)
