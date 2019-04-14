@@ -220,7 +220,7 @@ impl fmt::Display for Image {
         for ic in self.ichars.iter().take(self.visible_points) {
             let &ImageChar {
                 point: (x, y),
-                code: c,
+                code,
             } = ic;
             s = s
                 + "\x1b["
@@ -228,7 +228,7 @@ impl fmt::Display for Image {
                 + ";"
                 + &(x as usize + 1 + self.offset.0).to_string()
                 + "f"
-                + &c.to_string();
+                + &code.to_string();
         }
         // after printing the image s, bring the cursor below
         write!(
@@ -241,7 +241,7 @@ impl fmt::Display for Image {
 }
 
 impl Image {
-    pub fn new(string: &str, offset: (usize, usize)) -> Image {
+    pub fn new(string: &str, offset: (usize, usize)) -> Self {
         let mut v: Vec<ImageChar> = Vec::new();
 
         let mut rewarding_scheme: RewardingScheme = DEFAULT_REWARDING_SCHEME;
@@ -307,9 +307,9 @@ impl Image {
         }
 
         if v.len() == 0 {
-            Image::new(rand::thread_rng().choose(&DEFAULT_IMAGES).unwrap(), offset)
+            Self::new(rand::thread_rng().choose(&DEFAULT_IMAGES).unwrap(), offset)
         } else {
-            Image {
+            Self {
                 ichars: v,
                 offset,
                 dimension: (x_max,y_max),

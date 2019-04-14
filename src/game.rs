@@ -43,7 +43,7 @@ impl Game {
         }
     }
 
-    pub fn new(wordstr: &str, l: u8) -> Game {
+    pub fn new(wordstr: &str, l: u8) -> Self {
         // parse wordsstr, filp 'visible' every CONF_LINE_WORD_MODIFIER__VISIBLE
         let w = wordstr
             .chars()
@@ -61,7 +61,7 @@ impl Game {
             })
             //.inspect(|ref x| println!("after scan:\t{:?}", x))
             .collect();
-        Game {
+        Self {
             word: w,
             lives: l,
             last_guess: ' ',

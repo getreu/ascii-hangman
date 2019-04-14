@@ -20,8 +20,8 @@ impl fmt::Display for UserInterface {
 }
 
 impl UserInterface {
-    pub fn new(config: &str, offset: (usize, usize)) -> UserInterface {
-        UserInterface {
+    pub fn new(config: &str, offset: (usize, usize)) -> Self {
+        Self {
             image: Image::new(&config, offset),
             message: String::new(),
         }

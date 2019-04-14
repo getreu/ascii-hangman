@@ -33,8 +33,8 @@ impl Dict {
         self.wordlist.len()
     }
 
-    pub fn new(lines: &str) -> Dict {
-        Dict{wordlist :
+    pub fn new(lines: &str) -> Self {
+        Self{wordlist :
           // remove Unicode BOM if present (\u{feff} has in UTF8 3 bytes).
           if lines.starts_with('\u{feff}') { &lines[3..] } else { &lines[..] }
             .lines()
