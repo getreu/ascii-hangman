@@ -48,19 +48,21 @@ impl Game {
         let w = wordstr
             .chars()
             // for every * found flip v_acc
-            .scan(false, |v_acc, c| {
-                *v_acc = *v_acc ^ (c == CONF_LINE_WORD_MODIFIER__VISIBLE);
-                Some((c, *v_acc))
+            .scan(true, |v_acc, c| {
+                *v_acc ^= c == CONF_LINE_WORD_MODIFIER__VISIBLE;
+                if c == CONF_LINE_WORD_MODIFIER__VISIBLE {
+                    Some(None)
+                } else { 
+                    Some(Some(HangmanChar{char_: c, visible: *v_acc}))
+                }
             })
-            // omit *, we do not need them any more
-            .filter(|&(c, _)| c != CONF_LINE_WORD_MODIFIER__VISIBLE)
-            // construct objects
-            .map(|(c, v)| HangmanChar {
-                char_: c,
-                visible: v,
-            })
+            // ommit None and unwrap
+            .filter_map(|s|s)
             //.inspect(|ref x| println!("after scan:\t{:?}", x))
             .collect();
+
+        println!("{:?}",w);
+
         Self {
             word: w,
             lives: l,
