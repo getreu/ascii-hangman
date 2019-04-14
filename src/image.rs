@@ -311,10 +311,10 @@ impl Image {
         } else {
             Image {
                 ichars: v,
-                offset: offset,
+                offset,
                 dimension: (x_max,y_max),
                 visible_points: v_len,
-                rewarding_scheme: rewarding_scheme,
+                rewarding_scheme,
             }
         }
     }
