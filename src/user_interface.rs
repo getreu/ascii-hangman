@@ -1,5 +1,10 @@
 use crate::image::Image;
 use std::fmt;
+use crate::Render;
+
+extern crate crossterm;
+
+use crossterm::{cursor, terminal, ClearType};
 
 const TITLE: &str = "ASCII-ART HANGMAN FOR KIDS";
 
@@ -9,14 +14,20 @@ pub struct UserInterface {
     pub message: String,
 }
 
-impl fmt::Display for UserInterface {
-    fn fmt(&self, f: &mut fmt::Formatter) -> Result<(), fmt::Error> {
-        write!(
-            f,
-            "\x1b[2J\x1b[0;0f{}\n{}\n\n{}",
-            TITLE, self.image, self.message
-        )
-    }
+
+impl Render for UserInterface {
+    fn render(&self) {
+        // Clear all lines in terminal;
+        let terminal = terminal();
+        terminal.clear(ClearType::All).expect("Can not clear terminal.");
+        cursor().goto(0, 0).expect("Can not set curson position.");
+        terminal.write(&TITLE).expect("Can not write on terminal");
+        terminal.write("\n").expect("Can not write on terminal");
+        &self.image.render();
+        terminal.write("\n\n").expect("Can not write on terminal");
+        terminal.clear(ClearType::CurrentLine).expect("Can not clear terminal.");
+        terminal.write(&self.message).expect("Can not write on terminal");
+     }
 }
 
 impl UserInterface {

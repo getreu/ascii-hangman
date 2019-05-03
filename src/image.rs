@@ -2,6 +2,10 @@ extern crate rand;
 use rand::Rng;
 use std::cmp::{Ord, Ordering};
 use std::fmt;
+extern crate crossterm;
+use crossterm::{cursor,terminal};
+use crate::Render;
+
 
 // comands in config-file start with
 pub const CONF_LINE_IDENTIFIER__CONTROL: char = ':';
@@ -211,29 +215,22 @@ pub struct Image {
     pub rewarding_scheme: RewardingScheme,
 }
 
-impl fmt::Display for Image {
-    fn fmt(&self, f: &mut fmt::Formatter) -> Result<(), fmt::Error> {
-        let mut s = String::new();
+impl Render for Image {
+    fn render(&self) {
+        let cursor = cursor();
+        let terminal = terminal();
         for ic in self.ichars.iter().take(self.visible_points) {
             let &ImChar {
                 point: (x, y),
                 code,
             } = ic;
-            s = s
-                + "\x1b["
-                + &(y as usize + 1 + self.offset.1).to_string()
-                + ";"
-                + &(x as usize + 1 + self.offset.0).to_string()
-                + "f"
-                + &code.to_string();
+            cursor
+                .goto((self.offset.1 + (x as usize) + 1 ) as u16, (self.offset.0 + (y as usize) + 1 ) as u16)
+                .expect("Can not set curson position.");
+            terminal.write(&code.to_string()).expect("Can not write on terminal.");
         }
         // after printing the image s, bring the cursor below
-        write!(
-            f,
-            "{}\x1b[{};0f",
-            s,
-            (self.dimension.1 as usize + 1 + self.offset.1).to_string()
-        )
+        cursor.goto( 0, (self.dimension.1 as usize + 1 + self.offset.1) as u16).expect("Can not move cursor.");
     }
 }
 

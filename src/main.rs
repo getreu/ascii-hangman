@@ -1,4 +1,5 @@
 extern crate crossterm;
+use crossterm::{terminal, ClearType};
 extern crate rand;
 mod game;
 use game::{Game, State};
@@ -16,7 +17,6 @@ use std::io;
 use std::io::prelude::*;
 use std::path::PathBuf;
 
-use crossterm::{Color, Colored, Colorize, Crossterm};
 
 const COMMANDLINE_HELP: &str = "\
 Hangman is a paper and pencil guessing game for two or more players.  One player
@@ -141,6 +141,10 @@ const CONF_DEMO: &str = "- _Demo: add own words to config file and start a_gain_
 
 // ------------------ MAIN ---------------------------------------------
 
+trait Render {
+    fn render(&self);
+}
+
 pub fn read_config(pathstr: &PathBuf) -> Result<String, io::Error> {
     let mut f = File::open(pathstr)?;
     let mut s = String::new();
@@ -155,14 +159,6 @@ pub fn write_config_template(pathstr: &PathBuf) -> Result<(), io::Error> {
 }
 
 fn main() {
-
-    let crossterm = Crossterm::new();
-
-    let color = crossterm.color();
-    let cursor = crossterm.cursor();
-    let terminal = crossterm.terminal();
-    let input = crossterm.input();
-
     // SHOW HELP TEXT
     match env::args().nth(1) {
         Some(ref a) if a == "-h" || a == "--help" => {
@@ -232,6 +228,7 @@ fn main() {
 
     // INITIALISE GAME
 
+    let terminal = terminal();
     let mut ui = UserInterface::new(&config, OFFSET);
 
     let mut dict = Dict::new(&config);
@@ -258,7 +255,10 @@ fn main() {
         // The game loop
         let mut line_buffer = String::new();
         let reader = io::stdin();
-        print!("\x1b[2J"); // clear screen
+
+        // Clear all lines in terminal;
+        terminal.clear(ClearType::All).expect("Can not clear terminal.");
+
         'running_game: loop {
             if game.lives > 0 || ui.image.rewarding_scheme == RewardingScheme::UnhideWhenLostLife {
                 ui.image.disclose(
@@ -266,22 +266,25 @@ fn main() {
                     (game.visible_chars(), chars_to_guess),
                 );
             }
-            ui.message = format!("{}", game);
-            println!("{}", ui);
+            ui.message = format!("{}\n", game);
+            ui.render();
 
             match game.get_state() {
                 State::Victory => {
-                    println!("Congratulations! You won!");
+                    terminal.write("Congratulations! You won!\n")
+                        .expect("Can not write on terminal.");
                     break 'running_game;
                 }
                 State::Defeat => {
-                    println!("Sorry, you lost! Better luck next time!");
+                    terminal.write("Sorry, you lost! Better luck next time!\n")
+                        .expect("Can not write on terminal.");
                     break 'running_game;
                 }
                 _ => {}
             }
 
-            print!("Type a letter then type [Enter]: ");
+            terminal.write("Type a letter then type [Enter]: ")
+                        .expect("Can not write on terminal.");
             io::stdout().flush().unwrap();
 
             // Read next char and send it
@@ -294,13 +297,15 @@ fn main() {
             });
         }
 
-        print!("New game? Type [Y]es or [n]o: ");
+        terminal.write("New game? Type [Y]es or [n]o: ")
+                        .expect("Can not write on terminal.");
         io::stdout().flush().unwrap();
 
         // Read next char
         line_buffer.clear();
         reader.read_line(&mut line_buffer).unwrap();
-        println! {"(c) Jens Getreu, 2016-2019."};
+        terminal.write("\n(c) Jens Getreu, 2016-2019.")
+                        .expect("Can not write on terminal.");
 
         match line_buffer.trim_end().chars().next() {
             Some(char_) if char_ == 'N' || char_ == 'n' => break 'playing,
