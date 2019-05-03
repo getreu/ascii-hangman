@@ -1,3 +1,4 @@
+extern crate crossterm;
 extern crate rand;
 mod game;
 use game::{Game, State};
@@ -14,6 +15,8 @@ use std::fs::File;
 use std::io;
 use std::io::prelude::*;
 use std::path::PathBuf;
+
+use crossterm::{Color, Colored, Colorize, Crossterm};
 
 const COMMANDLINE_HELP: &str = "\
 Hangman is a paper and pencil guessing game for two or more players.  One player
@@ -152,6 +155,14 @@ pub fn write_config_template(pathstr: &PathBuf) -> Result<(), io::Error> {
 }
 
 fn main() {
+
+    let crossterm = Crossterm::new();
+
+    let color = crossterm.color();
+    let cursor = crossterm.cursor();
+    let terminal = crossterm.terminal();
+    let input = crossterm.input();
+
     // SHOW HELP TEXT
     match env::args().nth(1) {
         Some(ref a) if a == "-h" || a == "--help" => {
