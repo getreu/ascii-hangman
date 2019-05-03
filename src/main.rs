@@ -166,7 +166,7 @@ fn main() {
     // SHOW HELP TEXT
     match env::args().nth(1) {
         Some(ref a) if a == "-h" || a == "--help" => {
-            println!("{}", COMMANDLINE_HELP);
+            eprintln!("{}", COMMANDLINE_HELP);
             return;
         }
         Some(_) | None => {}
@@ -196,7 +196,7 @@ fn main() {
             Err(_) => {
                 match write_config_template(&path) {
                     Ok(_) => {
-                        println!(
+                        eprintln!(
                             "As no config-file :\n\
                              \t{:?}\n\
                              was found a template file is written in the \
@@ -210,7 +210,7 @@ fn main() {
                         CONF_DEMO.to_string()
                     }
                     Err(why) => {
-                        println!(
+                        eprintln!(
                             "Couldn't write hangman template \
                              config-file:\n\t{:?}\n({})\n\n\
                              Current working directory is:\n\t{:?}\n\n\
@@ -236,7 +236,7 @@ fn main() {
 
     let mut dict = Dict::new(&config);
     if dict.len() == 0 {
-        println!(
+        eprintln!(
             "No guessing words in config-file(s):\n\
              \t{:?}\n\
              were found. Current working directory is:\n\
