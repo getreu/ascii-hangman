@@ -24,7 +24,7 @@ impl Render for UserInterface {
         terminal.write("\n").expect("Can not write on terminal");
         &self.image.render();
         terminal.write("\n\n").expect("Can not write on terminal");
-        terminal.clear(ClearType::CurrentLine).expect("Can not clear current line.");
+        terminal.clear(ClearType::FromCursorDown).expect("Can not clear current line.");
         terminal.write(&self.message).expect("Can not write on terminal");
      }
 }
