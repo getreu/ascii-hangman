@@ -225,12 +225,14 @@ impl Render for Image {
                 code,
             } = ic;
             cursor
-                .goto((self.offset.1 + (x as usize) + 1 ) as u16, (self.offset.0 + (y as usize) + 1 ) as u16)
+                .goto((self.offset.1 + (x as usize) + 1 ) as u16, 
+                      (self.offset.0 + (y as usize) + 1 ) as u16)
                 .expect("Can not set curson position.");
             terminal.write(&code.to_string()).expect("Can not write on terminal.");
         }
         // after printing the image s, bring the cursor below
-        cursor.goto( 0, (self.dimension.1 as usize + 1 + self.offset.1) as u16).expect("Can not move cursor.");
+        cursor.goto( 0, (self.dimension.1 as usize + 1 + self.offset.1) as u16)
+            .expect("Can not move cursor.");
     }
 }
 

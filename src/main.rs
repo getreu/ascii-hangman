@@ -16,6 +16,7 @@ use std::fs::File;
 use std::io;
 use std::io::prelude::*;
 use std::path::PathBuf;
+use crossterm::input;
 
 
 const COMMANDLINE_HELP: &str = "\
@@ -184,6 +185,9 @@ fn main() {
     // read and concat all config files given on command line
     let cwd = env::current_dir().unwrap();
 
+    // access keyboard
+    let input = input();
+
     let mut config: String = String::new();
     for conf_file_path in &conf_file_paths {
         let path = conf_file_path;
@@ -201,8 +205,7 @@ fn main() {
                             path, cwd
                         );
                         // wait for [Enter] key
-                        let input = &mut String::new();
-                        io::stdin().read_line(input).unwrap();
+                        let _ = input.read_line();
                         CONF_DEMO.to_string()
                     }
                     Err(why) => {
@@ -216,8 +219,7 @@ fn main() {
                             cwd
                         );
                         // wait for [Enter] key
-                        let input = &mut String::new();
-                        io::stdin().read_line(input).unwrap();
+                        let _ = input.read_line();
                         CONF_DEMO.to_string()
                     }
                 }
@@ -241,8 +243,8 @@ fn main() {
             conf_file_paths, cwd
         );
         // wait for [Enter] key
-        let input = &mut String::new();
-        io::stdin().read_line(input).unwrap();
+        let _ = input.read_line();
+
         dict = Dict::new(CONF_DEMO);
     };
 
@@ -253,8 +255,6 @@ fn main() {
         let chars_to_guess = game.visible_chars();
 
         // The game loop
-        let mut line_buffer = String::new();
-        let reader = io::stdin();
 
         // Clear all lines in terminal;
         terminal.clear(ClearType::All).expect("Can not clear terminal.");
@@ -283,33 +283,25 @@ fn main() {
                 _ => {}
             }
 
-            terminal.write("Type a letter then type [Enter]: ")
+            terminal.write("Type a letter, then press [Enter]: ")
                         .expect("Can not write on terminal.");
-            io::stdout().flush().unwrap();
 
             // Read next char and send it
-            line_buffer.clear();
-            reader.read_line(&mut line_buffer).unwrap();
-
-            game.guess(match line_buffer.chars().next() {
-                Some(char_) => char_,
-                None => continue 'running_game,
-            });
+            let guess = input.read_line().expect("Can not read keyboard.");
+            game.guess(guess.chars().next().unwrap_or(' '));
         }
 
         terminal.write("New game? Type [Y]es or [n]o: ")
                         .expect("Can not write on terminal.");
-        io::stdout().flush().unwrap();
 
         // Read next char
-        line_buffer.clear();
-        reader.read_line(&mut line_buffer).unwrap();
-        terminal.write("\n(c) Jens Getreu, 2016-2019.")
-                        .expect("Can not write on terminal.");
+        let answer = input.read_char().expect("Can not read keyboard.");
 
-        match line_buffer.trim_end().chars().next() {
-            Some(char_) if char_ == 'N' || char_ == 'n' => break 'playing,
-            Some(_) | None => {}
-        }
+
+        if answer == 'N' || answer == 'n' { break 'playing };
+        
     }
+
+    terminal.write("\n(c) Jens Getreu, 2016-2019.")
+                        .expect("Can not write on terminal.");
 }

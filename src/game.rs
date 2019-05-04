@@ -104,7 +104,7 @@ impl fmt::Display for Game {
     fn fmt(&self, f: &mut fmt::Formatter) -> Result<(), fmt::Error> {
         writeln!(
             f,
-            "Lives:\t{}\tLast guess: {}   \n",
+            "Lives:\t{}\tLast guess: {}\n",
             self.lives, self.last_guess
         )?;
 

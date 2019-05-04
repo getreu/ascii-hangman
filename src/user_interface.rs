@@ -1,10 +1,9 @@
 use crate::image::Image;
-use std::fmt;
 use crate::Render;
 
 extern crate crossterm;
 
-use crossterm::{cursor, terminal, ClearType};
+use crossterm::{cursor, terminal, ClearType };
 
 const TITLE: &str = "ASCII-ART HANGMAN FOR KIDS";
 
@@ -25,7 +24,7 @@ impl Render for UserInterface {
         terminal.write("\n").expect("Can not write on terminal");
         &self.image.render();
         terminal.write("\n\n").expect("Can not write on terminal");
-        terminal.clear(ClearType::CurrentLine).expect("Can not clear terminal.");
+        terminal.clear(ClearType::CurrentLine).expect("Can not clear current line.");
         terminal.write(&self.message).expect("Can not write on terminal");
      }
 }
