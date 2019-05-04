@@ -1,10 +1,12 @@
 extern crate rand;
-use rand::Rng;
+use rand::thread_rng;
+use rand::seq::SliceRandom;
 use std::cmp::{Ord, Ordering};
 use std::fmt;
 extern crate crossterm;
 use crossterm::{cursor,terminal};
 use crate::Render;
+
 
 
 // comands in config-file start with
@@ -296,11 +298,13 @@ impl Image {
         if v_len <= BIG_IMAGE {
             v.sort(); // Sort algorithm, see "impl Ord for ImageChar"
         } else {
-            rand::thread_rng().shuffle(&mut v); // points appear randomly.
+            let mut rng = thread_rng();
+            (&mut v).shuffle(&mut rng); // points appear randomly.
         }
 
         if v.is_empty() {
-            Self::new(rand::thread_rng().choose(&DEFAULT_IMAGES).unwrap(), offset)
+            let mut rng = thread_rng();
+            Self::new((&DEFAULT_IMAGES).choose(&mut rng).unwrap(), offset)
         } else {
             Self {
                 ichars: v,
