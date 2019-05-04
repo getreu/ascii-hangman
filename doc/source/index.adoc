@@ -1,6 +1,6 @@
 = ASCII Art Hangman for Kids
 Jens Getreu <getreu@web.de>
-v3.1.0, 2.2.2019
+v4.0.0, 4.5.2019
 :imagesdir: images
 :toc:
 :numbering:
@@ -61,9 +61,13 @@ https://blog.getreu.net/_downloads/asciiart-hangman-for-kids.zip[binaries].
 . Download the binary `hangman` from 
 https://blog.getreu.net/_downloads/asciiart-hangman-for-kids.zip[here].
 
+. Extract the contents of the archive
+
+ unzip asciiart-hangman-for-kids.zip
+
 . Copy it in `$PATH`
 
- sudo cp hangman /usr/local/bin
+ sudo cp ./dist/bin/hangman /usr/local/bin
 
 . Generate a sample configuration file in your working directory
 
@@ -80,45 +84,43 @@ https://blog.getreu.net/_downloads/asciiart-hangman-for-kids.zip[here].
 
 === Windows
 
-. Download and install the terminal-emulator 
-  https://github.com/Maximus5/ConEmu[ConEmu]
-  from http://www.fosshub.com/ConEmu.html[here].
-
-. Download the binary `hangman.exe` from 
+. Download the binary `hangman` from 
 https://blog.getreu.net/_downloads/asciiart-hangman-for-kids.zip[here].
 
-. Copy `hangman.exe` in a directory of your choice, for example `c:\99-tools\`
-
-. Open the properties of the Shortcut `ConEmu (x64)` on your desktop.
+. Extract the contents of the archive
 +
-image::01a-Shortcut_properties.png[]
+Click right on  `asciiart-hangman-for-kids.zip` -> _Extract all_.
 
-
-
-. On the _General_ tab, change the program name to `Hangman for kids`.
+. Navigate to the hangman binary
 +
-image::01b-Shortcut_properties2.png[]
+Change into folder `./dist/bin/` 
 
-. Append `"C:\99-tools\hangman.exe"` to `ConEmu64.exe`
+. Add _Read and Execute_ permissions
 +
-image::02-Target.png[]
+Right click on `hangman.exe` -> Properties -> Security -> "Everyone" -> Edit
 +
-Leave _Start in_ empty.
-
-. Generate a sample configuration file on your desktop with double click on the
-`Hangman for Kids` Shortcut on your desktop.
+"Everyone" -> Add -> "Read and Execute" -> Ok
 
 
-. Edit the configuration file with _Wordpad_.
+. Generate a sample configuration file in your working directory
++
+Double click on `hangman.exe`
++
+This creates the file `hangman_words.txt`
 
-. Start the game with double click on the
-`Hangman for Kids` Shortcut on your desktop.
+. Edit the configuration file
++
+Right-click on `hangman-words.txt` -> Open with -> Wordpad
+
+. Start the game
++
+Double-click on `hangman.exe`.
 +
 image::03-Terminal.png[]
 
 == Usage
 
-include::../../src/main.rs[lines="48..82"]
+include::../../src/main.rs[lines="52..85§"]
 
 
 
