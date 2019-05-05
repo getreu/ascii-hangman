@@ -2,8 +2,9 @@ use crate::image::Image;
 use crate::Render;
 
 extern crate crossterm;
-
-use crossterm::{cursor, terminal, ClearType };
+#[cfg(unix)]
+use crossterm::Attribute;
+use crossterm::{cursor, terminal, ClearType, Color, Colored};
 
 const TITLE: &str = "ASCII-ART HANGMAN FOR KIDS";
 
@@ -13,20 +14,48 @@ pub struct UserInterface {
     pub message: String,
 }
 
-
 impl Render for UserInterface {
     fn render(&self) {
-        // Clear all lines in terminal;
         let terminal = terminal();
-        terminal.clear(ClearType::All).expect("Can not clear terminal.");
-        cursor().goto(0, 0).expect("Can not set curson position.");
-        terminal.write(&TITLE).expect("Can not write on terminal");
-        terminal.write("\n").expect("Can not write on terminal");
+        // Clear all lines in terminal;
+        terminal.clear(ClearType::All).unwrap();
+        cursor().goto(0, 0).unwrap();
+
+        #[cfg(unix)]
+        print!("{}", Attribute::Reset);
+        #[cfg(windows)]
+        print!("{}", Colored::Fg(Color::Grey));
+        println!("{}", &TITLE);
+
+        print!("{}", Colored::Fg(Color::DarkYellow));
         &self.image.render();
-        terminal.write("\n\n").expect("Can not write on terminal");
-        terminal.clear(ClearType::FromCursorDown).expect("Can not clear current line.");
-        terminal.write(&self.message).expect("Can not write on terminal");
-     }
+        println!("\n");
+
+        terminal.clear(ClearType::FromCursorDown).unwrap();
+        // print message field
+        let mut emph = false;
+        for line in &mut self.message.lines() {
+            if line == "" {
+                emph = !emph
+            };
+            if emph {
+                #[cfg(unix)]
+                print!("{}", Colored::Fg(Color::DarkGreen));
+                #[cfg(windows)]
+                print!("{}", Colored::Fg(Color::White));
+                println!("{}", &line);
+            } else {
+                #[cfg(unix)]
+                print!("{}", Attribute::Reset);
+                #[cfg(windows)]
+                print!("{}", Colored::Fg(Color::Grey));
+                println!("{}", &line);
+            }
+        }
+
+        #[cfg(Unix)]
+        print!("{}", Attribute.Reset);
+    }
 }
 
 impl UserInterface {

@@ -1,13 +1,11 @@
 extern crate rand;
-use rand::thread_rng;
 use rand::seq::SliceRandom;
+use rand::thread_rng;
 use std::cmp::{Ord, Ordering};
 use std::fmt;
 extern crate crossterm;
-use crossterm::{cursor,terminal};
 use crate::Render;
-
-
+use crossterm::{cursor, terminal};
 
 // comands in config-file start with
 pub const CONF_LINE_IDENTIFIER__CONTROL: char = ':';
@@ -227,13 +225,18 @@ impl Render for Image {
                 code,
             } = ic;
             cursor
-                .goto((self.offset.1 + (x as usize) + 1 ) as u16, 
-                      (self.offset.0 + (y as usize) + 1 ) as u16)
+                .goto(
+                    (self.offset.1 + (x as usize) + 1) as u16,
+                    (self.offset.0 + (y as usize) + 1) as u16,
+                )
                 .expect("Can not set curson position.");
-            terminal.write(&code.to_string()).expect("Can not write on terminal.");
+            terminal
+                .write(&code.to_string())
+                .expect("Can not write on terminal.");
         }
         // after printing the image s, bring the cursor below
-        cursor.goto( 0, (self.dimension.1 as usize + 1 + self.offset.1) as u16)
+        cursor
+            .goto(0, (self.dimension.1 as usize + 1 + self.offset.1) as u16)
             .expect("Can not move cursor.");
     }
 }

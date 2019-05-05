@@ -24,7 +24,7 @@ configuration file.
 .Screenshot
 ====
 ----
-HANGMAN GAME
+ASCII-ART HANGMAN FOR KIDS
          ,.
         (_|,.
        ,' /, )_______
@@ -116,7 +116,7 @@ Right-click on `hangman-words.txt` -> Open with -> Wordpad
 +
 Double-click on `hangman.exe`.
 +
-image::03-Terminal.png[]
+image::Screenshot.png[]
 
 == Usage
 

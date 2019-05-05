@@ -1,10 +1,8 @@
 #![allow(clippy::filter_map)]
 extern crate rand;
 use crate::image::CONF_LINE_IDENTIFIER__IMAGE;
-use rand::thread_rng;
 use rand::seq::SliceRandom;
-
-
+use rand::thread_rng;
 
 // Config file syntax error message
 pub const CONF_SYNTAX_ERROR: &str = "

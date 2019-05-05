@@ -16,8 +16,6 @@ use std::fs::File;
 use std::io;
 use std::io::prelude::*;
 use std::path::PathBuf;
-use crossterm::input;
-
 
 const COMMANDLINE_HELP: &str = "\
 Hangman is a paper and pencil guessing game for two or more players.  One player
@@ -185,9 +183,6 @@ fn main() {
     // read and concat all config files given on command line
     let cwd = env::current_dir().unwrap();
 
-    // access keyboard
-    let input = input();
-
     let mut config: String = String::new();
     for conf_file_path in &conf_file_paths {
         let path = conf_file_path;
@@ -205,7 +200,8 @@ fn main() {
                             path, cwd
                         );
                         // wait for [Enter] key
-                        let _ = input.read_line();
+                        let s = &mut String::new();
+                        io::stdin().read_line(s).unwrap();
                         CONF_DEMO.to_string()
                     }
                     Err(why) => {
@@ -219,7 +215,8 @@ fn main() {
                             cwd
                         );
                         // wait for [Enter] key
-                        let _ = input.read_line();
+                        let s = &mut String::new();
+                        io::stdin().read_line(s).unwrap();
                         CONF_DEMO.to_string()
                     }
                 }
@@ -243,7 +240,8 @@ fn main() {
             conf_file_paths, cwd
         );
         // wait for [Enter] key
-        let _ = input.read_line();
+        let s = &mut String::new();
+        io::stdin().read_line(s).unwrap();
 
         dict = Dict::new(CONF_DEMO);
     };
@@ -257,7 +255,9 @@ fn main() {
         // The game loop
 
         // Clear all lines in terminal;
-        terminal.clear(ClearType::All).expect("Can not clear terminal.");
+        terminal
+            .clear(ClearType::All)
+            .expect("Can not clear terminal.");
 
         'running_game: loop {
             if game.lives > 0 || ui.image.rewarding_scheme == RewardingScheme::UnhideWhenLostLife {
@@ -271,37 +271,34 @@ fn main() {
 
             match game.get_state() {
                 State::Victory => {
-                    terminal.write("Congratulations! You won!\n")
-                        .expect("Can not write on terminal.");
+                    println!("Congratulations! You won!");
                     break 'running_game;
                 }
                 State::Defeat => {
-                    terminal.write("Sorry, you lost! Better luck next time!\n")
-                        .expect("Can not write on terminal.");
+                    println!("Sorry, you lost! Better luck next time!");
                     break 'running_game;
                 }
                 _ => {}
             }
 
-            terminal.write("Type a letter, then press [Enter]: ")
-                        .expect("Can not write on terminal.");
+            print!("Type a letter, then press [Enter]: ");
+            io::stdout().flush().unwrap();
 
             // Read next char and send it
-            let guess = input.read_line().expect("Can not read keyboard.");
+            let guess = &mut String::new();
+            io::stdin().read_line(guess).unwrap();
             game.guess(guess.chars().next().unwrap_or(' '));
         }
 
-        terminal.write("New game? Type [Y]es or [n]o: ")
-                        .expect("Can not write on terminal.");
+        println!("New game? Type [Y]es or [n]o: ");
+        let s = &mut String::new();
+        io::stdin().read_line(s).unwrap();
+        let answer = s.chars().next().unwrap_or('Y');
 
-        // Read next char
-        let answer = input.read_char().expect("Can not read keyboard.");
-
-
-        if answer == 'N' || answer == 'n' { break 'playing };
-        
+        if answer == 'N' || answer == 'n' {
+            break 'playing;
+        };
     }
 
-    terminal.write("\n(c) Jens Getreu, 2016-2019.")
-                        .expect("Can not write on terminal.");
+    println!("\n(c) Jens Getreu, 2016-2019.")
 }
