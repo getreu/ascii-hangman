@@ -71,6 +71,7 @@ https://blog.getreu.net/_downloads/asciiart-hangman-for-kids.zip[here].
 . Copy the binary to `$PATH`
 
  sudo cp ./dist/bin/hangman /usr/local/bin
+ sudo chmod 775 /usr/local/hangman
 
 . Generate a sample configuration file in your working directory
 
@@ -128,8 +129,44 @@ include::../../src/main.rs[lines="53..83"]
 
 
 
-== Sample configuration file
+=== Sample configuration file
 
 ----
 include::../../src/main.rs[lines="93..138"]
 ----
+
+
+== Game preparation
+
+The game is designed for classroom usage, but can be played alone as well.
+
+*  The class composes the list of secret words together with the teacher.  The
+   pupil types the suggested words into the configuration file, the others
+   follow at the screen and correct spelling mistakes. 
+
+*  The list of secrets can be recent vocabulary or calculation exercises. A
+   secret can be one word only, a whole expression or a sentence.
+
+*  As a hint it is possible to tag a part of the secret sentence. This part
+   will be disclosed immediately when the game starts.   
+
+*  When the game starts the computer will choose one secret of the list randomly.
+   Even the teacher does not know.
+
+
+== Game rules
+
+
+1. The whole class is asked to write down all guessed letters on a sheet of 
+   paper.
+
+2. A player can guess again when the secret word contained the guessed letter.
+
+3. If not, the next player may try it.
+
+4. A player is not allowed to ask others to remind him if a letter was already
+   tried or not. He has to solely rely on his notes.
+
+3. The winner of the game it the person who discloses the last letter of the
+   secret word.
+
