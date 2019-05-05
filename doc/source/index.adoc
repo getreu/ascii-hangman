@@ -1,6 +1,6 @@
 = ASCII Art Hangman for Kids
 Jens Getreu <getreu@web.de>
-v4.0.0, 4.5.2019
+v4.1.0, 5.5.2019
 :imagesdir: images
 :toc:
 :numbering:
@@ -11,38 +11,38 @@ Hangman is a paper and pencil guessing game for two or more players.  One player
 thinks of a word, phrase or sentence and the other tries to guess it by
 suggesting letters or numbers, within a certain number of guesses. In this
 version for children the computer selects a word, phrase or sentence randomly
-out of a word-list defined in a configuration file. In the course of the game
-ASCII-Art images - designed for children - are progressively disclosed. There
-are 10 built in ASCII-Art images from which one is chosen randomly at the
-beginning of the game. Alternatively own ASCII-Art can be provided in the
-configuration file.
-
+out of a word-list defined in a configuration file. 
 // excerpt-end
-
-<<<
 
 .Screenshot
 ====
 ----
 ASCII-ART HANGMAN FOR KIDS
-         ,.
-        (_|,.
-       ,' /, )_______
-    __j o``-'        `
-   (")
-    `-j                |
-      `-._(           /
-         |_\  |--^.  /
-        /_]'|_| /_)_/
-           /_]'  /_]'
 
-Lives:  6       Last guess: g
+          ,.
+         (_|,.
+        ,' /, )_____
+     __j o``-'
+    (")
+     `-j
+       `-._(
+          |_\  |--^.
+         /_]'|_| /_
+            /_]'  /
+
+Lives:	7	Last guess: k
 
  g o o d   l u _ k
 
-Type a letter then type [Enter]:
+Type a letter, then press [Enter]: 
 ----
 ====
+
+In the course of the game
+ASCII-Art images - designed for children - are progressively disclosed. There
+are 10 built in ASCII-Art images from which one is chosen randomly at the
+beginning of the game. Alternatively own ASCII-Art can be provided in the
+configuration file.
 
 
 The project is hosted on Github:
@@ -58,6 +58,9 @@ https://blog.getreu.net/_downloads/asciiart-hangman-for-kids.zip[binaries].
 
 === Linux
 
+.Linux version
+image::01-Screenshot-Linux.png[]
+
 . Download the binary `hangman` from 
 https://blog.getreu.net/_downloads/asciiart-hangman-for-kids.zip[here].
 
@@ -65,12 +68,13 @@ https://blog.getreu.net/_downloads/asciiart-hangman-for-kids.zip[here].
 
  unzip asciiart-hangman-for-kids.zip
 
-. Copy it in `$PATH`
+. Copy the binary to `$PATH`
 
  sudo cp ./dist/bin/hangman /usr/local/bin
 
 . Generate a sample configuration file in your working directory
 
+ cd
  hangman
 
 . Edit the configuration file
@@ -116,11 +120,11 @@ Right-click on `hangman-words.txt` -> Open with -> Wordpad
 +
 Double-click on `hangman.exe`.
 +
-image::Screenshot.png[]
+image::02-Screenshot-Windows.png[]
 
-== Usage
+== Configuration
 
-include::../../src/main.rs[lines="52..85§"]
+include::../../src/main.rs[lines="53..83"]
 
 
 
