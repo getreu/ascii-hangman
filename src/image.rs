@@ -5,7 +5,7 @@ use std::cmp::{Ord, Ordering};
 use std::fmt;
 extern crate crossterm;
 use crate::Render;
-use crossterm::{cursor, terminal};
+use crossterm::cursor;
 
 // comands in config-file start with
 pub const CONF_LINE_IDENTIFIER__CONTROL: char = ':';
@@ -217,8 +217,10 @@ pub struct Image {
 
 impl Render for Image {
     fn render(&self) {
+        use std::io::prelude::*;                                                           
+        use std::io;   
+        
         let cursor = cursor();
-        let terminal = terminal();
         for ic in self.ichars.iter().take(self.visible_points) {
             let &ImChar {
                 point: (x, y),
@@ -229,10 +231,17 @@ impl Render for Image {
                     (self.offset.1 + (x as usize) + 1) as u16,
                     (self.offset.0 + (y as usize) + 1) as u16,
                 )
-                .expect("Can not set curson position.");
-            terminal
-                .write(&code.to_string())
-                .expect("Can not write on terminal.");
+                .expect("Can not set cursor position.");
+
+            print!("{}", &code );
+
+            // The following flush() is necessary on Windows terminals that do not understand ANSI
+            // escape code such as Window 7, 8 and older 10. BTW, in 2016, Microsoft released the
+            // Windows 10 Version 1511 update which unexpectedly implemented support for ANSI
+            // escape sequences.  
+            // [ANSI escape code](https://en.wikipedia.org/wiki/ANSI_escape_code#Windows)
+           
+            io::stdout().flush().ok().expect("Could not flush stdout");
         }
         // after printing the image s, bring the cursor below
         cursor
