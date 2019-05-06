@@ -46,7 +46,7 @@ configuration file.
 
 
 The project is hosted on Github:
-https://github.com/getreu/asciiart-hangman-for-kids.rs[getreu/asciiart-hangman-for-kids.rs].
+https://github.com/getreu/asciiart-hangman-for-kids[getreu/asciiart-hangman-for-kids].
 The project's webpage is on
 http://blog.getreu.net/projects/asciiart-hangman-for-kids/[getreu.net].
 There you also find a
