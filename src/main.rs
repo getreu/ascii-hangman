@@ -7,8 +7,8 @@ mod user_interface;
 use user_interface::UserInterface;
 mod dictionary;
 use dictionary::Dict;
+use dictionary::RewardingScheme;
 mod image;
-use image::RewardingScheme;
 
 use std::env;
 use std::error::Error;
@@ -260,7 +260,7 @@ fn main() {
             .expect("Can not clear terminal.");
 
         'running_game: loop {
-            match ui.image.rewarding_scheme {
+            match dict.rewarding_scheme {
                 RewardingScheme::UnhideWhenGuessedChar => {
                     ui.image.disclose((game.visible_chars(), chars_to_guess));
                 }

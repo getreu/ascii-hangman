@@ -12,6 +12,17 @@ Every line has to start with one of the following characters:
 '#' (comment line), '-' (guessing string), '|' (ASCII-Art image) or ':' (game modifier).
 Edit config file and start again.\n";
 
+// the default can be changed by one of the following switches
+const DEFAULT_REWARDING_SCHEME: RewardingScheme = RewardingScheme::UnhideWhenGuessedChar;
+
+// Keyword to switch rewarding scheme
+// :traditional-rewarding
+const UNHIDE_WHEN_LOST_LIVE_IDENTIFIER: &str = "traditional-rewarding";
+
+// Keyword to switch rewarding scheme
+// :success-rewarding
+const UNHIDE_WHEN_GUESSED_CHAR_IDENTIFIER: &str = "success-rewarding";
+
 // comments in config file start with
 pub const CONF_LINE_IDENTIFIER__COMMENT: char = '#';
 
@@ -25,20 +36,43 @@ pub const CONF_LINE_IDENTIFIER__WORD: char = '-';
 // "guess_-me_: will be shown as "_ _ _ _ _ - m e"
 pub const CONF_LINE_WORD_MODIFIER__VISIBLE: char = '_';
 
+#[derive(Debug, PartialEq)]
+pub enum RewardingScheme {
+    UnhideWhenLostLife,
+    UnhideWhenGuessedChar,
+}
+
 #[derive(Debug)]
 pub struct Dict {
     wordlist: Vec<String>,
+    pub rewarding_scheme: RewardingScheme,
 }
 
 impl Dict {
     pub fn len(&self) -> usize {
         self.wordlist.len()
     }
+
     pub fn new(lines: &str) -> Self {
-        Self{wordlist :
+        let mut rewarding_scheme = DEFAULT_REWARDING_SCHEME;
+        let wordlist =
           // remove Unicode BOM if present (\u{feff} has in UTF8 3 bytes).
           if lines.starts_with('\u{feff}') { &lines[3..] } else { &lines[..] }
+            // interpret identifier line
             .lines()
+            .filter_map(|l| {
+                if l.starts_with(CONF_LINE_IDENTIFIER__CONTROL) {
+                    if l[1..].trim().contains(UNHIDE_WHEN_LOST_LIVE_IDENTIFIER) {
+                        rewarding_scheme = RewardingScheme::UnhideWhenLostLife;
+                    }
+                    if l[1..].trim().contains(UNHIDE_WHEN_GUESSED_CHAR_IDENTIFIER) {
+                        rewarding_scheme = RewardingScheme::UnhideWhenGuessedChar;
+                    }
+                    None
+                } else {
+                    Some(l)
+                }
+            })
             .enumerate()
             .filter(|&(_,l)|!( l.trim().is_empty() ||
                           l.starts_with(CONF_LINE_IDENTIFIER__COMMENT) ||
@@ -48,11 +82,15 @@ impl Dict {
             )
             .map(|(n,l)| if l.starts_with(CONF_LINE_IDENTIFIER__WORD) {
                              l[1..].trim().to_string()
-                         } else {
+                        } else {
                              panic!("{}\nError in line: {}: \"{}\"\n\n",
                                      CONF_SYNTAX_ERROR, n+1, l)
-                     })
-            .collect()
+                        }
+            )
+            .collect();
+        Dict {
+            wordlist,
+            rewarding_scheme,
         }
     }
 

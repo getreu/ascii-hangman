@@ -7,20 +7,6 @@ extern crate crossterm;
 use crate::Render;
 use crossterm::cursor;
 
-// comands in config-file start with
-pub const CONF_LINE_IDENTIFIER__CONTROL: char = ':';
-
-// the default can be changed by one of the following switches
-const DEFAULT_REWARDING_SCHEME: RewardingScheme = RewardingScheme::UnhideWhenGuessedChar;
-
-// Keyword to switch rewarding scheme
-// :traditional-rewarding
-const UNHIDE_WHEN_LOST_LIVE_IDENTIFIER: &str = "traditional-rewarding";
-
-// Keyword to switch rewarding scheme
-// :success-rewarding
-const UNHIDE_WHEN_GUESSED_CHAR_IDENTIFIER: &str = "success-rewarding";
-
 // images in config file start with
 pub const CONF_LINE_IDENTIFIER__IMAGE: char = '|';
 
@@ -200,19 +186,12 @@ impl Ord for ImChar {
     }
 }
 
-#[derive(Debug, PartialEq)]
-pub enum RewardingScheme {
-    UnhideWhenLostLife,
-    UnhideWhenGuessedChar,
-}
-
 #[derive(Debug)]
 pub struct Image {
     pub ichars: Vec<ImChar>,
     pub offset: (usize, usize),
     pub dimension: (u8, u8),
     pub visible_points: usize,
-    pub rewarding_scheme: RewardingScheme,
 }
 
 impl Render for Image {
@@ -254,24 +233,9 @@ impl Image {
     pub fn new(string: &str, offset: (usize, usize)) -> Self {
         let mut v: Vec<ImChar> = Vec::new();
 
-        let mut rewarding_scheme: RewardingScheme = DEFAULT_REWARDING_SCHEME;
         for (y, line) in string
             // split in lines
             .lines()
-            // interpret identifier line
-            .filter_map(|l| {
-                if l.starts_with(CONF_LINE_IDENTIFIER__CONTROL) {
-                    if l[1..].trim().contains(UNHIDE_WHEN_LOST_LIVE_IDENTIFIER) {
-                        rewarding_scheme = RewardingScheme::UnhideWhenLostLife;
-                    }
-                    if l[1..].trim().contains(UNHIDE_WHEN_GUESSED_CHAR_IDENTIFIER) {
-                        rewarding_scheme = RewardingScheme::UnhideWhenGuessedChar;
-                    }
-                    None
-                } else {
-                    Some(l)
-                }
-            })
             // consider only lines starting with '|'
             .filter(|&l| l.starts_with(CONF_LINE_IDENTIFIER__IMAGE))
             .enumerate()
@@ -323,7 +287,6 @@ impl Image {
                 offset,
                 dimension: (x_max, y_max),
                 visible_points: v_len,
-                rewarding_scheme,
             }
         }
     }
