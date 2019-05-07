@@ -260,12 +260,15 @@ fn main() {
             .expect("Can not clear terminal.");
 
         'running_game: loop {
-            if game.lives > 0 || ui.image.rewarding_scheme == RewardingScheme::UnhideWhenLostLife {
-                ui.image.disclose(
-                    (game.lives as usize, LIVES as usize),
-                    (game.visible_chars(), chars_to_guess),
-                );
-            }
+            match ui.image.rewarding_scheme {
+                RewardingScheme::UnhideWhenGuessedChar => {
+                    ui.image.disclose((game.visible_chars(), chars_to_guess));
+                }
+                RewardingScheme::UnhideWhenLostLife => {
+                    ui.image.disclose((game.lives as usize, LIVES as usize));
+                }
+            };
+
             ui.message = format!("{}\n", game);
             ui.render();
 

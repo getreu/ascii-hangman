@@ -217,9 +217,9 @@ pub struct Image {
 
 impl Render for Image {
     fn render(&self) {
-        use std::io::prelude::*;                                                           
-        use std::io;   
-        
+        use std::io;
+        use std::io::prelude::*;
+
         let cursor = cursor();
         for ic in self.ichars.iter().take(self.visible_points) {
             let &ImChar {
@@ -233,14 +233,14 @@ impl Render for Image {
                 )
                 .expect("Can not set cursor position.");
 
-            print!("{}", &code );
+            print!("{}", &code);
 
             // The following flush() is necessary on Windows terminals that do not understand ANSI
             // escape code such as Window 7, 8 and older 10. BTW, in 2016, Microsoft released the
             // Windows 10 Version 1511 update which unexpectedly implemented support for ANSI
-            // escape sequences.  
+            // escape sequences.
             // [ANSI escape code](https://en.wikipedia.org/wiki/ANSI_escape_code#Windows)
-           
+
             io::stdout().flush().ok().expect("Could not flush stdout");
         }
         // after printing the image s, bring the cursor below
@@ -328,14 +328,13 @@ impl Image {
         }
     }
 
-    pub fn disclose(&mut self, lives_frac: (usize, usize), guessed_chars_frac: (usize, usize)) {
+    pub fn disclose(&mut self, frac: (usize, usize)) {
         let l = self.ichars.len();
 
         let as_points = |(n, d)| (3 * l * (d - n) as usize / d as usize + l) / 4;
 
-        self.visible_points = match self.rewarding_scheme {
-            RewardingScheme::UnhideWhenGuessedChar => as_points(guessed_chars_frac),
-            RewardingScheme::UnhideWhenLostLife => as_points(lives_frac),
+        if frac.1 > 0 {
+            self.visible_points = as_points(frac);
         };
     }
 }
