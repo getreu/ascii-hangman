@@ -27,7 +27,8 @@ Ascii-Art images - designed for children - are progressively disclosed.
 
 ===================================
 -----------------------------------
-HANGMAN GAME
+ASCII-ART HANGMAN FOR KIDS
+
          ,.
         (_|,.
        ,' /, )_______
@@ -48,7 +49,7 @@ Type a letter then type [Enter]:
 ===================================
 
  Usage: hangman [FILE]...
-        hangman (-c|--help)
+        hangman (-h|--help)
         hangman
 
 
