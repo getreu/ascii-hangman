@@ -549,7 +549,7 @@ impl Image {
     pub fn disclose(&mut self, frac: (usize, usize)) {
         let l = self.ichars.len();
 
-        let as_points = |(n, d)| (3 * l * (d - n) as usize / d as usize + l) / 4;
+        let as_points = |(n, d)| (5 * l * (d - n) as usize / d as usize + l) / 6;
 
         if frac.1 > 0 {
             self.visible_points = as_points(frac);
