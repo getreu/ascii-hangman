@@ -56,13 +56,13 @@ Type a letter then type [Enter]:
 `[FILE]` are configuration files containing word-lists and optionally Ascii-Art
 images.
 
-When no `[FILE]` argument is given, `[FILE]` defaults to 'hangman-words.txt'. In
-case no `[FILE]` is found, a template configuration file 'hangman-words.txt' is
+When no `[FILE]` argument is given, `[FILE]` defaults to `hangman-words.txt`. In
+case no `[FILE]` is found, a template configuration file `hangman-words.txt` is
 written into the current working directory. Multiple `[FILE]`s are concatted.
 
-`[FILE]` is an Ascii file containing 4 different line-types:
+`[FILE]` is an UTF-8 file containing 4 different line-types:
 
-- lines starting with `#` is ignored.
+- lines starting with `#` are ignored.
 
 - lines starting with `|` are part of an optional Ascii-Art image shown
   progressively in the course of the game. If not defined here, built in
@@ -70,17 +70,23 @@ written into the current working directory. Multiple `[FILE]`s are concatted.
 
 - lines starting with `:` are game modifier. They change the logic how the image
   is progressively disclosed:
-   `:success-rewarding`       Every guessed character shows a bit more of the
-                              image. This mode is default.
+
+   `:success-rewarding`       Every guessed character shows a bit more of
+                              the image. This mode is default.
    `:traditional-rewarding`   Every lost live discloses a bit more of the
-                  image. Choose this mode together with a
+                              image. Choose this mode together with a
                               traditional gallows image (not built in).
 
-- lines starting with `-` are _guessing strings_. At the beginning of the game
+- lines starting with `-` are guessing strings. At the beginning of the game
   one line is randomly chosen and all characters are hidden.  In
   order to give additional hints it is possible to enclose some characters with
-  `+_+`.  These words are then displayed in clear. For example a config line:
-  `+- Guess _me_+` is shown in the game as: `_ _ _ _ _ _ m e`.
+  `_`.  These words are then displayed in clear. For example the config line:
+  
+      `- Guess _me_`
+    
+  is shown in the game as: 
+
+      `_ _ _ _ _ _ m e`
 
 "#;
 
@@ -93,26 +99,28 @@ const CONF_TEMPLATE: &str = r#"### This is a sample word-list for the hangman ga
 ### Sample word-list
 #   ----------------
 #
-# Before every game one line is randomly chosen.
-# Empty lines and lines starting with # are ignored.
-# Lines with guessing strings must start with '-'.
+# This file contains a list of guessing strings, one per line.
+# At the start of the game the computer choses one guessing string randomly.
+# Lines with guessing strings must start with `-`.
 # Words enclosed with _ are not hidden when the game starts:
 #   - _guess _me
 # appears in the game as:
 #   g u e s s   _ _
 #
+# Empty lines and lines starting with # are considered as
+# comments and are ignored.
 
 - _guess _me
 - hang_man_
 - _good l_uck
 
 
-# Lines starting with ':' are game modifier. They change
+# Lines starting with `:` are game modifier. They change
 # the logic how the image is progressively disclosed:
-#   ':success-rewarding'       Every guessed character shows a bit more of the
-#                              image. This mode is default.
-#   ':traditional-rewarding'   Every lost live discloses a bit more of the
-#                  image. Choose this mode together with a
+#   `:success-rewarding`       Every guessed character shows a bit more of 
+#                              the image. This mode is default.
+#   `:traditional-rewarding`   Every lost live discloses a bit more of the
+#                              image. Choose this mode together with a
 #                              traditional gallows image (not built in).
 
 
@@ -120,8 +128,8 @@ const CONF_TEMPLATE: &str = r#"### This is a sample word-list for the hangman ga
 #   -------------------
 #
 # Instead of built in images a word list can use a
-# custom image. Lines starting with '|' are interpreted
-# as image-lines. Delete '#' in the following lines to
+# custom image. Lines starting with `|` are interpreted
+# as image-lines. Delete `#` in the following lines to
 # try out this feature.
 
 #:traditional-rewarding
