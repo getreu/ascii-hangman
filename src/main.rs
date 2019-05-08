@@ -17,8 +17,8 @@ use std::io;
 use std::io::prelude::*;
 use std::path::PathBuf;
 
-const COMMANDLINE_HELP: &str = "\
-Hangman is a paper and pencil guessing game for two or more players.  One player
+const COMMANDLINE_HELP: &str =
+    r#"Hangman is a paper and pencil guessing game for two or more players.  One player
 thinks of a word, phrase or sentence and the other tries to guess it by
 suggesting letters or numbers, within a certain number of guesses. In this
 version for children the computer selects a word, phrase or sentence randomly
@@ -33,10 +33,10 @@ ASCII-ART HANGMAN FOR KIDS
         (_|,.
        ,' /, )_______
     __j o``-'        `
-   (\")
+   (")
     `-j                |
       `-._(           /
-         |_\\  |--^.  /
+         |_\  |--^.  /
         /_]'|_| /_)_/
            /_]'  /_]'
 
@@ -82,14 +82,13 @@ written into the current working directory. Multiple `[FILE]`s are concatted.
   `+_+`.  These words are then displayed in clear. For example a config line:
   `+- Guess _me_+` is shown in the game as: `_ _ _ _ _ _ m e`.
 
-";
+"#;
 
 const LIVES: u8 = 7;
 const PATHSTR: &str = "hangman-words.txt";
 const OFFSET: (usize, usize) = (1, 1);
 
-const CONF_TEMPLATE: &str = "\
-### This is a sample word-list for the hangman game
+const CONF_TEMPLATE: &str = r#"### This is a sample word-list for the hangman game
 
 ### Sample word-list
 #   ----------------
@@ -129,13 +128,13 @@ const CONF_TEMPLATE: &str = "\
 #|  ______
 #|  |    |
 #|  |    O
-#|  |   /|\\
+#|  |   /|\
 #|  |    |
-#|  |   / \\
+#|  |   / \
 #|__|_____
 #||      |___
 #||_________|
-";
+"#;
 
 const CONF_DEMO: &str = "- _Demo: add own words to config file and start a_gain_!";
 
