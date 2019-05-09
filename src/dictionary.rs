@@ -4,16 +4,13 @@ use crate::image::CONF_LINE_IDENTIFIER__IMAGE;
 use rand::seq::SliceRandom;
 use rand::thread_rng;
 
-// Config file syntax error message
-pub const CONF_SYNTAX_ERROR: &str = "
+
+pub const CONF_SYNTAX_ERROR1: &str = "
 
 SYNTAX ERROR in config file!
-The first character of every line has to be one of the following:
-    any letter or digit (guessing string), 
-    '#' (comment line), 
-    '-' (guessing string), 
-    '|' (ASCII-Art image) or 
-    ':' (game modifier).
+The game modifier must be one of the following:
+    :traditional-rewarding
+    :success-rewarding
 
 Edit config file and start again.\n";
 
@@ -27,6 +24,20 @@ const UNHIDE_WHEN_LOST_LIVE_IDENTIFIER: &str = "traditional-rewarding";
 // Keyword to switch rewarding scheme
 // :success-rewarding
 const UNHIDE_WHEN_GUESSED_CHAR_IDENTIFIER: &str = "success-rewarding";
+
+
+// Config file syntax error message
+pub const CONF_SYNTAX_ERROR2: &str = "
+
+SYNTAX ERROR in config file!
+The first character of every line has to be one of the following:
+    any letter or digit (guessing string), 
+    '#' (comment line), 
+    '-' (guessing string), 
+    '|' (ASCII-Art image) or 
+    ':' (game modifier).
+
+Edit config file and start again.\n";
 
 // comments in config file start with
 pub const CONF_LINE_IDENTIFIER__COMMENT: char = '#';
@@ -65,20 +76,25 @@ impl Dict {
           if lines.starts_with('\u{feff}') { &lines[3..] } else { &lines[..] }
             // interpret identifier line
             .lines()
-            .filter_map(|l| {
+            .enumerate()
+            .filter(|&(n,l)| {
                 if l.starts_with(CONF_LINE_IDENTIFIER__CONTROL) {
-                    if l[1..].trim().contains(UNHIDE_WHEN_LOST_LIVE_IDENTIFIER) {
+                    if l[1..].trim() == UNHIDE_WHEN_LOST_LIVE_IDENTIFIER {
                         rewarding_scheme = RewardingScheme::UnhideWhenLostLife;
+                        false
                     }
-                    if l[1..].trim().contains(UNHIDE_WHEN_GUESSED_CHAR_IDENTIFIER) {
+                    else if l[1..].trim() == UNHIDE_WHEN_GUESSED_CHAR_IDENTIFIER {
                         rewarding_scheme = RewardingScheme::UnhideWhenGuessedChar;
+                        false
                     }
-                    None
+                    else {
+                        panic!("{}\nError in line: {}: \"{}\"\n\n",
+                                     CONF_SYNTAX_ERROR1, n+1, l);
+                    }
                 } else {
-                    Some(l)
+                    true
                 }
             })
-            .enumerate()
             .filter(|&(_,l)|!( l.trim().is_empty() ||
                           l.starts_with(CONF_LINE_IDENTIFIER__COMMENT) ||
                           l.starts_with(CONF_LINE_IDENTIFIER__CONTROL) ||
@@ -95,7 +111,7 @@ impl Dict {
                                  l.trim().to_string()
                              } else {
                              panic!("{}\nError in line: {}: \"{}\"\n\n",
-                                     CONF_SYNTAX_ERROR, n+1, l)
+                                     CONF_SYNTAX_ERROR2, n+1, l)
                              }
                         }
             )
