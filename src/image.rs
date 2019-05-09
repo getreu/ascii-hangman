@@ -161,8 +161,9 @@ const DEFAULT_IMAGES: &[&str] = &[
 |    []             [(_)(_)
 "#,
     r#"
-|  (o|_+_|o) 
-|   ( . . )   
+|   _     _ 
+|  ( |_ _| ) 
+|   ( .". )   
 |  _( (Y) )_  
 | / /,---.\ \ 
 |/ / | + | \ \
@@ -171,6 +172,7 @@ const DEFAULT_IMAGES: &[&str] = &[
 |  _)  |  (_ 
 | (___,'.___)  hjw
 # Art by Hayley Jane Wakenshaw
+# (slightly modified)
 "#,
     r#"
 |          |
