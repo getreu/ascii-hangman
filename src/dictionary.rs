@@ -8,8 +8,13 @@ use rand::thread_rng;
 pub const CONF_SYNTAX_ERROR: &str = "
 
 SYNTAX ERROR in config file!
-Every line has to start with one of the following characters:
-'#' (comment line), '-' (guessing string), '|' (ASCII-Art image) or ':' (game modifier).
+The first character of every line has to be one of the following:
+    any letter or digit (guessing string), 
+    '#' (comment line), 
+    '-' (guessing string), 
+    '|' (ASCII-Art image) or 
+    ':' (game modifier).
+
 Edit config file and start again.\n";
 
 // the default can be changed by one of the following switches
@@ -83,8 +88,15 @@ impl Dict {
             .map(|(n,l)| if l.starts_with(CONF_LINE_IDENTIFIER__WORD) {
                              l[1..].trim().to_string()
                         } else {
+                             // Lines starting alphanumeric are guessing strings also.
+                             // We can safely unwrap here since all empty lines had been filtered.
+                             let c = l.chars().next().unwrap();
+                             if c.is_alphanumeric() || c == CONF_LINE_WORD_MODIFIER__VISIBLE {
+                                 l.trim().to_string()
+                             } else {
                              panic!("{}\nError in line: {}: \"{}\"\n\n",
                                      CONF_SYNTAX_ERROR, n+1, l)
+                             }
                         }
             )
             .collect();
