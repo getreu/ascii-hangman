@@ -1,38 +1,11 @@
-### This is a sample word-list for the hangman game
-
-### Sample word-list
-#   ----------------
-#
-# Before every game one line is randomly chosen.
-# Empty lines and lines starting with # are ignored.
-# Lines with guessing strings must start with `-`.
-# Words enclosed with `_` are not hidden when the game starts, e.g.:
-#   - _guess _me
-# appears in the game as:
-#   g u e s s   _ _
-#
+# This is a sample word-list for the hangman game
 
 - _guess_ me
 - hang_man_
 - good luck
 
 
-# Lines starting with ':' are game modifier. They change
-# the logic how the image is progressively disclosed:
-#   ':success-rewarding'       Every guessed character shows a bit more of the
-#                              image. This mode is default.
-#   ':traditional-rewarding'   Every lost live discloses a bit more of the
-#                  image. Choose this mode together with a
-#                              traditional gallows image (not built in).
-
-
-### Sample custom image
-#   -------------------
-#
-# Instead of built in images a word list can use a
-# custom image. Lines starting with '|' are interpreted
-# as image-lines. Delete '#' in the following lines to
-# try out this feature.
+# Sample custom image
 
 :success-rewarding
 |      / \`\          __

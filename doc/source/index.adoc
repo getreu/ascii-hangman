@@ -60,7 +60,7 @@ https://blog.getreu.net/_downloads/asciiart-hangman-for-kids.zip[binaries].
 .Short instructions 
 
 https://blog.getreu.net/_downloads/asciiart-hangman-for-kids.zip[Download]
-`.zip` file, unpack, find `hangman` binary, grant execution rights, open
+`.zip` file, unpack, find `hangman` binary, grant execution permissions, open
 terminal, type `./hangman`.
 
 .Detailed instructions
@@ -150,8 +150,63 @@ include::../../src/main.rs[lines="51..91"]
 
 === Sample configuration file
 
+==== Simple configuration file
+
 ----
-include::../../src/main.rs[lines="100..145"]
+guess me
+hang_man_
+_good l_uck
+----
+
+==== Configuration file with custom image
+
+A configuration file may contain a custom image. The image is gradually 
+disclosed after each right guess.
+
+----
+- _guess_ me
+- hang_man_
+- good luck
+
+
+:success-rewarding
+|      !!!!\\\\
+|    '`!_  ||||
+|     ` \`-'''|
+|       `\   /
+|        )\  \
+| ejm   /  \  \
+|           \|
+
+# Author: ejm
+----
+
+It is also possible to split the word list and the image into two files and load
+them separately:
+
+      hangman wordlist.txt custom-image.txt
+
+==== Configuration file with traditional gallows image
+
+The following image has a different rewarding mode: The image is gradually
+disclosed after each lost life.
+
+----
+- _guess _me
+- hang_man_
+- _good l_uck
+
+
+:traditional-rewarding
+|  ______
+|  |    |
+|  |    O
+|  |   /|\
+|  |    |
+|  |   / \
+|__|_____
+||      |___
+||_________|
 ----
 
 

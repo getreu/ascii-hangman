@@ -62,9 +62,21 @@ written into the current working directory. Multiple `[FILE]`s are concatted.
 
 `[FILE]` is an UTF-8 file containing 4 different line-types:
 
-- lines starting with `#` are ignored.
+- lines starting with a letter, a digit or '-' are guessing strings. At the 
+  beginning of the game one line is randomly chosen and all characters are 
+  hidden. If you want to give an additional hint, enclose some characters 
+  with `_`.  The enclosed is then displayed in clear when the game starts.
+  For example the configuration line:
+  
+      Guess _me_
+    
+  is shown in the game as: 
 
-- lines starting with `|` are part of an optional Ascii-Art image shown
+      _ _ _ _ _ _ m e
+
+- lines starting with `#` are ignored. This can be used for comments.
+
+- lines starting with `|` are part of an optional custom Ascii-Art image shown
   progressively in the course of the game. If not defined here, built in
   Ascii-Art images are used instead.
 
@@ -77,71 +89,32 @@ written into the current working directory. Multiple `[FILE]`s are concatted.
                               image. Choose this mode together with a
                               traditional gallows image (not built in).
 
-- lines starting with `-` are guessing strings. At the beginning of the game
-  one line is randomly chosen and all characters are hidden.  In
-  order to give additional hints it is possible to enclose some characters with
-  `_`.  These words are then displayed in clear. For example the config line:
-  
-      `- Guess _me_`
-    
-  is shown in the game as: 
+  The following shows an example for a custom image (needs to be left-aligned
+  in the config-file): 
 
-      `_ _ _ _ _ _ m e`
-
+        :traditional-rewarding
+        |  ______
+        |  |    |
+        |  |    O
+        |  |   /|\
+        |  |    |
+        |  |   / \
+        |__|_____
+        ||      |___
+        ||_________|
+                              
 "#;
 
 const LIVES: u8 = 7;
 const PATHSTR: &str = "hangman-words.txt";
 const OFFSET: (usize, usize) = (1, 1);
 
-const CONF_TEMPLATE: &str = r#"### This is a sample word-list for the hangman game
+const CONF_TEMPLATE: &str = 
+    r#"# Type `hangman -h` to learn how to insert custom ASCII-art images here.` 
 
-### Sample word-list
-#   ----------------
-#
-# This file contains a list of guessing strings, one per line.
-# At the start of the game the computer choses one guessing string randomly.
-# Lines with guessing strings must start with `-`.
-# Words enclosed with _ are not hidden when the game starts:
-#   - _guess _me
-# appears in the game as:
-#   g u e s s   _ _
-#
-# Empty lines and lines starting with # are considered as
-# comments and are ignored.
-
-- _guess _me
-- hang_man_
-- _good l_uck
-
-
-# Lines starting with `:` are game modifier. They change
-# the logic how the image is progressively disclosed:
-#   `:success-rewarding`       Every guessed character shows a bit more of 
-#                              the image. This mode is default.
-#   `:traditional-rewarding`   Every lost live discloses a bit more of the
-#                              image. Choose this mode together with a
-#                              traditional gallows image (not built in).
-
-
-### Sample custom image
-#   -------------------
-#
-# Instead of built in images a word list can use a
-# custom image. Lines starting with `|` are interpreted
-# as image-lines. Delete `#` in the following lines to
-# try out this feature.
-
-#:traditional-rewarding
-#|  ______
-#|  |    |
-#|  |    O
-#|  |   /|\
-#|  |    |
-#|  |   / \
-#|__|_____
-#||      |___
-#||_________|
+guess me
+hang_man_
+_good l_uck
 "#;
 
 const CONF_DEMO: &str = "- _Demo: add own words to config file and start a_gain_!";
