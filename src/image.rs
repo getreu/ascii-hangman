@@ -415,6 +415,16 @@ const DEFAULT_IMAGES: &[&str] = &[
 |              |____V||  .  |
 |                     |____V| ejm98
 "#,
+    r#"
+|      !!!!\\\\
+|    '`!_  ||||
+|     ` \`-'''|
+|       `\   /
+|        )\  \
+| ejm   /  \  \
+|           \|
+"#,
+
 ];
 
 #[derive(PartialOrd, Eq, PartialEq, Debug, Copy, Clone)] //omitting Ord
