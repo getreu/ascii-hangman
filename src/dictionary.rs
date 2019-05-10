@@ -116,7 +116,7 @@ impl Dict {
                         } else {
                              // Lines starting alphanumericly are secret strings also.
                              // We can safely unwrap here since all empty lines had been filtered.
-                             let c = l.chars().next().unwrap();
+                             let c = l.trim().chars().next().unwrap();
                              if c.is_alphanumeric() || c == CONF_LINE_WORD_MODIFIER__VISIBLE {
                                 l.trim().to_string()
                              } else {
