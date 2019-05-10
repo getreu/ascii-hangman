@@ -224,7 +224,7 @@ The game is designed for classroom usage, but can be played alone as well.
 
 The aim of the game is to consolidate recently learned vocabulary. 
 For this purpose the class composes a vocabulary list of words or expressions,
-hereafter referred to as secret words of guessing words.
+hereafter referred to as secret words words.
 
 *  The class composes the list of secret words together with the teacher.  One
    pupil types the suggested words into the configuration file, the others

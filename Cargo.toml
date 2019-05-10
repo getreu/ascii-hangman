@@ -7,3 +7,4 @@ edition = "2018"
 [dependencies]
 rand = "*"
 crossterm = "0.9.3"
+custom_error = "*"

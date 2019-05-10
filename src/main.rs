@@ -16,6 +16,10 @@ use std::fs::File;
 use std::io;
 use std::io::prelude::*;
 use std::path::PathBuf;
+use std::process;
+
+#[macro_use]
+extern crate custom_error;
 
 const COMMANDLINE_HELP: &str =
     r#"Hangman is a paper and pencil guessing game for two or more players.  One player
@@ -62,7 +66,7 @@ written into the current working directory. Multiple `[FILE]`s are concatted.
 
 `[FILE]` is an UTF-8 file containing 4 different line-types:
 
-- lines starting with a letter, a digit or '-' are guessing strings. At the 
+- lines starting with a letter, a digit or '-' are secret strings. At the 
   beginning of the game one line is randomly chosen and all characters are 
   hidden. If you want to give an additional hint, enclose some characters 
   with `_`.  The enclosed is then displayed in clear when the game starts.
@@ -109,7 +113,7 @@ const LIVES: u8 = 7;
 const PATHSTR: &str = "hangman-words.txt";
 const OFFSET: (usize, usize) = (1, 1);
 
-const CONF_TEMPLATE: &str = 
+const CONF_TEMPLATE: &str =
     r#"# Type `hangman -h` to learn how to insert custom ASCII-art images here.` 
 
 guess me
@@ -118,6 +122,8 @@ _good l_uck
 "#;
 
 const CONF_DEMO: &str = "- _Demo: add own words to config file and start a_gain_!";
+
+
 
 // ------------------ MAIN ---------------------------------------------
 
@@ -211,23 +217,17 @@ fn main() {
     let terminal = terminal();
     let mut ui = UserInterface::new(&config, OFFSET);
 
-    let mut dict = Dict::new(&config);
-    if dict.len() == 0 {
-        eprintln!(
-            "No guessing words in config-file(s):\n\
-             \t{:?}\n\
-             were found. Current working directory is:\n\
-             \t{:?}\n\n\nPress [Enter] to enter demo mode.",
-            conf_file_paths, cwd
-        );
-        // wait for [Enter] key
-        let s = &mut String::new();
-        io::stdin().read_line(s).unwrap();
+    let dict = match Dict::new(&config) {
+        Ok(d) => d,
+        Err(e) => {
+            eprintln!("ERROR IN CONFIGURATION FILE\n{}", e);
 
-        dict = Dict::new(CONF_DEMO);
+            // wait for [Enter] key
+            let s = &mut String::new();
+            io::stdin().read_line(s).unwrap();
+            process::exit(1);
+        }
     };
-
-    // PLAY
 
     'playing: loop {
         let mut game = Game::new(&(dict.get_random_word()), LIVES);
