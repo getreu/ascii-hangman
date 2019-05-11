@@ -140,17 +140,27 @@ Double-click on `hangman.exe`.
 +
 image::02-Screenshot-Windows.png[]
 
+
+
 == Configuration
 
 === Synopsis and syntax
 
-include::../../src/main.rs[lines="51..91"]
+include::../../src/main.rs[lines="57..111"]
 
 
 
 === Sample configuration file
 
 ==== Simple configuration file
+
+----
+guess me
+hangman
+good luck
+----
+
+==== Simple configuration file with hints
 
 ----
 guess me
@@ -216,7 +226,7 @@ The game is designed for classroom usage, but can be played alone as well.
 
 === Classroom requirements
 
-*  Screen or projector
+*  Big screen or projector
 
 *  Windows or Linux Computer with `hangman.exe` or `hangman` binary installed.
 
@@ -224,20 +234,23 @@ The game is designed for classroom usage, but can be played alone as well.
 
 The aim of the game is to consolidate recently learned vocabulary. 
 For this purpose the class composes a vocabulary list of words or expressions,
-hereafter referred to as secret words words.
+hereafter referred to as list of secrets words.
 
-*  The class composes the list of secret words together with the teacher.  One
-   pupil types the suggested words into the configuration file, the others
+*  The class composes the list of secrets together with the teacher. 
+   To optimize the learning progress, it is most useful to involve the pupils 
+   in the preparation of the list of secrets, e.g.:
+   One pupil types the suggested words into the configuration file, the others
    follow at the screen and correct spelling mistakes. 
 
 *  The list of secrets can be recent vocabulary or calculation exercises. A
-   secret can be one word only, a whole expression or a sentence.
+   secret is always encoded as one line in the configuration file and can be a
+   word or a whole sentence of vocabulary or even a math exercise.
 
-*  As a hint it is possible to tag a part of the secret sentence. This part
-   will be disclosed immediately when the game starts.   
+*  To give an additional hint it, is possible to tag a part of the secret
+   sentence. This part will be disclosed immediately when the game starts.   
 
-*  When the game starts the computer will choose one secret of the list randomly.
-   Even the teacher does not know.
+*  When the game starts the computer will choose one secret of the list
+*  randomly.  The teacher can also as he does not know either.
 
 
 === Game rules
@@ -247,13 +260,15 @@ The following rules make sure that the whole class participates.
 1. The whole class is asked to write down all guessed letters on a sheet of 
    paper.
 
-2. A player can guess again when the secret word contained the guessed letter.
+2. A player can guess again when when the last guess was right, meaning the
+   secret contained the guessed letter.
 
 3. If not, the next player may try it. In bigger groups the next player should
-be chosen randomly.
+   be chosen randomly. This incites the whole group as nobody knows who will 
+   be the next.
 
 4. A player is not allowed to ask others to remind him if a letter was already
-   tried or not. He has to solely rely on his notes.
+   tried or not. He has to solely rely on his own notes.
 
 5. The winner of the game it the person who discloses the last letter of the
    secret word.
