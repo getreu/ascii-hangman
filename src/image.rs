@@ -1,17 +1,23 @@
-extern crate rand;
-use rand::seq::SliceRandom;
-use rand::thread_rng;
+//! Holds a dictionary of built-in ASCII art images and manages the piecemeal disclosure to the
+//! image.  Also parses user provided images if given in the configuration file. 
+
+extern crate rand; 
+use rand::seq::SliceRandom; 
+use rand::thread_rng; 
 use std::cmp::{Ord, Ordering};
-use std::fmt;
-extern crate crossterm;
-use crate::Render;
+use std::fmt; 
+extern crate crossterm; 
+use crate::Render; 
 use crossterm::cursor;
 
-// images in config file start with
+/// Identifier tagging image data in configuration files.
 pub const CONF_LINE_IDENTIFIER__IMAGE: char = '|';
 
+/// Threshold to decide from how many characters on the images is considered to be "big".
+/// Big images are disclosed with another algorithm.
 const BIG_IMAGE: usize = 100; // sort algorithm <-> random algorithm
 
+/// A collection of built-in images from whom one is chosen at the start of the game.
 // first char of image lines must be '|'
 const DEFAULT_IMAGES: &[&str] = &[
     r#"
@@ -429,20 +435,24 @@ const DEFAULT_IMAGES: &[&str] = &[
 
 ];
 
+/// One character of the ASCII art image.
 #[derive(PartialOrd, Eq, PartialEq, Debug, Copy, Clone)] //omitting Ord
 pub struct ImChar {
     pub point: (u8, u8),
     pub code: char,
 }
 
+/// Format an image character.
 impl fmt::Display for ImChar {
     fn fmt(&self, f: &mut fmt::Formatter) -> Result<(), fmt::Error> {
         write!(f, "{}", self.code)
     }
 }
 
-// Ord enables us to v.sort()
+/// Ord enables us to v.sort() the image characters.
 impl Ord for ImChar {
+/// Compares to ImChar.
+/// Points near the left lower corner are small.
     fn cmp(&self, other: &Self) -> Ordering {
         fn weight(ic: &ImChar) -> isize {
             let &ImChar { point: (x, y), .. } = ic;
@@ -454,6 +464,7 @@ impl Ord for ImChar {
 }
 
 #[derive(Debug)]
+/// An ASCII-art image.
 pub struct Image {
     pub ichars: Vec<ImChar>,
     pub offset: (usize, usize),
@@ -462,6 +473,9 @@ pub struct Image {
 }
 
 impl Render for Image {
+    /// Renders and prints the image on the screen. It would be more consistent to implement Display
+    /// for Image, but crossterm does not supprt `print!(f, ...)`. Therefor, it is not on option
+    /// here. 
     fn render(&self) {
         use std::io;
         use std::io::prelude::*;
@@ -497,6 +511,7 @@ impl Render for Image {
 }
 
 impl Image {
+    /// Constructor reading image data from configuration files.
     pub fn new(string: &str, offset: (usize, usize)) -> Self {
         let mut v: Vec<ImChar> = Vec::new();
 
@@ -558,6 +573,7 @@ impl Image {
         }
     }
 
+    /// Sets how much of the image will disclosed next time the image is rendered.
     pub fn disclose(&mut self, frac: (usize, usize)) {
         let l = self.ichars.len();
 

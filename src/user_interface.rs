@@ -1,3 +1,4 @@
+//! Manages and prints the TUI.
 use crate::image::Image;
 use crate::Render;
 
@@ -6,15 +7,23 @@ extern crate crossterm;
 use crossterm::Attribute;
 use crossterm::{cursor, terminal, ClearType, Color, Colored};
 
+/// Titleline.
 const TITLE: &str = "ASCII-ART HANGMAN FOR KIDS";
 
+/// Postion of the upper left corner of the image on the screen.
+const OFFSET: (usize, usize) = (1, 1);
+
+/// State of the TUI.
 #[derive(Debug)]
 pub struct UserInterface {
     pub image: Image,
     pub message: String,
 }
 
+/// Printable representation of the TUI.
 impl Render for UserInterface {
+    /// Renders and prints the TUI.  It would be more consistent to implement Display for Image,
+    /// but crossterm does not support `print!(f, ...)`. Therefor, it is not on option here.
     fn render(&self) {
         let terminal = terminal();
         // Clear all lines in terminal;
@@ -59,9 +68,10 @@ impl Render for UserInterface {
 }
 
 impl UserInterface {
-    pub fn new(config: &str, offset: (usize, usize)) -> Self {
+    /// Constructor.
+    pub fn new(config: &str) -> Self {
         Self {
-            image: Image::new(&config, offset),
+            image: Image::new(&config, OFFSET),
             message: String::new(),
         }
     }

@@ -1,3 +1,4 @@
+//! Loads the configuration and runs the game workflow.
 extern crate crossterm;
 use crossterm::{terminal, ClearType};
 extern crate rand;
@@ -21,8 +22,9 @@ use std::process;
 #[macro_use]
 extern crate custom_error;
 
-const COMMANDLINE_HELP: &str =
-    r#"Hangman is a paper and pencil guessing game for two or more players.  One player
+/// Text to show as command-line help --help
+const COMMANDLINE_HELP: &str =     r#"
+Hangman is a paper and pencil guessing game for two or more players.  One player
 thinks of a word, phrase or sentence and the other tries to guess it by
 suggesting letters or numbers, within a certain number of guesses. In this
 version for children the computer selects a word, phrase or sentence randomly
@@ -109,10 +111,11 @@ written into the current working directory. Multiple `[FILE]`s are concatted.
                               
 "#;
 
+/// Number of wrong guess allowed.
 const LIVES: u8 = 7;
+/// Default configuration filename when no filename is given at the command-line.
 const PATHSTR: &str = "hangman-words.txt";
-const OFFSET: (usize, usize) = (1, 1);
-
+/// Fallback sample configuration when no configuration file can be found.
 const CONF_TEMPLATE: &str =
     r#"# Type `hangman -h` to learn how to insert custom ASCII-art images here.` 
 
@@ -121,6 +124,7 @@ hang_man_
 _good l_uck
 "#;
 
+/// Fallback secret when no configuration file can be found.
 const CONF_DEMO: &str = "- _Demo: add own words to config file and start a_gain_!";
 
 
@@ -128,9 +132,13 @@ const CONF_DEMO: &str = "- _Demo: add own words to config file and start a_gain_
 // ------------------ MAIN ---------------------------------------------
 
 trait Render {
+    /// Renders a graphical text representation of Self. It would be more consistent to implement
+    /// Display instead, but crossterm does not support `print!(f, ...)`. Therefor, it is not on
+    /// option here.
     fn render(&self);
 }
 
+/// Reads the configuration file.
 pub fn read_config(pathstr: &PathBuf) -> Result<String, io::Error> {
     let mut f = File::open(pathstr)?;
     let mut s = String::new();
@@ -138,12 +146,14 @@ pub fn read_config(pathstr: &PathBuf) -> Result<String, io::Error> {
     Ok(s)
 }
 
+/// Writes a sample configuration file on disk. Called when no configuration file can be found.
 pub fn write_config_template(pathstr: &PathBuf) -> Result<(), io::Error> {
     let mut file = File::create(&pathstr)?;
     file.write_all(CONF_TEMPLATE.as_bytes())?;
     Ok(())
 }
 
+/// Starts the game.
 fn main() {
     // SHOW HELP TEXT
     match env::args().nth(1) {
@@ -215,7 +225,7 @@ fn main() {
     // INITIALISE GAME
 
     let terminal = terminal();
-    let mut ui = UserInterface::new(&config, OFFSET);
+    let mut ui = UserInterface::new(&config);
 
     let dict = match Dict::new(&config) {
         Ok(d) => d,
@@ -228,6 +238,9 @@ fn main() {
             process::exit(1);
         }
     };
+
+
+    // PLAY
 
     'playing: loop {
         let mut game = Game::new(&(dict.get_random_word()), LIVES);

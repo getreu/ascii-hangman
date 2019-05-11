@@ -1,3 +1,5 @@
+//! This module deals with configuration data including the management of the list of secrets
+
 #![allow(clippy::filter_map)]
 extern crate rand;
 use crate::image::CONF_LINE_IDENTIFIER__IMAGE;
@@ -5,31 +7,31 @@ use rand::seq::SliceRandom;
 use rand::thread_rng;
 
 
-// the default can be changed by one of the following switches
+/// Default game mode. Can be changed in the configuration file.
 const DEFAULT_REWARDING_SCHEME: RewardingScheme = RewardingScheme::UnhideWhenGuessedChar;
 
-// Keyword to switch rewarding scheme
-// :traditional-rewarding
+/// Keyword in the configuration file to switch rewarding scheme in the enum `RewardingScheme` 
+/// to `UnHideWhenLostLife`
 const UNHIDE_WHEN_LOST_LIVE_IDENTIFIER: &str = "traditional-rewarding";
 
-// Keyword to switch rewarding scheme
-// :success-rewarding
+/// Keyword in the configuration file to switch rewarding scheme in the enum `RewardingScheme` 
+/// to `UnHideWhenGuessedChar`
 const UNHIDE_WHEN_GUESSED_CHAR_IDENTIFIER: &str = "success-rewarding";
 
-// comments in config file start with
+/// Tags comment lines in the configuration file.
 pub const CONF_LINE_IDENTIFIER__COMMENT: char = '#';
 
-// comands in config-file start with
+/// Tags control comman lines in the configuration file.
 pub const CONF_LINE_IDENTIFIER__CONTROL: char = ':';
 
-// secret strings in config-file start with
+/// Optionally tags secret strings in config-file. Can be omitted.
 pub const CONF_LINE_IDENTIFIER__WORD: char = '-';
 
-// a modifier tagging parts of the string to be visible from the start, e.g.
-// "guess_-me_: will be shown as "_ _ _ _ _ - m e"
+/// A tag to enclose parts of the secret to be visible from the start, e.g.
+/// "guess_-me_" will be displayed in the game as "_ _ _ _ _ - m e"
 pub const CONF_LINE_WORD_MODIFIER__VISIBLE: char = '_';
 
-
+/// Custom error type used expressing potential syntax errors when parsing the configuration file.
 custom_error! {pub ConfigParseError
     GameModifier{line_number: usize, line: String}   = "
 Syntax error in line 
@@ -58,13 +60,19 @@ a non-empty line starting with a letter, digit, '_' or '-'.
 ",
 }
 
-
+/// A game mode defining how the ASCII-art image will be disclosed progressively.
 #[derive(Debug, PartialEq)]
 pub enum RewardingScheme {
+    /// Game mode that is used together with the traditional gallows image (the gallows image
+    /// is not build in, but can be add in the configuration file. The image is disclosed
+    /// piecemeal after each wrong guess.
     UnhideWhenLostLife,
+    /// Default game mode. The image is disclosed piecemeal after each right guess.
     UnhideWhenGuessedChar,
 }
 
+/// A dictionary holding all secret sentences from among whom one is chosen randomly at the 
+/// beginning of the game.
 #[derive(Debug)]
 pub struct Dict {
     wordlist: Vec<String>,
@@ -72,6 +80,8 @@ pub struct Dict {
 }
 
 impl Dict {
+    /// Parses the configuration data, sets game modifier variables and populates the dictionary
+    /// with secrets.
     pub fn new(lines: &str) -> Result<Self, ConfigParseError> {
         let mut rewarding_scheme = DEFAULT_REWARDING_SCHEME;
         let mut file_syntax_test1: Result<(), ConfigParseError> = Ok(());
@@ -149,6 +159,7 @@ impl Dict {
         })
     }
 
+    /// Chooses randomly one secret from the dictionary.
     pub fn get_random_word(&self) -> String {
         let mut rng = thread_rng();
         (&self.wordlist).choose(&mut rng).unwrap().to_string()

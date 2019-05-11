@@ -1,0 +1,11 @@
+#!/bin/sh
+# Author: Jens Getreu
+
+
+cargo doc --document-private-items 
+
+cd doc/
+
+./adoc2docbook2pdf
+./adoc2html
+

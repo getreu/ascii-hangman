@@ -1,14 +1,19 @@
-use std::fmt;
+//!Defines the game state and logic
 
+use std::fmt;
 use crate::dictionary::CONF_LINE_WORD_MODIFIER__VISIBLE;
+
+/// Defines the linebreak position when displaying the secret string.
 const LINE_WIDTH: usize = 20;
 
+/// One character of the secret string.
 #[derive(Debug)]
 struct HangmanChar {
     char_: char,
     visible: bool,
 }
 
+/// Format HangmanChar.
 impl fmt::Display for HangmanChar {
     fn fmt(&self, f: &mut fmt::Formatter) -> Result<(), fmt::Error> {
         if self.visible {
@@ -19,12 +24,17 @@ impl fmt::Display for HangmanChar {
     }
 }
 
+/// A subset of the game state. Can be derived from `Game` struct.
 pub enum State {
+    /// The game is ongoing.
     Ongoing,
+    /// The player won.
     Victory,
+    /// The player lost.
     Defeat,
 }
 
+/// The game state.
 #[derive(Debug)]
 pub struct Game {
     word: Vec<HangmanChar>,
@@ -33,6 +43,7 @@ pub struct Game {
 }
 
 impl Game {
+    /// Derive State from Game data.
     pub fn get_state(&self) -> State {
         if self.lives == 0 {
             State::Defeat
@@ -43,6 +54,7 @@ impl Game {
         }
     }
 
+    /// Constructor.
     pub fn new(wordstr: &str, l: u8) -> Self {
         // parse wordsstr, filp 'visible' every CONF_LINE_WORD_MODIFIER__VISIBLE
         let w = wordstr
@@ -71,6 +83,7 @@ impl Game {
         }
     }
 
+    /// Process a guess and modify the game state.
     pub fn guess(&mut self, char_: char) {
         if char_ == '\n' {
             return;
@@ -95,12 +108,14 @@ impl Game {
         }
     }
 
+    /// The number of disclosed characters of the secret.
     pub fn visible_chars(&self) -> usize {
         self.word.iter().filter(|hc| !hc.visible).count()
     }
 }
 
 impl fmt::Display for Game {
+    /// Graphical representation of the game state.
     fn fmt(&self, f: &mut fmt::Formatter) -> Result<(), fmt::Error> {
         writeln!(
             f,
