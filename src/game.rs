@@ -1,7 +1,7 @@
 //!Defines the game state and logic
 
-use std::fmt;
 use crate::dictionary::CONF_LINE_WORD_MODIFIER__VISIBLE;
+use std::fmt;
 
 /// Defines the linebreak position when displaying the secret string.
 const LINE_WIDTH: usize = 20;

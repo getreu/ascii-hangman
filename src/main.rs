@@ -23,7 +23,7 @@ use std::process;
 extern crate custom_error;
 
 /// Text to show as command-line help --help
-const COMMANDLINE_HELP: &str =     r#"
+const COMMANDLINE_HELP: &str = r#"
 Hangman is a paper and pencil guessing game for two or more players.  One player
 thinks of a word, phrase or sentence and the other tries to guess it by
 suggesting letters or numbers, within a certain number of guesses. In this
@@ -126,8 +126,6 @@ _good l_uck
 
 /// Fallback secret when no configuration file can be found.
 const CONF_DEMO: &str = "- _Demo: add own words to config file and start a_gain_!";
-
-
 
 // ------------------ MAIN ---------------------------------------------
 
@@ -238,7 +236,6 @@ fn main() {
             process::exit(1);
         }
     };
-
 
     // PLAY
 

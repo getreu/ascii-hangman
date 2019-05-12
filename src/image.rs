@@ -1,13 +1,13 @@
 //! Holds a dictionary of built-in ASCII art images and manages the piecemeal disclosure to the
-//! image.  Also parses user provided images if given in the configuration file. 
+//! image.  Also parses user provided images if given in the configuration file.
 
-extern crate rand; 
-use rand::seq::SliceRandom; 
-use rand::thread_rng; 
+extern crate rand;
+use rand::seq::SliceRandom;
+use rand::thread_rng;
 use std::cmp::{Ord, Ordering};
-use std::fmt; 
-extern crate crossterm; 
-use crate::Render; 
+use std::fmt;
+extern crate crossterm;
+use crate::Render;
 use crossterm::cursor;
 
 /// Identifier tagging image data in configuration files.
@@ -432,7 +432,6 @@ const DEFAULT_IMAGES: &[&str] = &[
 | ejm   /  \  \
 |           \|
 "#,
-
 ];
 
 /// One character of the ASCII art image.
@@ -451,8 +450,8 @@ impl fmt::Display for ImChar {
 
 /// Ord enables us to v.sort() the image characters.
 impl Ord for ImChar {
-/// Compares to ImChar.
-/// Points near the left lower corner are small.
+    /// Compares to ImChar.
+    /// Points near the left lower corner are small.
     fn cmp(&self, other: &Self) -> Ordering {
         fn weight(ic: &ImChar) -> isize {
             let &ImChar { point: (x, y), .. } = ic;
@@ -475,7 +474,7 @@ pub struct Image {
 impl Render for Image {
     /// Renders and prints the image on the screen. It would be more consistent to implement Display
     /// for Image, but crossterm does not supprt `print!(f, ...)`. Therefor, it is not on option
-    /// here. 
+    /// here.
     fn render(&self) {
         use std::io;
         use std::io::prelude::*;

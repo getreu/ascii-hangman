@@ -6,15 +6,14 @@ use crate::image::CONF_LINE_IDENTIFIER__IMAGE;
 use rand::seq::SliceRandom;
 use rand::thread_rng;
 
-
 /// Default game mode. Can be changed in the configuration file.
 const DEFAULT_REWARDING_SCHEME: RewardingScheme = RewardingScheme::UnhideWhenGuessedChar;
 
-/// Keyword in the configuration file to switch rewarding scheme in the enum `RewardingScheme` 
+/// Keyword in the configuration file to switch rewarding scheme in the enum `RewardingScheme`
 /// to `UnHideWhenLostLife`
 const UNHIDE_WHEN_LOST_LIVE_IDENTIFIER: &str = "traditional-rewarding";
 
-/// Keyword in the configuration file to switch rewarding scheme in the enum `RewardingScheme` 
+/// Keyword in the configuration file to switch rewarding scheme in the enum `RewardingScheme`
 /// to `UnHideWhenGuessedChar`
 const UNHIDE_WHEN_GUESSED_CHAR_IDENTIFIER: &str = "success-rewarding";
 
@@ -71,7 +70,7 @@ pub enum RewardingScheme {
     UnhideWhenGuessedChar,
 }
 
-/// A dictionary holding all secret sentences from among whom one is chosen randomly at the 
+/// A dictionary holding all secret sentences from among whom one is chosen randomly at the
 /// beginning of the game.
 #[derive(Debug)]
 pub struct Dict {
