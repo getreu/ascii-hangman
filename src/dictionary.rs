@@ -31,7 +31,7 @@ pub const CONF_LINE_IDENTIFIER__WORD: char = '-';
 pub const CONF_LINE_WORD_MODIFIER__VISIBLE: char = '_';
 
 /// Custom error type used expressing potential syntax errors when parsing the configuration file.
-custom_error! {pub ConfigParseError
+custom_error! {#[derive(PartialEq)] pub ConfigParseError
     GameModifier{line_number: usize, line: String}   = "
 Syntax error in line 
 {line_number}:  \"{line}\"
@@ -72,7 +72,7 @@ pub enum RewardingScheme {
 
 /// A dictionary holding all secret sentences from among whom one is chosen randomly at the
 /// beginning of the game.
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct Dict {
     wordlist: Vec<String>,
     pub rewarding_scheme: RewardingScheme,
@@ -162,5 +162,93 @@ impl Dict {
     pub fn get_random_word(&self) -> String {
         let mut rng = thread_rng();
         (&self.wordlist).choose(&mut rng).unwrap().to_string()
+    }
+}
+
+// ***********************
+
+#[cfg(test)]
+mod tests {
+    use super::{ConfigParseError, Dict, RewardingScheme};
+
+    /// parse all 3 data types in configuration file format
+    #[test]
+    fn test_dictionary_parser_syntax() {
+        let config: &str = "
+#  comment
+
+guess me
+hang_man_
+_good l_uck
+:traditional-rewarding
+";
+        let dict = Dict::new(&config);
+        let expected = Ok(Dict {
+            wordlist: vec![
+                "guess me".to_string(),
+                "hang_man_".to_string(),
+                "_good l_uck".to_string(),
+            ],
+            rewarding_scheme: RewardingScheme::UnhideWhenLostLife,
+        });
+        assert!(dict == expected);
+    }
+
+    /// indent of secrets is allowed
+    #[test]
+    fn test_dictionary_parser_indent() {
+        let config: &str = "   guess me";
+        let dict = Dict::new(&config);
+        let expected = Ok(Dict {
+            wordlist: vec!["guess me".to_string()],
+            // this is default
+            rewarding_scheme: RewardingScheme::UnhideWhenGuessedChar,
+        });
+        assert!(dict == expected);
+    }
+
+    /// indent of comments is not allowed
+    #[test]
+    fn test_dictionary_parser_error_indent() {
+        let config = "\n\n\n   # comment";
+        let dict = Dict::new(&config);
+        let expected = Err(ConfigParseError::LineIdentifier {
+            line_number: 4,
+            line: "   # comment".to_string(),
+        });
+        assert!(dict == expected);
+    }
+
+    /// indent of game modifier is not allowed
+    #[test]
+    fn test_dictionary_parser_error_indent2() {
+        let config = "\n\n\n\n :success-rewarding";
+        let dict = Dict::new(&config);
+        let expected = Err(ConfigParseError::LineIdentifier {
+            line_number: 5,
+            line: " :success-rewarding".to_string(),
+        });
+        assert!(dict == expected);
+    }
+
+    /// test game modifier spelling
+    #[test]
+    fn test_dictionary_parser_error_misspelled() {
+        let config = "\n\n:traditional-rewardXing";
+        let dict = Dict::new(&config);
+        let expected = Err(ConfigParseError::GameModifier {
+            line_number: 3,
+            line: ":traditional-rewardXing".to_string(),
+        });
+        assert!(dict == expected);
+    }
+
+    /// configuration must define at least one secret
+    #[test]
+    fn test_dictionary_parser_error_no_secrets() {
+        let config = "# nothing but comment";
+        let dict = Dict::new(&config);
+        let expected = Err(ConfigParseError::NoSecretString {});
+        assert!(dict == expected);
     }
 }
