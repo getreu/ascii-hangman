@@ -462,7 +462,7 @@ impl Ord for ImChar {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 /// An ASCII-art image.
 pub struct Image {
     pub ichars: Vec<ImChar>,
@@ -473,7 +473,7 @@ pub struct Image {
 
 impl Render for Image {
     /// Renders and prints the image on the screen. It would be more consistent to implement Display
-    /// for Image, but crossterm does not supprt `print!(f, ...)`. Therefor, it is not on option
+    /// for Image, but crossterm does not support `print!(f, ...)`. Therefor, it is not on option
     /// here.
     fn render(&self) {
         use std::io;
@@ -500,7 +500,7 @@ impl Render for Image {
             // escape sequences.
             // [ANSI escape code](https://en.wikipedia.org/wiki/ANSI_escape_code#Windows)
 
-            io::stdout().flush().ok().expect("Could not flush stdout");
+            io::stdout().flush().ok().expect("Can not flush stdout");
         }
         // after printing the image s, bring the cursor below
         cursor
@@ -528,9 +528,10 @@ impl Image {
                 .skip(1)
                 // consider only chars != ' '
                 .filter(|&(_, c)| c != ' ')
-                // save in ImageChar object
+                // save in ImChar object
                 .map(|(x, c)| ImChar {
-                    point: (x as u8, y as u8),
+                    // subtract the char we have skipped before
+                    point: ((x - 1) as u8, y as u8),
                     code: c,
                 })
                 .collect();
@@ -538,16 +539,22 @@ impl Image {
         }
 
         // find dimensions
-        let mut x_max = 0;
-        let mut y_max = 0;
-        for i in &v {
-            let &ImChar { point: (x, y), .. } = i;
-            if x > x_max {
-                x_max = x
-            };
-            if y > y_max {
-                y_max = y
-            };
+        let mut dimension = (0, 0);
+        if !v.is_empty() {
+            let mut x_max = 0;
+            let mut y_max = 0;
+
+            for i in &v {
+                let &ImChar { point: (x, y), .. } = i;
+                if x > x_max {
+                    x_max = x
+                };
+                if y > y_max {
+                    y_max = y
+                };
+            }
+            // we know there is at least one char
+            dimension = (x_max + 1, y_max + 1);
         }
 
         // order points
@@ -561,12 +568,13 @@ impl Image {
 
         if v.is_empty() {
             let mut rng = thread_rng();
+            // this is recursive!
             Self::new((&DEFAULT_IMAGES).choose(&mut rng).unwrap(), offset)
         } else {
             Self {
                 ichars: v,
                 offset,
-                dimension: (x_max, y_max),
+                dimension,
                 visible_points: v_len,
             }
         }
