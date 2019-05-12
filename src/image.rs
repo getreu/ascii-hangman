@@ -591,3 +591,130 @@ impl Image {
         };
     }
 }
+
+// *******************************
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    /// Test image parsing of configuration file data
+    #[test]
+    fn test_image_parser_syntax() {
+        let config: &str = r#"
+|ab
+|cd"#;
+        let image = Image::new(&config, (10, 20));
+        //println!("{:?}",image);
+        let expected = Image {
+            ichars: [
+                ImChar {
+                    point: (0, 0),
+                    code: 'a',
+                },
+                ImChar {
+                    point: (0, 1),
+                    code: 'c',
+                },
+                ImChar {
+                    point: (1, 0),
+                    code: 'b',
+                },
+                ImChar {
+                    point: (1, 1),
+                    code: 'd',
+                },
+            ]
+            .to_vec(),
+            offset: (10, 20),
+            dimension: (2, 2),
+            visible_points: 4,
+        };
+
+        assert!(image == expected);
+    }
+
+    /// Is non image data ignored?
+    #[test]
+    fn test_image_parser_syntax_ignore() {
+        let config: &str = r#"
+|/\
+\/"#;
+        let image = Image::new(&config, (10, 20));
+        //println!("{:?}",image);
+        let expected = Image {
+            ichars: [
+                ImChar {
+                    point: (0, 0),
+                    code: '/',
+                },
+                ImChar {
+                    point: (1, 0),
+                    code: '\\',
+                },
+            ]
+            .to_vec(),
+            offset: (10, 20),
+            dimension: (2, 1),
+            visible_points: 2,
+        };
+
+        assert!(image == expected);
+    }
+
+    /// in case of missing custom image, choose built-in
+    #[test]
+    fn test_image_parser_built_in_image() {
+        let config: &str = "this is no image";
+        let image = Image::new(&config, (10, 20));
+        //println!("{:?}",image);
+
+        assert!(image.visible_points > 0);
+    }
+
+    /// disclose image progressively
+    #[test]
+    fn test_image_parser_disclose() {
+        let config: &str = "|abcde";
+        let mut image = Image::new(&config, (10, 20));
+        //println!("{:?}",image);
+        let expected = Image {
+            ichars: [
+                ImChar {
+                    point: (0, 0),
+                    code: 'a',
+                },
+                ImChar {
+                    point: (1, 0),
+                    code: 'b',
+                },
+                ImChar {
+                    point: (2, 0),
+                    code: 'c',
+                },
+                ImChar {
+                    point: (3, 0),
+                    code: 'd',
+                },
+                ImChar {
+                    point: (4, 0),
+                    code: 'e',
+                },
+            ]
+            .to_vec(),
+            offset: (10, 20),
+            dimension: (5, 1),
+            visible_points: 5,
+        };
+        assert!(image == expected);
+
+        image.disclose((5, 5));
+        assert!(image.visible_points == 0);
+
+        image.disclose((1, 5));
+        assert!(image.visible_points == 4);
+
+        image.disclose((0, 5));
+        assert!(image.visible_points == 5);
+    }
+}
