@@ -23,7 +23,7 @@ use std::process;
 extern crate custom_error;
 
 const VERSION: Option<&'static str> = option_env!("CARGO_PKG_VERSION");
-const AUTHOR: &str = "(c) Jens Getreu, 2016-2018";
+const AUTHOR: &str = "(c) Jens Getreu, 2016-2019";
 
 /// Text to show as command-line help --help
 const COMMANDLINE_HELP: &str = r#"

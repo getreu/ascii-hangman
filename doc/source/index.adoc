@@ -1,6 +1,6 @@
 = ASCII Art Hangman for Kids
 Jens Getreu <getreu@web.de>
-v4.5.0, 10.5.2019
+v4.6.0, 12.5.2019
 :imagesdir: images
 :toc:
 :numbering:
@@ -146,7 +146,7 @@ image::02-Screenshot-Windows.png[]
 
 === Synopsis and syntax
 
-include::../../src/main.rs[lines="57..118"]
+include::../../src/main.rs[lines="60..121"]
 
 
 
