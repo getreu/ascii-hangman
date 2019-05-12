@@ -95,8 +95,15 @@ written into the current working directory. Multiple `[FILE]`s are concatted.
                               image. Choose this mode together with a
                               traditional gallows image (not built in).
 
-  The following shows an example for a custom image (needs to be left-aligned
-  in the config-file): 
+The following shows an example of a custom image (copy it left-aligned
+into the config-file): 
+
+        |  ,~~--~~-.
+        | +      | |\
+        | || |~ |`,/-\
+        | *\_) \_) `-'
+
+If you prefer a traditional gallows image, add the following:
 
         :traditional-rewarding
         |  ______

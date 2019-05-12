@@ -432,6 +432,12 @@ const DEFAULT_IMAGES: &[&str] = &[
 | ejm   /  \  \
 |           \|
 "#,
+    r#"
+|  ,~~--~~-.
+| +      | |\
+| || |~ |`,/-\
+| *\_) \_) `-'#,
+"#,
 ];
 
 /// One character of the ASCII art image.
