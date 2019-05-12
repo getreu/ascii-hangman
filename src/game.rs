@@ -7,7 +7,7 @@ use std::fmt;
 const LINE_WIDTH: usize = 20;
 
 /// One character of the secret string.
-#[derive(Debug)]
+#[derive(Debug, Clone, PartialEq)]
 struct HangmanChar {
     char_: char,
     visible: bool,
@@ -25,6 +25,7 @@ impl fmt::Display for HangmanChar {
 }
 
 /// A subset of the game state. Can be derived from `Game` struct.
+#[derive(PartialEq)]
 pub enum State {
     /// The game is ongoing.
     Ongoing,
@@ -35,7 +36,7 @@ pub enum State {
 }
 
 /// The game state.
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct Game {
     word: Vec<HangmanChar>,
     pub lives: u8,
@@ -55,7 +56,7 @@ impl Game {
     }
 
     /// Constructor.
-    pub fn new(wordstr: &str, l: u8) -> Self {
+    pub fn new(wordstr: &str, lives: u8) -> Self {
         // parse wordsstr, filp 'visible' every CONF_LINE_WORD_MODIFIER__VISIBLE
         let w = wordstr
             .chars()
@@ -78,7 +79,7 @@ impl Game {
 
         Self {
             word: w,
-            lives: l,
+            lives,
             last_guess: ' ',
         }
     }
@@ -139,5 +140,150 @@ impl fmt::Display for Game {
             }
         }
         writeln!(f)
+    }
+}
+// ***********************
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    /// Play simulation
+    #[test]
+    fn test_game_simulation() {
+        let mut game = Game::new("_ab _cd", 2);
+        //println!("{:?}",game);
+        let expected = Game {
+            word: [
+                HangmanChar {
+                    char_: 'a',
+                    visible: true,
+                },
+                HangmanChar {
+                    char_: 'b',
+                    visible: true,
+                },
+                HangmanChar {
+                    char_: ' ',
+                    visible: true,
+                },
+                HangmanChar {
+                    char_: 'c',
+                    visible: false,
+                },
+                HangmanChar {
+                    char_: 'd',
+                    visible: false,
+                },
+            ]
+            .to_vec(),
+            lives: 2,
+            last_guess: ' ',
+        };
+
+        assert!(game == expected);
+        assert!(game.get_state() == State::Ongoing);
+
+        // now we guess right
+        game.guess('c');
+        //println!("{:?}",game);
+        let expected = Game {
+            word: [
+                HangmanChar {
+                    char_: 'a',
+                    visible: true,
+                },
+                HangmanChar {
+                    char_: 'b',
+                    visible: true,
+                },
+                HangmanChar {
+                    char_: ' ',
+                    visible: true,
+                },
+                HangmanChar {
+                    char_: 'c',
+                    visible: true,
+                },
+                HangmanChar {
+                    char_: 'd',
+                    visible: false,
+                },
+            ]
+            .to_vec(),
+            lives: 2,
+            last_guess: 'c',
+        };
+
+        assert!(game == expected);
+        assert!(game.get_state() == State::Ongoing);
+
+        // now we guess wrong
+        game.guess('x');
+        //println!("{:?}",game);
+        let expected = Game {
+            word: [
+                HangmanChar {
+                    char_: 'a',
+                    visible: true,
+                },
+                HangmanChar {
+                    char_: 'b',
+                    visible: true,
+                },
+                HangmanChar {
+                    char_: ' ',
+                    visible: true,
+                },
+                HangmanChar {
+                    char_: 'c',
+                    visible: true,
+                },
+                HangmanChar {
+                    char_: 'd',
+                    visible: false,
+                },
+            ]
+            .to_vec(),
+            lives: 1,
+            last_guess: 'x',
+        };
+
+        assert!(game == expected);
+        assert!(game.get_state() == State::Ongoing);
+
+        // we guess wrong again and we loose
+        game.guess('y');
+        //println!("{:?}",game);
+        let expected = Game {
+            word: [
+                HangmanChar {
+                    char_: 'a',
+                    visible: true,
+                },
+                HangmanChar {
+                    char_: 'b',
+                    visible: true,
+                },
+                HangmanChar {
+                    char_: ' ',
+                    visible: true,
+                },
+                HangmanChar {
+                    char_: 'c',
+                    visible: true,
+                },
+                HangmanChar {
+                    char_: 'd',
+                    visible: true,
+                },
+            ]
+            .to_vec(),
+            lives: 0,
+            last_guess: 'y',
+        };
+
+        assert!(game == expected);
+        assert!(game.get_state() == State::Defeat);
     }
 }
