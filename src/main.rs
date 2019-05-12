@@ -22,6 +22,9 @@ use std::process;
 #[macro_use]
 extern crate custom_error;
 
+const VERSION: Option<&'static str> = option_env!("CARGO_PKG_VERSION");
+const AUTHOR: &str = "(c) Jens Getreu, 2016-2018";
+
 /// Text to show as command-line help --help
 const COMMANDLINE_HELP: &str = r#"
 Hangman is a paper and pencil guessing game for two or more players.  One player
@@ -54,9 +57,10 @@ Type a letter then type [Enter]:
 -----------------------------------
 ===================================
 
- Usage: hangman [FILE]...
-        hangman (-h|--help)
-        hangman
+ Usage: hangman
+        hangman [FILE]...
+        hangman -h|--help
+        hangman -V|--version
 
 
 `[FILE]` are configuration files containing word-lists and optionally Ascii-Art
@@ -164,6 +168,10 @@ fn main() {
     match env::args().nth(1) {
         Some(ref a) if a == "-h" || a == "--help" => {
             eprintln!("{}", COMMANDLINE_HELP);
+            return;
+        }
+        Some(ref a) if a == "-V" || a == "--version" => {
+            eprintln!("{}", VERSION.unwrap());
             return;
         }
         Some(_) | None => {}
@@ -301,5 +309,5 @@ fn main() {
         };
     }
 
-    println!("\n(c) Jens Getreu, 2016-2019.")
+    println!("\n{}",AUTHOR);
 }
