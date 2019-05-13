@@ -132,7 +132,8 @@ This creates the file `hangman_words.txt`
 
 . Edit the configuration file
 +
-Right-click on `hangman-words.txt` -> Open with -> Wordpad
+Double-click on `hangman-words.txt`. This opens the file in the `Notepad` 
+editor. Add own secrets, one per line.
 
 . Start the game
 +
