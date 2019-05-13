@@ -128,12 +128,12 @@ const LIVES: u8 = 7;
 const PATHSTR: &str = "hangman-words.txt";
 /// Fallback sample configuration when no configuration file can be found.
 const CONF_TEMPLATE: &str =
-    r#"# Type `hangman -h` to learn how to insert custom ASCII-art images here.` 
-
-guess me
-hang_man_
-_good l_uck
-"#;
+    "# Type `hangman -h` to learn how to insert custom ASCII-art images here. \r
+\r
+guess me\r
+hang_man_\r
+_good l_uck\r
+";
 
 /// Fallback secret when no configuration file can be found.
 const CONF_DEMO: &str = "- _Demo: add own words to config file and start a_gain_!";
