@@ -30,10 +30,10 @@ pub const CONF_LINE_IDENTIFIER__WORD: char = '-';
 /// "guess_-me_" will be displayed in the game as "_ _ _ _ _ - m e"
 pub const CONF_LINE_WORD_MODIFIER__VISIBLE: char = '_';
 
-/// Custom error type used expressing potential syntax errors when parsing the configuration file.
+// Custom error type used expressing potential syntax errors when parsing the configuration file.
 custom_error! {#[derive(PartialEq)] pub ConfigParseError
     GameModifier{line_number: usize, line: String}   = "
-Syntax error in line 
+Syntax error in line
 {line_number}:  \"{line}\"
 
 The game modifier must be one of the following:
@@ -42,19 +42,19 @@ The game modifier must be one of the following:
 
 Edit config file and start again.\n",
     LineIdentifier{line_number: usize, line: String} = "
-Syntax error in line 
+Syntax error in line
 {line_number}:  \"{line}\"
 
 The first character of every non-empty line has to be one of the following:
-    any letter or digit (secret string), 
-    '#' (comment line), 
-    '-' (secret string), 
-    '|' (ASCII-Art image) or 
+    any letter or digit (secret string),
+    '#' (comment line),
+    '-' (secret string),
+    '|' (ASCII-Art image) or
     ':' (game modifier).
 
 Edit config file and start again.\n",
     NoSecretString{} = "
-A config file must have a least one secret string, which is 
+A config file must have a least one secret string, which is
 a non-empty line starting with a letter, digit, '_' or '-'.
 ",
 }
@@ -63,7 +63,7 @@ a non-empty line starting with a letter, digit, '_' or '-'.
 #[derive(Debug, PartialEq)]
 pub enum RewardingScheme {
     /// Game mode that is used together with the traditional gallows image (the gallows image
-    /// is not build in, but can be add in the configuration file. The image is disclosed
+    /// is not build in, but can be added in the configuration file. The image is disclosed
     /// piecemeal after each wrong guess.
     UnhideWhenLostLife,
     /// Default game mode. The image is disclosed piecemeal after each right guess.

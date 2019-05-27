@@ -3,7 +3,7 @@
 use crate::dictionary::CONF_LINE_WORD_MODIFIER__VISIBLE;
 use std::fmt;
 
-/// Defines the linebreak position when displaying the secret string.
+/// Defines the line-break position when displaying the secret string.
 const LINE_WIDTH: usize = 20;
 
 /// One character of the secret string.
@@ -72,7 +72,7 @@ impl Game {
                     }))
                 }
             })
-            // ommit None and unwrap
+            // omit None and unwrap
             .filter_map(|s| s)
             //.inspect(|ref x| println!("after scan:\t{:?}", x))
             .collect();

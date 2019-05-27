@@ -70,25 +70,25 @@ When no `[FILE]` argument is given, `[FILE]` defaults to `hangman-words.txt`. In
 case no `[FILE]` is found, a template configuration file `hangman-words.txt` is
 written into the current working directory. Multiple `[FILE]`s are concatted.
 
-`[FILE]` is an UTF-8 file containing 4 different line-types:
+`[FILE]` is a UTF-8 file containing 4 different line-types:
 
-- lines starting with a letter, a digit or '-' are secret strings. At the 
-  beginning of the game one line is randomly chosen and all characters are 
-  hidden. If you want to give an additional hint, enclose some characters 
+- lines starting with a letter, a digit or '-' are secret strings. At the
+  beginning of the game one line is randomly chosen and all characters are
+  hidden. If you want to give an additional hint, enclose some characters
   with `_`.  The enclosed is then displayed in clear when the game starts.
   For example the configuration line:
-  
+
       Guess _me_
-    
-  is shown in the game as: 
+
+  is shown in the game as:
 
       _ _ _ _ _ _ m e
 
 - lines starting with `#` are ignored. This can be used for comments.
 
-- lines starting with `|` are part of an optional custom Ascii-Art image shown
+- lines starting with `|` are part of an optional custom ASCII-Art image shown
   progressively in the course of the game. If not defined here, built in
-  Ascii-Art images are used instead.
+  ASCII-Art images are used instead.
 
 - lines starting with `:` are game modifier. They change the logic how the image
   is progressively disclosed:
@@ -100,7 +100,7 @@ written into the current working directory. Multiple `[FILE]`s are concatted.
                               traditional gallows image (not built in).
 
 The following shows an example of a custom image (copy it left-aligned
-into the config-file): 
+into the config-file):
 
         |  ,~~--~~-.
         | +      | |\
@@ -119,7 +119,7 @@ If you prefer a traditional gallows image, add the following:
         |__|_____
         ||      |___
         ||_________|
-                              
+
 "#;
 
 /// Number of wrong guess allowed.
@@ -142,7 +142,7 @@ const CONF_DEMO: &str = "- _Demo: add own words to config file and start a_gain_
 
 trait Render {
     /// Renders a graphical text representation of Self. It would be more consistent to implement
-    /// Display instead, but crossterm does not support `print!(f, ...)`. Therefor, it is not on
+    /// Display instead, but crossterm does not support `print!(f, ...)`. Therefore, it is not on
     /// option here.
     fn render(&self);
 }

@@ -167,15 +167,15 @@ const DEFAULT_IMAGES: &[&str] = &[
 |    []             [(_)(_)
 "#,
     r#"
-|   _     _ 
-|  ( |_ _| ) 
-|   ( .". )   
-|  _( (Y) )_  
-| / /,---.\ \ 
+|   _     _
+|  ( |_ _| )
+|   ( .". )
+|  _( (Y) )_
+| / /,---.\ \
 |/ / | + | \ \
-|\_)-"   "-(_/  
-|  |_______| 
-|  _)  |  (_ 
+|\_)-"   "-(_/
+|  |_______|
+|  _)  |  (_
 | (___,'.___)  hjw
 # Art by Hayley Jane Wakenshaw
 # (slightly modified)
@@ -221,20 +221,20 @@ const DEFAULT_IMAGES: &[&str] = &[
 "#,
     r#"
 |  ,-~~-.___.
-| / |  '     \         
-|(  )         0  
-| \_/-, ,----'            
-|    ====           // 
+| / |  '     \
+|(  )         0
+| \_/-, ,----'
+|    ====           //
 |   /  \-'~;    /~~~(O)
-|  /  __/~|   /       |     
+|  /  __/~|   /       |
 |=(  _____| (_________|
 "#,
     r#"
-|  \,`/ / 
+|  \,`/ /
 | _)..  `_
 |( __  -\
-|    '`.                  
-|   ( \>_-_,   
+|    '`.
+|   ( \>_-_,
 |   _||_ ~-/    W<
 "#,
     r#"
@@ -255,17 +255,17 @@ const DEFAULT_IMAGES: &[&str] = &[
 # Art by Shanaka Dias
 "#,
     r#"
-|  _,                          _                
-|.'  `.                  ___.>"''-..-.          
-|`-.   ;           .--"""        .-._@;         
-|   ;  !_.--..._ .'      /     .[_@'`'.         
-|  ;            /       : .'  ; :_.._  `.       
-|  :           ;        ;[   _T-"  `.'-. `-.    
-|   \        .-:      ; `.`-=_,88p.   _.}.-"    
-|    `-.__.-'   \    /L._ Y",P$T888;  ""        
-|             .-'_.-'  / ;$$$$$$]8P;            
-|             \ /     / / "Y$$P" ^"             
-|     fsc      ;\_    `.\_._                    
+|  _,                          _
+|.'  `.                  ___.>"''-..-.
+|`-.   ;           .--"""        .-._@;
+|   ;  !_.--..._ .'      /     .[_@'`'.
+|  ;            /       : .'  ; :_.._  `.
+|  :           ;        ;[   _T-"  `.'-. `-.
+|   \        .-:      ; `.`-=_,88p.   _.}.-"
+|    `-.__.-'   \    /L._ Y",P$T888;  ""
+|             .-'_.-'  / ;$$$$$$]8P;
+|             \ /     / / "Y$$P" ^"
+|     fsc      ;\_    `.\_._
 |              ]__\     \___;
 "#,
     r#"
@@ -441,7 +441,7 @@ const DEFAULT_IMAGES: &[&str] = &[
 "#,
     r#"
 |  (.  \
-|   \  |   
+|   \  |
 |    \ |___(\--/)
 |  __/    (  . . )
 | "'._.    '-.O.'
@@ -490,7 +490,7 @@ const DEFAULT_IMAGES: &[&str] = &[
 |Sher^
 "#,
     r#"
-| W                   __ 
+| W                   __
 |[ ]                 |::|
 | E          ._.     |::|   ._.
 | |\         |:| ._. |::|   |/|
@@ -541,7 +541,7 @@ pub struct Image {
 
 impl Render for Image {
     /// Renders and prints the image on the screen. It would be more consistent to implement Display
-    /// for Image, but crossterm does not support `print!(f, ...)`. Therefor, it is not on option
+    /// for Image, but crossterm does not support `print!(f, ...)`. Therefore, it is not on option
     /// here.
     fn render(&self) {
         use std::io;
@@ -648,7 +648,7 @@ impl Image {
         }
     }
 
-    /// Sets how much of the image will disclosed next time the image is rendered.
+    /// Sets how much of the image will be disclosed next time the image is rendered.
     pub fn disclose(&mut self, frac: (usize, usize)) {
         let l = self.ichars.len();
 
