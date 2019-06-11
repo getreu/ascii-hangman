@@ -661,13 +661,14 @@ impl Image {
     }
 
     /// Sets how much of the image will be disclosed next time the image is rendered.
-    pub fn disclose(&mut self, frac: (usize, usize)) {
+    pub fn hide(&mut self, fraction: (usize, usize)) {
         let l = self.ichars.len();
 
         let as_points = |(n, d)| (5 * l * (d - n) as usize / d as usize + l) / 6;
 
-        if frac.1 > 0 {
-            self.visible_points = as_points(frac);
+        // silently ignore division by zero
+        if fraction.1 > 0 {
+            self.visible_points = as_points(fraction);
         };
     }
 }
@@ -788,13 +789,13 @@ mod tests {
         };
         assert!(image == expected);
 
-        image.disclose((5, 5));
+        image.hide((5, 5));
         assert!(image.visible_points == 0);
 
-        image.disclose((1, 5));
+        image.hide((1, 5));
         assert!(image.visible_points == 4);
 
-        image.disclose((0, 5));
+        image.hide((0, 5));
         assert!(image.visible_points == 5);
     }
 }

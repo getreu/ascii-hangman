@@ -268,10 +268,10 @@ fn main() {
         'running_game: loop {
             match dict.rewarding_scheme {
                 RewardingScheme::UnhideWhenGuessedChar => {
-                    ui.image.disclose((game.visible_chars(), chars_to_guess));
+                    ui.image.hide((game.visible_chars(), chars_to_guess));
                 }
                 RewardingScheme::UnhideWhenLostLife => {
-                    ui.image.disclose((game.lives as usize, LIVES as usize));
+                    ui.image.hide((game.lives as usize, LIVES as usize));
                 }
             };
 
