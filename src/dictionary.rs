@@ -3,8 +3,7 @@
 #![allow(clippy::filter_map)]
 extern crate rand;
 use crate::image::CONF_LINE_IDENTIFIER__IMAGE;
-use rand::seq::SliceRandom;
-use rand::thread_rng;
+use rand::Rng;
 
 /// Default game mode. Can be changed in the configuration file.
 const DEFAULT_REWARDING_SCHEME: RewardingScheme = RewardingScheme::UnhideWhenGuessedChar;
@@ -158,11 +157,25 @@ impl Dict {
         })
     }
 
-    /// Chooses randomly one secret from the dictionary.
-    pub fn get_random_word(&self) -> String {
-        let mut rng = thread_rng();
-        (&self.wordlist).choose(&mut rng).unwrap().to_string()
+    /// Chooses randomly one secret from the dictionary and removes the secret from list
+    pub fn get_random_secret(&mut self) -> Option<String> {
+        match self.wordlist.len() {
+            0 => None,
+            1 => Some(self.wordlist.swap_remove(0)),
+            _ => {
+                let mut rng = rand::thread_rng();
+                let i = rng.gen_range(0, &self.wordlist.len() - 1);
+                Some(self.wordlist.swap_remove(i))
+            }
+        }
     }
+
+    /// Is the dictionary empty?
+    pub fn is_empty(&self) -> bool {
+        self.wordlist.is_empty()
+    }
+
+
 }
 
 // ***********************

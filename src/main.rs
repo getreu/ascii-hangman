@@ -240,7 +240,7 @@ fn main() {
     let terminal = terminal();
     let mut ui = UserInterface::new(&config);
 
-    let dict = match Dict::new(&config) {
+    let mut dict = match Dict::new(&config) {
         Ok(d) => d,
         Err(e) => {
             eprintln!("ERROR IN CONFIGURATION FILE\n{}", e);
@@ -255,7 +255,10 @@ fn main() {
     // PLAY
 
     'playing: loop {
-        let mut game = Game::new(&(dict.get_random_word()), LIVES);
+        let mut game = match &mut dict.get_random_secret() {
+            None => break 'playing,
+            Some(w) => Game::new(w, LIVES),
+        };
         let chars_to_guess = game.visible_chars();
 
         // The game loop
@@ -298,6 +301,10 @@ fn main() {
             io::stdin().read_line(guess).unwrap();
             game.guess(guess.chars().next().unwrap_or(' '));
         }
+
+        if dict.is_empty() {
+            break 'playing;
+        };
 
         println!("New game? Type [Y]es or [n]o: ");
         let s = &mut String::new();
