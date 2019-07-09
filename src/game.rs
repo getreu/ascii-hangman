@@ -1,6 +1,6 @@
 //!Defines the game state and logic
 
-use crate::dictionary::CONF_LINE_WORD_MODIFIER__VISIBLE;
+use crate::dictionary::CONF_LINE_SECRET_MODIFIER__VISIBLE;
 use std::fmt;
 
 /// Defines the line-break position when displaying the secret string.
@@ -38,7 +38,7 @@ pub enum State {
 /// The game state.
 #[derive(Debug, PartialEq)]
 pub struct Game {
-    word: Vec<HangmanChar>,
+    secret: Vec<HangmanChar>,
     pub lives: u8,
     pub last_guess: char,
 }
@@ -48,7 +48,7 @@ impl Game {
     pub fn get_state(&self) -> State {
         if self.lives == 0 {
             State::Defeat
-        } else if self.word.iter().all(|c| c.visible) {
+        } else if self.secret.iter().all(|c| c.visible) {
             State::Victory
         } else {
             State::Ongoing
@@ -56,14 +56,14 @@ impl Game {
     }
 
     /// Constructor.
-    pub fn new(wordstr: &str, lives: u8) -> Self {
-        // parse wordsstr, filp 'visible' every CONF_LINE_WORD_MODIFIER__VISIBLE
-        let w = wordstr
+    pub fn new(secretstr: &str, lives: u8) -> Self {
+        // parse secretsstr, filp 'visible' every CONF_LINE_SECRET_MODIFIER__VISIBLE
+        let w = secretstr
             .chars()
             // for every * found flip v_acc
             .scan(false, |v_acc, c| {
-                *v_acc ^= c == CONF_LINE_WORD_MODIFIER__VISIBLE;
-                if c == CONF_LINE_WORD_MODIFIER__VISIBLE {
+                *v_acc ^= c == CONF_LINE_SECRET_MODIFIER__VISIBLE;
+                if c == CONF_LINE_SECRET_MODIFIER__VISIBLE {
                     Some(None)
                 } else {
                     Some(Some(HangmanChar {
@@ -78,7 +78,7 @@ impl Game {
             .collect();
 
         Self {
-            word: w,
+            secret: w,
             lives,
             last_guess: ' ',
         }
@@ -91,7 +91,7 @@ impl Game {
         };
         self.last_guess = char_;
         let mut found = false;
-        for h_char in &mut self.word {
+        for h_char in &mut self.secret {
             if h_char.char_.eq_ignore_ascii_case(&char_) {
                 h_char.visible = true;
                 found = true;
@@ -103,7 +103,7 @@ impl Game {
         }
 
         if self.lives == 0 {
-            for hc in &mut self.word {
+            for hc in &mut self.secret {
                 hc.visible = true;
             }
         }
@@ -111,8 +111,9 @@ impl Game {
 
     /// The number of disclosed characters of the secret.
     pub fn visible_chars(&self) -> usize {
-        self.word.iter().filter(|hc| !hc.visible).count()
+        self.secret.iter().filter(|hc| !hc.visible).count()
     }
+
 }
 
 impl fmt::Display for Game {
@@ -125,7 +126,7 @@ impl fmt::Display for Game {
         )?;
 
         let mut linebreak = false;
-        for (n, c) in self.word.iter().enumerate() {
+        for (n, c) in self.secret.iter().enumerate() {
             if n % LINE_WIDTH == 0 {
                 linebreak = true
             };
@@ -152,9 +153,10 @@ mod tests {
     #[test]
     fn test_game_simulation() {
         let mut game = Game::new("_ab _cd", 2);
+
         //println!("{:?}",game);
         let expected = Game {
-            word: [
+            secret: [
                 HangmanChar {
                     char_: 'a',
                     visible: true,
@@ -188,7 +190,7 @@ mod tests {
         game.guess('c');
         //println!("{:?}",game);
         let expected = Game {
-            word: [
+            secret: [
                 HangmanChar {
                     char_: 'a',
                     visible: true,
@@ -222,7 +224,7 @@ mod tests {
         game.guess('x');
         //println!("{:?}",game);
         let expected = Game {
-            word: [
+            secret: [
                 HangmanChar {
                     char_: 'a',
                     visible: true,
@@ -256,7 +258,7 @@ mod tests {
         game.guess('y');
         //println!("{:?}",game);
         let expected = Game {
-            word: [
+            secret: [
                 HangmanChar {
                     char_: 'a',
                     visible: true,

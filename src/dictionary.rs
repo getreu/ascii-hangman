@@ -27,7 +27,7 @@ pub const CONF_LINE_IDENTIFIER__WORD: char = '-';
 
 /// A tag to enclose parts of the secret to be visible from the start, e.g.
 /// "guess_-me_" will be displayed in the game as "_ _ _ _ _ - m e"
-pub const CONF_LINE_WORD_MODIFIER__VISIBLE: char = '_';
+pub const CONF_LINE_SECRET_MODIFIER__VISIBLE: char = '_';
 
 // Custom error type used expressing potential syntax errors when parsing the configuration file.
 custom_error! {#[derive(PartialEq)] pub ConfigParseError
@@ -125,7 +125,7 @@ impl Dict {
                              // Lines starting alphanumericly are secret strings also.
                              // We can safely unwrap here since all empty lines had been filtered.
                              let c = l.trim().chars().next().unwrap();
-                             if c.is_alphanumeric() || c == CONF_LINE_WORD_MODIFIER__VISIBLE {
+                             if c.is_alphanumeric() || c == CONF_LINE_SECRET_MODIFIER__VISIBLE {
                                 l.trim().to_string()
                              } else {
                                  // we only save the first error
@@ -175,7 +175,10 @@ impl Dict {
         self.wordlist.is_empty()
     }
 
-
+    /// Add a secret to the list.
+    pub fn add(&mut self, secret: String) {
+        &self.wordlist.push(secret);
+    }
 }
 
 // ***********************

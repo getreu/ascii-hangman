@@ -251,8 +251,9 @@ hereafter referred to as list of secrets words.
    sentence. This part will be disclosed immediately when the game starts.   
 
 *  When the game starts the computer will choose one secret of the list
-*  randomly.  The teacher can also as he does not know either.
-
+   randomly.  The teacher can also as he does not know either.
+   Every secret appears only once, unless it is not guessed 
+   correctly. Then it will be presented again.
 
 === Game rules
 
@@ -273,6 +274,11 @@ The following rules make sure that the whole class participates.
 
 5. The winner of the game it the person who discloses the last letter of the
    secret word.
+
+
+Alternatively, the game can be played in a more disorganized manner:  In order
+to activate a group, choose a game master who will type the letters the 
+group calls in.
 
 === Start the game
 

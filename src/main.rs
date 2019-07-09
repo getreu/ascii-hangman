@@ -255,10 +255,11 @@ fn main() {
     // PLAY
 
     'playing: loop {
-        let mut game = match &mut dict.get_random_secret() {
+        let secret = match &mut dict.get_random_secret() {
             None => break 'playing,
-            Some(w) => Game::new(w, LIVES),
+            Some(w) => w.to_owned(),
         };
+        let mut game = Game::new(&secret, LIVES);
         let chars_to_guess = game.visible_chars();
 
         // The game loop
@@ -288,6 +289,8 @@ fn main() {
                 }
                 State::Defeat => {
                     println!("Sorry, you lost! Better luck next time!");
+                    // We will ask this again
+                    dict.add(secret);
                     break 'running_game;
                 }
                 _ => {}
@@ -303,6 +306,9 @@ fn main() {
         }
 
         if dict.is_empty() {
+            println!("Game over. Press any key.");
+            let s = &mut String::new();
+            io::stdin().read_line(s).unwrap();
             break 'playing;
         };
 
