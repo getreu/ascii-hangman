@@ -3,6 +3,7 @@
 - _guess_ me
 - hang_man_
 - good luck
+- _3*_7_=21_
 
 
 # Sample custom image

@@ -159,6 +159,7 @@ include::../../src/main.rs[lines="60..121"]
 guess me
 hangman
 good luck
+3*7=21
 ----
 
 ==== Simple configuration file with hints
@@ -167,6 +168,7 @@ good luck
 guess me
 hang_man_
 _good l_uck
+_3*_7_=21_
 ----
 
 ==== Configuration file with custom image
@@ -178,6 +180,7 @@ disclosed after each right guess.
 - _guess_ me
 - hang_man_
 - good luck
+- _3*_7_=21_
 
 
 :success-rewarding

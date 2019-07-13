@@ -133,6 +133,7 @@ const CONF_TEMPLATE: &str =
 guess me\r
 hang_man_\r
 _good l_uck\r
+_3*_7_=21_\r
 ";
 
 /// Fallback secret when no configuration file can be found.
