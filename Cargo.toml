@@ -1,6 +1,6 @@
 [package]
 name = "hangman"
-version = "4.9.0"
+version = "4.9.1"
 authors = ["Jens Getreu <getreu@web.de>"]
 edition = "2018"
 
