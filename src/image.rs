@@ -580,7 +580,7 @@ impl Render for Image {
             // escape sequences.
             // [ANSI escape code](https://en.wikipedia.org/wiki/ANSI_escape_code#Windows)
 
-            io::stdout().flush().ok().expect("Can not flush stdout");
+            io::stdout().flush().expect("Can not flush stdout");
         }
         // after printing the image s, bring the cursor below
         cursor
