@@ -254,9 +254,9 @@ hereafter referred to as list of secrets words.
    sentence. This part will be disclosed immediately when the game starts.   
 
 *  When the game starts the computer will choose one secret of the list
-   randomly.  The teacher can also as he does not know either.
-   Every secret appears only once, unless it is not guessed 
-   correctly. Then it will be presented again.
+   randomly. The teacher can play also as he does not know the next secret
+   either. Every secret appears only once, unless it is not guessed
+   correctly. Then it will appear again at some random time in the future.
 
 === Game rules
 
