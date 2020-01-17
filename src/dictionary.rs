@@ -177,7 +177,7 @@ impl Dict {
 
     /// Add a secret to the list.
     pub fn add(&mut self, secret: String) {
-        &self.wordlist.push(secret);
+        self.wordlist.push(secret);
     }
 }
 

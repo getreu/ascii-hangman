@@ -37,7 +37,7 @@ impl Render for UserInterface {
         println!("{}", &TITLE);
 
         print!("{}", Colored::Fg(Color::DarkYellow));
-        &self.image.render();
+        self.image.render();
         println!("\n");
 
         terminal.clear(ClearType::FromCursorDown).unwrap();
