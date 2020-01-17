@@ -619,8 +619,7 @@ impl Image {
         }
 
         // find dimensions
-        let mut dimension = (0, 0);
-        if !v.is_empty() {
+        let dimension = if !v.is_empty() {
             let mut x_max = 0;
             let mut y_max = 0;
 
@@ -634,8 +633,10 @@ impl Image {
                 };
             }
             // we know there is at least one char
-            dimension = (x_max + 1, y_max + 1);
-        }
+            (x_max + 1, y_max + 1)
+        } else {
+            (0, 0)
+        };
 
         // order points
         let v_len = v.len();

@@ -113,7 +113,6 @@ impl Game {
     pub fn visible_chars(&self) -> usize {
         self.secret.iter().filter(|hc| !hc.visible).count()
     }
-
 }
 
 impl fmt::Display for Game {
