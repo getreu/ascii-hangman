@@ -1,30 +1,60 @@
-#!/bin/sh
+#!/bin/bash
 # Author: Jens Getreu
 
-
+# apt install pandoc asciidoctor-fopub
+FOPUB_PATH="/usr/local/java-deployment/asciidoctor-fopub/bin/"
 
 render () {
-### not needed
-### get absolute path
-#FullPath=$1
-#FullPath=$(readlink -f "$FullPath")
+    ### parse args
+
+    #set -x
+    InPath="$1"
+    InFile="${InPath##*/}"
+    InBase="${InFile%.*}"
+    InDir="${InPath%/*}"
+    if [ "$InDir" = "$InPath" ] ; then
+        InDir="."
+    fi
+
+    OutPath="$2"
+    OutFile="${OutPath##*/}"
+    OutBase="${OutFile%.*}"
+    OutDir="${OutPath%/*}"
+    if [ "$OutDir" = "$OutPath" ] ; then
+        OutDir="."
+    fi
 
 
-BaseName=$(basename "$1" ".adoc")
-InDirName="$(dirname "$1")"
-OutDirName="./build/html"
-mkdir -p "$DirName"
+    ### Prepare
 
-#asciidoctor -b xhtml5 -D "$DirName" "$@"
-asciidoctor -b xhtml5 -D "$OutDirName" "$1"
+    HtmlPath="$OutDir/$OutBase.html"
+    HtmlFile="${XmlPath##*/}"
 
-$InDirName/post_process_html "$OutDirName/$BaseName.html"
+    mkdir -p "$OutDir"
 
-rm -r "$OutDirName/.asciidoctor"
-cd "$OutDirName"
-cp -r ../../source/images/ .
+    ### Generate Html
+    
+    # this is only needed for html and xml output
+    cp -r  "$InDir/images/" "$OutDir"
+    cp "$InPath" "$OutDir"
+    cd "$OutDir"
+    asciidoctor -b html5 -a data-uri! "$InFile"
 
+    rm "$InFile"
 }
 
 
-render "source/index.adoc"
+
+### Main
+# usage: 
+# render FILE [FILE]
+# render report.adoc ./rendition/report.html
+
+if [[ -n "${2/[ ]*\n/}" ]] ; then
+        OutPath="$2"
+else
+        OutPath="${1%.*}.pdf" # $2 is empty
+fi
+render "$1" "$OutPath" 
+
+

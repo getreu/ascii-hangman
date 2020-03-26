@@ -1,36 +1,66 @@
-#!/bin/sh
+#!/bin/bash
 # Author: Jens Getreu
 
-
+# apt install pandoc asciidoctor-fopub
+FOPUB_PATH="/usr/local/java-deployment/asciidoctor-fopub/bin/"
 
 render () {
+    ### parse args
+
+    #set -x
+    InPath="$1"
+    InFile="${InPath##*/}"
+    InBase="${InFile%.*}"
+    InDir="${InPath%/*}"
+    if [ "$InDir" = "$InPath" ] ; then
+        InDir="."
+    fi
+
+    OutPath="$2"
+    OutFile="${OutPath##*/}"
+    OutBase="${OutFile%.*}"
+    OutDir="${OutPath%/*}"
+    if [ "$OutDir" = "$OutPath" ] ; then
+        OutDir="."
+    fi
 
 
-AdocBase=$(basename "$1" ".adoc")
-cd "source" || echo "Error: no source directory found!" || exit 1 
-InDir="./"
-OutDir="../build/pdf"
-mkdir -p "$OutDir"
-PdfBase=$(basename "$2" ".pdf")
-XmlFile="$OutDir/$AdocBase.xml"
-PdfFile="$OutDir/$PdfBase.pdf"
+    ### Prepare
 
+    XmlPath="$OutDir/$OutBase.xml"
+    XmlFile="${XmlPath##*/}"
+    PdfPath="$OutDir/$OutBase.pdf"
 
-echo asciidoctor -b docbook -a data-uri!  -D "$OutDir" "$1"
-asciidoctor -b docbook -a data-uri!  -D "$OutDir" "$1"
+    mkdir -p "$OutDir"
 
-cp -r "$InDir/images/" "$OutDir"
+    ### Generate XML
+    
+    # this is only needed for html and xml output
+    cp -r  "$InDir/images/" "$OutDir"
+    cp "$InPath" "$OutDir"
+    cd "$OutDir"
+    asciidoctor -b docbook -a data-uri! "$InFile"
 
-echo fopub -H  "$XmlFile" 
-#fopub -t ./docbook-xsl  "$XmlFile" && \
-fopub -H  "$XmlFile" && \
-	rm  "$XmlFile" && \
-    rm  -v -r "$OutDir/images/" ; \
-    rm  -v -r "$OutDir/.asciidoctor/" ; \
-    mv -v "$OutDir/$AdocBase.pdf" "$OutDir/$PdfBase.pdf" && \
-	mupdf "$PdfFile" & 
+    ### Generate PDF
+    "$FOPUB_PATH/fopub" -H  "$XmlFile" && \
+        rm  "$XmlFile" && \
+        rm  "$InFile" && \
+        rm  -f -r "./images/" 
 
 }
 
 
-render "index.adoc" "asciiart-hangman-for-kids.pdf" \
+
+### Main
+# usage: 
+# render FILE [FILE]
+# render report.adoc ./rendition/report.pdf
+
+if [[ -n "${2/[ ]*\n/}" ]] ; then
+        OutPath="$2"
+else
+        OutPath="${1%.*}.pdf" # $2 is empty
+fi
+render "$1" "$OutPath" 
+
+

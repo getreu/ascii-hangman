@@ -147,7 +147,7 @@ image::02-Screenshot-Windows.png[]
 
 === Synopsis and syntax
 
-include::../../src/main.rs[lines="60..121"]
+include::../../../src/main.rs[lines="60..120"]
 
 
 

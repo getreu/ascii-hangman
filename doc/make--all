@@ -1,0 +1,6 @@
+#!/bin/sh
+# Author: Jens Getreu
+
+./make--hangman-manual
+./make--rustdoc-link
+
