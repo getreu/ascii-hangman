@@ -1,17 +1,22 @@
 //! Manages and prints the TUI.
 use crate::image::Image;
 use crate::Render;
-
+use std::io::{stdout, Write};
 extern crate crossterm;
-#[cfg(unix)]
-use crossterm::Attribute;
-use crossterm::{cursor, terminal, ClearType, Color, Colored};
+use crossterm::cursor::MoveTo;
+use crossterm::cursor::MoveToNextLine;
+use crossterm::queue;
+use crossterm::style::Color;
+use crossterm::style::Print;
+use crossterm::style::SetForegroundColor;
+use crossterm::terminal::Clear;
+use crossterm::terminal::ClearType;
 
 /// Titleline.
 const TITLE: &str = "ASCII-ART HANGMAN FOR KIDS";
 
 /// Postion of the upper left corner of the image on the screen.
-const OFFSET: (usize, usize) = (1, 1);
+const OFFSET: (usize, usize) = (1, 2);
 
 /// State of the TUI.
 #[derive(Debug)]
@@ -25,22 +30,24 @@ impl Render for UserInterface {
     /// Renders and prints the TUI.  It would be more consistent to implement Display for Image,
     /// but crossterm does not support `print!(f, ...)`. Therefor, it is not on option here.
     fn render(&self) {
-        let terminal = terminal();
         // Clear all lines in terminal;
-        terminal.clear(ClearType::All).unwrap();
-        cursor().goto(0, 0).unwrap();
+        queue!(stdout(), Clear(ClearType::All), MoveTo(0, 0)).unwrap();
 
-        #[cfg(unix)]
-        print!("{}", Attribute::Reset);
+        #[cfg(not(windows))]
+        queue!(stdout(), SetForegroundColor(Color::White),).unwrap();
         #[cfg(windows)]
-        print!("{}", Colored::Fg(Color::Grey));
-        println!("{}", &TITLE);
+        queue!(stdout(), SetForegroundColor(Color::Grey),).unwrap();
 
-        print!("{}", Colored::Fg(Color::DarkYellow));
+        queue!(
+            stdout(),
+            Print(&TITLE),
+            MoveToNextLine(1),
+            SetForegroundColor(Color::DarkYellow),
+        )
+        .unwrap();
+
         self.image.render();
-        println!("\n");
 
-        terminal.clear(ClearType::FromCursorDown).unwrap();
         // print message field
         let mut emph = false;
         for line in &mut self.message.lines() {
@@ -48,22 +55,25 @@ impl Render for UserInterface {
                 emph = !emph
             };
             if emph {
-                #[cfg(unix)]
-                print!("{}", Colored::Fg(Color::DarkGreen));
+                #[cfg(not(windows))]
+                queue!(stdout(), SetForegroundColor(Color::DarkGreen),).unwrap();
+
                 #[cfg(windows)]
-                print!("{}", Colored::Fg(Color::White));
-                println!("{}", &line);
+                queue!(stdout(), SetForegroundColor(Color::White),).unwrap();
             } else {
-                #[cfg(unix)]
-                print!("{}", Attribute::Reset);
+                #[cfg(not(windows))]
+                queue!(stdout(), SetForegroundColor(Color::White),).unwrap();
+
                 #[cfg(windows)]
-                print!("{}", Colored::Fg(Color::Grey));
-                println!("{}", &line);
+                queue!(stdout(), SetForegroundColor(Color::Grey),).unwrap();
             }
+
+            // Print message line.
+            queue!(stdout(), Print(&line), MoveToNextLine(1)).unwrap();
         }
 
-        #[cfg(Unix)]
-        print!("{}", Attribute.Reset);
+        // Print queued.
+        stdout().flush().unwrap();
     }
 }
 

@@ -3,8 +3,10 @@ name = "hangman"
 version = "4.9.1"
 authors = ["Jens Getreu <getreu@web.de>"]
 edition = "2018"
+description = "Customizable hangman game for kids with ASCII-art rewarding"
+license = "MIT/Apache-2.0"
 
 [dependencies]
-rand = "*"
-crossterm = "0.9.3"
-custom_error = "*"
+rand = "0.7.3"
+crossterm = "0.17.0"
+thiserror = "1.0.13"

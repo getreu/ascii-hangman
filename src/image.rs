@@ -1,14 +1,18 @@
 //! Holds a dictionary of built-in ASCII art images and manages the piecemeal disclosure to the
 //! image.  Also parses user provided images if given in the configuration file.
 
+extern crate crossterm;
 extern crate rand;
+use crate::Render;
+use crossterm::cursor::MoveTo;
+use crossterm::queue;
+use crossterm::style::Print;
 use rand::seq::SliceRandom;
 use rand::thread_rng;
 use std::cmp::{Ord, Ordering};
 use std::fmt;
-extern crate crossterm;
-use crate::Render;
-use crossterm::cursor;
+use std::io::prelude::*;
+use std::io::stdout;
 
 /// Identifier tagging image data in configuration files.
 pub const CONF_LINE_IDENTIFIER__IMAGE: char = '|';
@@ -556,36 +560,30 @@ impl Render for Image {
     /// for Image, but crossterm does not support `print!(f, ...)`. Therefore, it is not on option
     /// here.
     fn render(&self) {
-        use std::io;
-        use std::io::prelude::*;
-
-        let cursor = cursor();
         for ic in self.ichars.iter().take(self.visible_points) {
             let &ImChar {
                 point: (x, y),
                 code,
             } = ic;
-            cursor
-                .goto(
-                    (self.offset.1 + (x as usize) + 1) as u16,
-                    (self.offset.0 + (y as usize) + 1) as u16,
-                )
-                .expect("Can not set cursor position.");
-
-            print!("{}", &code);
-
-            // The following flush() is necessary on Windows terminals that do not understand ANSI
-            // escape code such as Window 7, 8 and older 10. BTW, in 2016, Microsoft released the
-            // Windows 10 Version 1511 update which unexpectedly implemented support for ANSI
-            // escape sequences.
-            // [ANSI escape code](https://en.wikipedia.org/wiki/ANSI_escape_code#Windows)
-
-            io::stdout().flush().expect("Can not flush stdout");
+            queue!(
+                stdout(),
+                MoveTo(
+                    (self.offset.0 + (x as usize)) as u16,
+                    (self.offset.1 + (y as usize)) as u16,
+                ),
+                Print(&code),
+            )
+            .unwrap();
         }
         // after printing the image s, bring the cursor below
-        cursor
-            .goto(0, (self.dimension.1 as usize + 1 + self.offset.1) as u16)
-            .expect("Can not move cursor.");
+        queue!(
+            stdout(),
+            MoveTo(0, (self.dimension.1 as usize + 1 + self.offset.1) as u16)
+        )
+        .unwrap();
+
+        // Flush queue buffer
+        stdout().flush().unwrap();
     }
 }
 

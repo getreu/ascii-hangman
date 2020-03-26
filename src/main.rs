@@ -1,8 +1,7 @@
 //! Loads the configuration and runs the game workflow.
 extern crate crossterm;
-extern crate thiserror;
-use crossterm::{terminal, ClearType};
 extern crate rand;
+extern crate thiserror;
 mod game;
 use game::{Game, State};
 mod user_interface;
@@ -15,6 +14,7 @@ use std::env;
 use std::fs::File;
 use std::io;
 use std::io::prelude::*;
+use std::io::Write;
 use std::path::PathBuf;
 use std::process;
 
@@ -234,7 +234,6 @@ fn main() {
 
     // INITIALISE GAME
 
-    let terminal = terminal();
     let mut ui = UserInterface::new(&config);
 
     let mut dict = match Dict::new(&config) {
@@ -260,11 +259,6 @@ fn main() {
         let chars_to_guess = game.visible_chars();
 
         // The game loop
-
-        // Clear all lines in terminal;
-        terminal
-            .clear(ClearType::All)
-            .expect("Can not clear terminal.");
 
         'running_game: loop {
             match dict.rewarding_scheme {
