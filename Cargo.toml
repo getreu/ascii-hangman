@@ -1,14 +1,33 @@
 [package]
 name = "ascii-hangman"
-version = "4.9.1"
+version = "4.10.0"
 authors = ["Jens Getreu <getreu@web.de>"]
 edition = "2018"
 readme = "README.md"
 categories = ["command-line-utilities", "games", "text-processing"]
 description = "customizable Hangman game for kids with ASCII-art rewarding"
+repository = "https://github.com/getreu/ascii-hangman"
+documentation = "https://getreu.gitlab.io/_downloads/ascii-hangman--manual.pdf"
 license = "MIT/Apache-2.0"
 
 [dependencies]
 rand = "0.7.3"
 crossterm = "0.17.0"
 thiserror = "1.0.13"
+
+[package.metadata.deb]
+maintainer = "Jens Getreu, <getreu@web.de>"
+copyright = "2015-2020, Jens Getreu <getreu@web.de>"
+depends = "$auto"
+extended-description = '''
+Hangman is a paper and pencil guessing game for two or more players.  One player
+thinks of a word, phrase or sentence and the other tries to guess it by
+suggesting letters or numbers, within a certain number of guesses. In this
+version for children the computer selects a word, phrase or sentence randomly
+out of a word-list defined in a configuration file. 
+'''
+assets = [
+    ["doc/build/html/index.html", "usr/share/doc/ascii-hangman/", "644"],
+    ["doc/build/pdf/ascii-hangman--manual.pdf", "usr/share/doc/ascii-hangman/", "644"],
+    ["target/release/ascii-hangman", "usr/bin/ascii-hangman", "755"]
+]
