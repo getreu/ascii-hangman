@@ -1,6 +1,6 @@
 #!/bin/sh
 
-cargo rustdoc  -p hangman -- --document-private-items 
+cargo rustdoc  -p ascii-hangman -- --document-private-items 
 
 cd ../doc/
 ./make--all

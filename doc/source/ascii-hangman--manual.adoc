@@ -45,50 +45,27 @@ configuration file.
 
 
 The project is hosted on Github:
-https://github.com/getreu/asciiart-hangman-for-kids[getreu/asciiart-hangman-for-kids].
+https://github.com/getreu/ascii-hangman[getreu/ascii-hangman].
 The project's webpage is on
-http://blog.getreu.net/projects/asciiart-hangman-for-kids/[getreu.net].
+http://blog.getreu.net/projects/ascii-hangman/[getreu.net].
 There you also find a
-https://blog.getreu.net/_downloads/asciiart-hangman-for-kids.pdf[
+https://blog.getreu.net/_downloads/ascii-hangman.pdf[
 pdf rendition] of this document and compiled 
-https://blog.getreu.net/_downloads/asciiart-hangman-for-kids.zip[binaries].
+https://blog.getreu.net/_downloads/ascii-hangman.zip[binaries].
 
-== Installation
+== ASCII-Art-Hangman configuration
 
-=== Linux
+=== Linux configuration
 
-.Short instructions 
+For installation instruction see 
+https://github.com/getreu/ascii-hangman[getreu/ascii-hangman].
 
-https://blog.getreu.net/_downloads/asciiart-hangman-for-kids.zip[Download]
-`.zip` file, unpack, find `hangman` binary, grant execution permissions, open
-terminal, type `./hangman`.
-
-.Detailed instructions
-
-. Open a terminal window
-
-. Download the binary `hangman` from 
-https://blog.getreu.net/_downloads/asciiart-hangman-for-kids.zip[here].
- 
- wget https://blog.getreu.net/_downloads/asciiart-hangman-for-kids.zip
-
-. Extract the contents from the archive
-
- unzip asciiart-hangman-for-kids.zip
-
-. Copy the binary to `$PATH`
-
- sudo cp ./dist/bin/hangman /usr/local/bin
- sudo chmod 775 /usr/local/hangman
-
-. Generate a sample configuration file in your home directory
-
- cd
- hangman
+. Run ASCII-Hangman once. It creates a configuration file
+  `ascii-hangman-words.txt` in the current working directory.
 
 . Edit the configuration file
 
- nano hangman-words.txt
+ nano ascii-hangman-words.txt
 
 . Start the game
 
@@ -97,42 +74,17 @@ https://blog.getreu.net/_downloads/asciiart-hangman-for-kids.zip[here].
 .Linux version
 image::01-Screenshot-Linux.png[Linux version,640,480,pdfwidth=50%,scaledwidth=50%]
 
-=== Windows
+=== Windows configuration
 
-.Short instructions 
-
-https://blog.getreu.net/_downloads/asciiart-hangman-for-kids.zip[Download]
-`.zip` file, unpack, find the `.exe` binary, grant execution rights, double-click to start.
-
-.Detailed instructions
-
-. Download the binary `hangman` from 
-https://blog.getreu.net/_downloads/asciiart-hangman-for-kids.zip[here].
-
-. Extract the contents of the archive
+. Generate a configuration file in your working directory
 +
-Click right on  `asciiart-hangman-for-kids.zip` -> _Extract all_.
-
-. Navigate to the hangman binary
+Double click on `ascii-hangman.exe`
 +
-Change into folder `./dist/bin/` 
-
-. Add _Read and Execute_ permissions
-+
-Right click on `hangman.exe` -> Properties -> Security -> "Everyone" -> Edit
-+
-"Everyone" -> Add -> "Read and Execute" -> Ok
-
-
-. Generate a sample configuration file in your working directory
-+
-Double click on `hangman.exe`
-+
-This creates the file `hangman_words.txt`
+This creates the file `ascii-hangman_words.txt`
 
 . Edit the configuration file
 +
-Double-click on `hangman-words.txt`. This opens the file in the `Notepad` 
+Double-click on `ascii-hangman-words.txt`. This opens the file in the `Notepad` 
 editor. Add own secrets, one per line.
 
 . Start the game
@@ -142,12 +94,9 @@ Double-click on `hangman.exe`.
 image::02-Screenshot-Windows.png[]
 
 
-
-== Configuration
-
 === Synopsis and syntax
 
-include::../../../src/main.rs[lines="60..120"]
+include::../../../src/main.rs[lines="60..118"]
 
 
 

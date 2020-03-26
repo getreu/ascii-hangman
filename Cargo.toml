@@ -1,9 +1,11 @@
 [package]
-name = "hangman"
+name = "ascii-hangman"
 version = "4.9.1"
 authors = ["Jens Getreu <getreu@web.de>"]
 edition = "2018"
-description = "Customizable hangman game for kids with ASCII-art rewarding"
+readme = "README.md"
+categories = ["command-line-utilities", "games", "text-processing"]
+description = "customizable Hangman game for kids with ASCII-art rewarding"
 license = "MIT/Apache-2.0"
 
 [dependencies]

@@ -1,10 +1,10 @@
 #!/bin/sh
 #set -x
 cd ..
-find target -mindepth 2 -not -path "*/release/hangman" \
-                        -not -path "*/release/hangman.exe" \
+find target -mindepth 2 -not -path "*/release/ascii-hangman" \
+                        -not -path "*/release/ascii-hangman.exe" \
                         -not -path "*/debian" \
-                        -not -path "*/debian/hangman*.deb" \
+                        -not -path "*/debian/ascii-hangman*.deb" \
                         -not -path "*/release/*.md" \
                         -not -path "*/release" \
                         -not -path "target/doc*"  \

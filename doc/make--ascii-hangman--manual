@@ -1,0 +1,8 @@
+#!/bin/sh
+
+mkdir --parents ./build/html
+mkdir --parents ./build/html/_downloads
+
+./adoc2docbook2pdf ./source/ascii-hangman--manual.adoc ./build/pdf/ascii-hangman--manual.pdf
+./adoc2html ./source/ascii-hangman--manual.adoc ./build/html/ascii-hangman--manual.html
+

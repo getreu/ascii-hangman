@@ -53,17 +53,17 @@ Type a letter then type [Enter]:
 -----------------------------------
 ===================================
 
- Usage: hangman
-        hangman [FILE]...
-        hangman -h|--help
-        hangman -V|--version
+ Usage: ascii-hangman
+        ascii-hangman [FILE]...
+        ascii-hangman -h|--help
+        asciiart-ascii-hangman-for-kids -V|--version
 
 
 `[FILE]` are configuration files containing word-lists and optionally Ascii-Art
 images.
 
-When no `[FILE]` argument is given, `[FILE]` defaults to `hangman-words.txt`. In
-case no `[FILE]` is found, a template configuration file `hangman-words.txt` is
+When no `[FILE]` argument is given, `[FILE]` defaults to `ascii-hangman-words.txt`. In
+case no `[FILE]` is found, a template configuration file `ascii-hangman-words.txt` is
 written into the current working directory. Multiple `[FILE]`s are concatted.
 
 `[FILE]` is a UTF-8 file containing 4 different line-types:
@@ -121,10 +121,10 @@ If you prefer a traditional gallows image, add the following:
 /// Number of wrong guess allowed.
 const LIVES: u8 = 7;
 /// Default configuration filename when no filename is given at the command-line.
-const PATHSTR: &str = "hangman-words.txt";
+const PATHSTR: &str = "ascii-hangman-words.txt";
 /// Fallback sample configuration when no configuration file can be found.
 const CONF_TEMPLATE: &str =
-    "# Type `hangman -h` to learn how to insert custom ASCII-art images here. \r
+    "# Type `ascii-hangman -h` to learn how to insert custom ASCII-art images here. \r
 \r
 guess me\r
 hang_man_\r
@@ -213,7 +213,7 @@ fn main() {
                     }
                     Err(why) => {
                         eprintln!(
-                            "Couldn't write hangman template \
+                            "Couldn't write ascii-hangman template \
                              config-file:\n\t{:?}\n({})\n\n\
                              Current working directory is:\n\t{:?}\n\n\
                              Press [Enter] to enter demo mode.",
