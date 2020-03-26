@@ -1,5 +1,6 @@
 //! Loads the configuration and runs the game workflow.
 extern crate crossterm;
+extern crate thiserror;
 use crossterm::{terminal, ClearType};
 extern crate rand;
 mod game;
@@ -10,17 +11,12 @@ mod dictionary;
 use dictionary::Dict;
 use dictionary::RewardingScheme;
 mod image;
-
 use std::env;
-use std::error::Error;
 use std::fs::File;
 use std::io;
 use std::io::prelude::*;
 use std::path::PathBuf;
 use std::process;
-
-#[macro_use]
-extern crate custom_error;
 
 const VERSION: Option<&'static str> = option_env!("CARGO_PKG_VERSION");
 const AUTHOR: &str = "(c) Jens Getreu, 2016-2020.";
@@ -222,7 +218,7 @@ fn main() {
                              Current working directory is:\n\t{:?}\n\n\
                              Press [Enter] to enter demo mode.",
                             path,
-                            Error::description(&why),
+                            why.to_string(),
                             cwd
                         );
                         // wait for [Enter] key

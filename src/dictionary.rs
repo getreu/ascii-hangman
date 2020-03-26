@@ -4,6 +4,7 @@
 extern crate rand;
 use crate::image::CONF_LINE_IDENTIFIER__IMAGE;
 use rand::Rng;
+use thiserror::Error;
 
 /// Default game mode. Can be changed in the configuration file.
 const DEFAULT_REWARDING_SCHEME: RewardingScheme = RewardingScheme::UnhideWhenGuessedChar;
@@ -30,32 +31,30 @@ pub const CONF_LINE_IDENTIFIER__WORD: char = '-';
 pub const CONF_LINE_SECRET_MODIFIER__VISIBLE: char = '_';
 
 // Custom error type used expressing potential syntax errors when parsing the configuration file.
-custom_error! {#[derive(PartialEq)] pub ConfigParseError
-    GameModifier{line_number: usize, line: String}   = "
-Syntax error in line
-{line_number}:  \"{line}\"
-
-The game modifier must be one of the following:
-    :traditional-rewarding
-    :success-rewarding
-
-Edit config file and start again.\n",
-    LineIdentifier{line_number: usize, line: String} = "
-Syntax error in line
-{line_number}:  \"{line}\"
-
-The first character of every non-empty line has to be one of the following:
-    any letter or digit (secret string),
-    '#' (comment line),
-    '-' (secret string),
-    '|' (ASCII-Art image) or
-    ':' (game modifier).
-
-Edit config file and start again.\n",
-    NoSecretString{} = "
-A config file must have a least one secret string, which is
-a non-empty line starting with a letter, digit, '_' or '-'.
-",
+#[derive(Error, Debug, PartialEq)]
+pub enum ConfigParseError {
+    #[error(
+        "Syntax error in line {line_number:?}: `{line}`\n\n\"
+    The game modifier must be one of the following:\n\
+        :traditional-rewarding\n\
+        :success-rewarding\n\n\
+        Edit config file and start again.\n"
+    )]
+    GameModifier { line_number: usize, line: String },
+    #[error(
+        "Syntax error in line {line_number:?}: `{line}`\n\n\
+    The first character of every non-empty line has to be one of the following:\n\
+        any letter or digit (secret string),\n\
+        '#' (comment line),\n\
+        '-' (secret string),\n\
+        '|' (ASCII-Art image) or\n\
+        ':' (game modifier).\n\n\
+    Edit config file and start again.\n"
+    )]
+    LineIdentifier { line_number: usize, line: String },
+    #[error["A config file must have a least one secret string, which is\
+    a non-empty line starting with a letter, digit, '_' or '-'."]]
+    NoSecretString,
 }
 
 /// A game mode defining how the ASCII-art image will be disclosed progressively.
