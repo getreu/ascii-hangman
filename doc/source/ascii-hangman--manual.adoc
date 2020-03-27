@@ -69,7 +69,7 @@ https://github.com/getreu/ascii-hangman[getreu/ascii-hangman].
 
 . Start the game
 
- hangman
+ ./ascii-hangman
 +
 .Linux version
 image::01-Screenshot-Linux.png[Linux version,640,480,pdfwidth=50%,scaledwidth=50%]
@@ -89,7 +89,7 @@ editor. Add own secrets, one per line.
 
 . Start the game
 +
-Double-click on `hangman.exe`.
+Double-click on `ascii-hangman.exe`.
 +
 image::02-Screenshot-Windows.png[]
 
@@ -147,7 +147,7 @@ disclosed after each right guess.
 It is also possible to split the word list and the image into two files and load
 them separately:
 
-      hangman wordlist.txt custom-image.txt
+      ascii-hangman wordlist.txt custom-image.txt
 
 ==== Configuration file with traditional gallows image
 
@@ -181,7 +181,8 @@ The game is designed for classroom usage, but can be played alone as well.
 
 *  Big screen or projector
 
-*  Windows or Linux Computer with `hangman.exe` or `hangman` binary installed.
+*  Windows or Linux Computer with `ascii-hangman.exe` or `ascii-hangman` 
+   binary installed.
 
 === Prepare a configuration file with secret words
 
@@ -253,10 +254,10 @@ otherwise type, e.g.
 
 ==== Windows
 
-1. Open the folder where the `hangman.exe` file resides.
+1. Open the folder where the `ascii-hangman.exe` file resides.
 
 2. Open a second explorer window and navigate to a folder with a configuration
 file.
 
-3. Drag and drop one or more configuration files on `hangman.exe`.
+3. Drag and drop one or more configuration files on `ascii-hangman.exe`.
 
