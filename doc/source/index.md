@@ -2,6 +2,13 @@
 title: ASCII-Hangman - hangman game for children with ASCII-art rewarding
 ---
 
+[![Cargo](https://img.shields.io/crates/v/ascii-hangman.svg)](
+https://crates.io/crates/ascii-hangman)
+[![Documentation](https://docs.rs/ascii-hangman/badge.svg)](
+https://docs.rs/ascii-hangman)
+[![License](https://img.shields.io/badge/license-MIT%2FApache--2.0-blue.svg)](
+https://github.com/getreu/ascii-hangman)
+
 Hangman is a paper and pencil guessing game for two or more players.  One player
 thinks of a word, phrase or sentence and the other tries to guess it by
 suggesting letters or numbers, within a certain number of guesses. In this
@@ -93,46 +100,16 @@ Repository:
 
 ## Building and installing
 
-1. Install *Rust* with [rustup](https://www.rustup.rs/):
+1. [Install Rust](https://www.rust-lang.org/tools/install), e.g.
 
        curl https://sh.rustup.rs -sSf | sh
 
-   The fast-track procedure:
+2. Download, compile and install:
 
        cargo install ascii-hangman
        sudo cp ~/.cargo/bin/ascii-hangman /usr/local/bin
 
-   If it works for you, you are done. Otherwise continue the next step.
-
-2. Download [ascii-hangman](#ascii-hangman):
-
-       git clone git@github.com:getreu/ascii-hangman.git
-
-3. Build:
-
-   Enter the *ascii-hangman* directory where the file `Cargo.toml`
-   resides:
-
-       cd ascii-hangman
-
-
-   Then execute:
-
-       cargo build --release
-       ./doc/make--all
-
-4. Install:
-
-   a.  Linux:
-
-           # install binary
-           sudo cp target/release/ascii-hangman /usr/local/bin/
-
-   b.  Windows:
-
-       Copy the binary `target/release/ascii-hangman.exe` on your desktop.
-
-   See the user manual for a detailed installation description.
+   See also the user manual for a more detailed installation description.
 
 This project follows [Semantic Versioning](https://semver.org/).
 
