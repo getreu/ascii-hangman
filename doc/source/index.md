@@ -89,7 +89,7 @@ Repository:
 
   - Package for Debian and Ubuntu:
 
-    [x86_64-unknown-linux-gnu/debian/ascii-hangman_4.10.0_amd64.deb](/projects/ascii-hangman/_downloads/x86_64-unknown-linux-gnu/debian/ascii-hangman_4.10.0_amd64.deb)
+    [x86_64-unknown-linux-gnu/debian/ascii-hangman_4.10.1_amd64.deb](/projects/ascii-hangman/_downloads/x86_64-unknown-linux-gnu/debian/ascii-hangman_4.10.1_amd64.deb)
 
 
 * Zipfile with all binaries and documentation:

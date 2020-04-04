@@ -2,7 +2,12 @@
 
 mkdir --parents ./build/html
 mkdir --parents ./build/html/_downloads
+mkdir --parents ./build/xml
+mkdir --parents ./build/pdf
 
-./adoc2docbook2pdf ./source/ascii-hangman--manual.adoc ./build/pdf/ascii-hangman--manual.pdf
+./adoc2docbook ./source/ascii-hangman--manual.adoc ./build/xml/ascii-hangman--manual.xml
+./docbook52pdf ./build/xml/ascii-hangman--manual.xml ./build/pdf/ascii-hangman--manual.pdf
+rm -r ./build/xml/
+
 ./adoc2html ./source/ascii-hangman--manual.adoc ./build/html/ascii-hangman--manual.html
 

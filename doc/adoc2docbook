@@ -29,7 +29,6 @@ render () {
 
     XmlPath="$OutDir/$OutBase.xml"
     XmlFile="${XmlPath##*/}"
-    PdfPath="$OutDir/$OutBase.pdf"
 
     mkdir -p "$OutDir"
 
@@ -37,16 +36,11 @@ render () {
     
     # this is only needed for html and xml output
     cp -r  "$InDir/images/" "$OutDir"
+    cp -r  "$InDir/docbook-xsl/" "$OutDir"
     cp "$InPath" "$OutDir"
     cd "$OutDir"
-    asciidoctor -b docbook -a data-uri! "$InFile"
-
-    ### Generate PDF
-    "$FOPUB_PATH/fopub" -H  "$XmlFile" && \
-        rm  "$XmlFile" && \
-        rm  "$InFile" && \
-        rm  -f -r "./images/" 
-
+    asciidoctor -b docbook -a data-uri! "$InFile" \
+        && rm "$InFile"
 }
 
 
@@ -54,7 +48,7 @@ render () {
 ### Main
 # usage: 
 # render FILE [FILE]
-# render report.adoc ./rendition/report.pdf
+# render report.adoc ./rendition/report.xml
 
 if [[ -n "${2/[ ]*\n/}" ]] ; then
         OutPath="$2"

@@ -1,6 +1,9 @@
 #!/bin/sh
 # Author: Jens Getreu
 
+# Change to this script directory
+cd "${0%/*}"
+
 ./make--index
 ./make--ascii-hangman--manual
 ./make--rustdoc-link
