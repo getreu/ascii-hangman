@@ -65,7 +65,7 @@ Repository:
 
 * Binaries for latest release (Linux, Windows, iOS)
 
-    1. Open: [Releases · getreu/ascii-hangman](https://github.com/getreu/ascii-hangman/releases)
+    1. Open: [Releases - getreu/ascii-hangman](https://github.com/getreu/ascii-hangman/releases)
 
     2. Open the latest release.
 
