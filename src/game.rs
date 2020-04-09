@@ -57,7 +57,7 @@ impl Game {
 
     /// Constructor.
     pub fn new(secretstr: &str, lives: u8) -> Self {
-        // parse secretsstr, filp 'visible' every CONF_LINE_SECRET_MODIFIER__VISIBLE
+        // parse `secretsstr`, flip 'visible' every CONF_LINE_SECRET_MODIFIER__VISIBLE
         let w = secretstr
             .chars()
             // for every * found flip v_acc

@@ -9,11 +9,15 @@ https://docs.rs/ascii-hangman)
 [![License](https://img.shields.io/badge/license-MIT%2FApache--2.0-blue.svg)](
 https://github.com/getreu/ascii-hangman)
 
+A little game designed for primary kids to revise vocabulary in classroom. Setting
+up the vocabulary list is part of the learning process.
+
 Hangman is a paper and pencil guessing game for two or more players.  One player
 thinks of a word, phrase or sentence and the other tries to guess it by
 suggesting letters or numbers, within a certain number of guesses. In this
 version for children the computer selects a word, phrase or sentence randomly
-out of a word-list defined in a configuration file. 
+out of a word-list defined in a configuration file. As a reward, with every
+guessed letter, some ASCII-art is gradually disclosed.
 
 ```
 ASCII-ART HANGMAN FOR KIDS

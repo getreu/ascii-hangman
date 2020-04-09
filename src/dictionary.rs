@@ -20,7 +20,7 @@ const UNHIDE_WHEN_GUESSED_CHAR_IDENTIFIER: &str = "success-rewarding";
 /// Tags comment lines in the configuration file.
 pub const CONF_LINE_IDENTIFIER__COMMENT: char = '#';
 
-/// Tags control comman lines in the configuration file.
+/// Tags control common lines in the configuration file.
 pub const CONF_LINE_IDENTIFIER__CONTROL: char = ':';
 
 /// Optionally tags secret strings in config-file. Can be omitted.
@@ -121,7 +121,7 @@ impl Dict {
             .map(|(n,l)| if l.starts_with(CONF_LINE_IDENTIFIER__WORD) {
                              l[1..].trim().to_string()
                         } else {
-                             // Lines starting alphanumericly are secret strings also.
+                             // Lines starting alphanumerically are secret strings also.
                              // We can safely unwrap here since all empty lines had been filtered.
                              let c = l.trim().chars().next().unwrap();
                              if c.is_alphanumeric() || c == CONF_LINE_SECRET_MODIFIER__VISIBLE {

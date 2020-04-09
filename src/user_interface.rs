@@ -12,7 +12,7 @@ use crossterm::style::SetForegroundColor;
 use crossterm::terminal::Clear;
 use crossterm::terminal::ClearType;
 
-/// Titleline.
+/// Title line.
 const TITLE: &str = "ASCII-ART HANGMAN FOR KIDS";
 
 /// Postion of the upper left corner of the image on the screen.

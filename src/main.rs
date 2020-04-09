@@ -64,7 +64,7 @@ images.
 
 When no `[FILE]` argument is given, `[FILE]` defaults to `ascii-hangman-words.txt`. In
 case no `[FILE]` is found, a template configuration file `ascii-hangman-words.txt` is
-written into the current working directory. Multiple `[FILE]`s are concatted.
+written into the current working directory. Multiple `[FILE]`s are concatenated.
 
 `[FILE]` is a UTF-8 file containing 4 different line-types:
 
