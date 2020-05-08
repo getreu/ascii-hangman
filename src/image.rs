@@ -3,16 +3,10 @@
 
 extern crate crossterm;
 extern crate rand;
-use crate::Render;
-use crossterm::cursor::MoveTo;
-use crossterm::queue;
-use crossterm::style::Print;
 use rand::seq::SliceRandom;
 use rand::thread_rng;
 use std::cmp::{Ord, Ordering};
 use std::fmt;
-use std::io::prelude::*;
-use std::io::stdout;
 
 /// Identifier tagging image data in configuration files.
 pub const CONF_LINE_IDENTIFIER__IMAGE: char = '|';
@@ -546,7 +540,7 @@ impl Ord for ImChar {
     }
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq)]
 /// An ASCII-art image.
 pub struct Image {
     pub ichars: Vec<ImChar>,
@@ -555,37 +549,29 @@ pub struct Image {
     pub visible_points: usize,
 }
 
-impl Render for Image {
-    /// Renders and prints the image on the screen. It would be more consistent to implement Display
-    /// for Image, but crossterm does not support `print!(f, ...)`. Therefore, it is not on option
-    /// here.
-    fn render(&self) {
+/// Format an image.
+impl fmt::Display for Image {
+    fn fmt(&self, f: &mut fmt::Formatter) -> Result<(), fmt::Error> {
+        let x_max = self.dimension.0 as usize;
+        let y_max = self.dimension.1 as usize;
+
+        let mut i = vec![' '; ((x_max + 1) * y_max) as usize];
+        for y in 0..y_max {
+            i[((x_max + 1) * y + x_max) as usize] = '\n';
+        }
+
         for ic in self.ichars.iter().take(self.visible_points) {
             let &ImChar {
                 point: (x, y),
                 code,
             } = ic;
-            queue!(
-                stdout(),
-                MoveTo(
-                    (self.offset.0 + (x as usize)) as u16,
-                    (self.offset.1 + (y as usize)) as u16,
-                ),
-                Print(&code),
-            )
-            .unwrap();
+            i[(x as usize + y as usize * (x_max + 1)) ] = code;
         }
-        // after printing the image s, bring the cursor below
-        queue!(
-            stdout(),
-            MoveTo(0, (self.dimension.1 as usize + 1 + self.offset.1) as u16)
-        )
-        .unwrap();
 
-        // Flush queue buffer
-        stdout().flush().unwrap();
+        write!(f, "{}", i.into_iter().collect::<String>())
     }
 }
+
 
 impl Image {
     /// Constructor reading image data from configuration files.
@@ -742,7 +728,20 @@ mod tests {
         assert!(image == expected);
     }
 
-    /// in case of missing custom image, choose built-in
+    #[test]
+    fn test_image_renderer() {
+        let config: &str = r#"
+|>o)
+|(_>   <o)
+|      (_>
+"#;
+        let expected: &str = ">o)      \n(_>   <o)\n      (_>\n";
+        let image = Image::new(&config, (10, 20));
+
+        assert!(image.visible_points > 0);
+        assert_eq!(format!("{}", image), expected);
+    }
+
     #[test]
     fn test_image_parser_built_in_image() {
         let config: &str = "this is no image";
