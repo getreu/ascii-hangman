@@ -35,30 +35,17 @@ pub enum State {
     Defeat,
 }
 
-/// The game state.
+/// The secret
 #[derive(Debug, PartialEq)]
-pub struct Game {
-    secret: Vec<HangmanChar>,
-    pub lives: u8,
-    pub last_guess: char,
+pub struct Secret {
+    chars: Vec<HangmanChar>,
 }
 
-impl Game {
-    /// Derive State from Game data.
-    pub fn get_state(&self) -> State {
-        if self.lives == 0 {
-            State::Defeat
-        } else if self.secret.iter().all(|c| c.visible) {
-            State::Victory
-        } else {
-            State::Ongoing
-        }
-    }
-
+impl Secret {
     /// Constructor.
-    pub fn new(secretstr: &str, lives: u8) -> Self {
+    pub fn new(secretstr: &str) -> Self {
         // parse `secretsstr`, flip 'visible' every CONF_LINE_SECRET_MODIFIER__VISIBLE
-        let w = secretstr
+        let w: Vec<HangmanChar> = secretstr
             .chars()
             // for every * found flip v_acc
             .scan(false, |v_acc, c| {
@@ -77,55 +64,15 @@ impl Game {
             //.inspect(|ref x| println!("after scan:\t{:?}", x))
             .collect();
 
-        Self {
-            secret: w,
-            lives,
-            last_guess: ' ',
-        }
-    }
-
-    /// Process a guess and modify the game state.
-    pub fn guess(&mut self, char_: char) {
-        if char_ == '\n' {
-            return;
-        };
-        self.last_guess = char_;
-        let mut found = false;
-        for h_char in &mut self.secret {
-            if h_char.char_.eq_ignore_ascii_case(&char_) {
-                h_char.visible = true;
-                found = true;
-            }
-        }
-
-        if !found {
-            self.lives -= 1;
-        }
-
-        if self.lives == 0 {
-            for hc in &mut self.secret {
-                hc.visible = true;
-            }
-        }
-    }
-
-    /// The number of disclosed characters of the secret.
-    pub fn visible_chars(&self) -> usize {
-        self.secret.iter().filter(|hc| !hc.visible).count()
+        Self { chars: w }
     }
 }
 
-impl fmt::Display for Game {
+impl fmt::Display for Secret {
     /// Graphical representation of the game state.
     fn fmt(&self, f: &mut fmt::Formatter) -> Result<(), fmt::Error> {
-        writeln!(
-            f,
-            "Lives:\t{}\tLast guess: {}\n",
-            self.lives, self.last_guess
-        )?;
-
         let mut linebreak = false;
-        for (n, c) in self.secret.iter().enumerate() {
+        for (n, c) in self.chars.iter().enumerate() {
             if n % LINE_WIDTH == 0 {
                 linebreak = true
             };
@@ -142,6 +89,82 @@ impl fmt::Display for Game {
         writeln!(f)
     }
 }
+
+/// The game state.
+#[derive(Debug, PartialEq)]
+pub struct Game {
+    secret: Secret,
+    pub lives: u8,
+    pub last_guess: char,
+}
+
+impl Game {
+    /// Derive State from Game data.
+    pub fn get_state(&self) -> State {
+        if self.lives == 0 {
+            State::Defeat
+        } else if self.secret.chars.iter().all(|c| c.visible) {
+            State::Victory
+        } else {
+            State::Ongoing
+        }
+    }
+
+    /// Constructor.
+    pub fn new(secretstr: &str, lives: u8) -> Self {
+        // parse `secretsstr`, flip 'visible' every CONF_LINE_SECRET_MODIFIER__VISIBLE
+        let secret = Secret::new(secretstr);
+
+        Self {
+            secret,
+            lives,
+            last_guess: ' ',
+        }
+    }
+
+    /// Process a guess and modify the game state.
+    pub fn guess(&mut self, char_: char) {
+        if char_ == '\n' {
+            return;
+        };
+        self.last_guess = char_;
+        let mut found = false;
+        for h_char in &mut self.secret.chars {
+            if h_char.char_.eq_ignore_ascii_case(&char_) {
+                h_char.visible = true;
+                found = true;
+            }
+        }
+
+        if !found {
+            self.lives -= 1;
+        }
+
+        if self.lives == 0 {
+            for hc in &mut self.secret.chars {
+                hc.visible = true;
+            }
+        }
+    }
+
+    /// The number of disclosed characters of the secret.
+    pub fn visible_chars(&self) -> usize {
+        self.secret.chars.iter().filter(|hc| !hc.visible).count()
+    }
+}
+
+impl fmt::Display for Game {
+    /// Graphical representation of the game state.
+    fn fmt(&self, f: &mut fmt::Formatter) -> Result<(), fmt::Error> {
+        writeln!(
+            f,
+            "Lives:\t{}\tLast guess: {}\n",
+            self.lives, self.last_guess
+        )?;
+
+        write!(f, "{}", self.secret)
+    }
+}
 // ***********************
 
 #[cfg(test)]
@@ -155,29 +178,31 @@ mod tests {
 
         //println!("{:?}",game);
         let expected = Game {
-            secret: [
-                HangmanChar {
-                    char_: 'a',
-                    visible: true,
-                },
-                HangmanChar {
-                    char_: 'b',
-                    visible: true,
-                },
-                HangmanChar {
-                    char_: ' ',
-                    visible: true,
-                },
-                HangmanChar {
-                    char_: 'c',
-                    visible: false,
-                },
-                HangmanChar {
-                    char_: 'd',
-                    visible: false,
-                },
-            ]
-            .to_vec(),
+            secret: Secret {
+                chars: [
+                    HangmanChar {
+                        char_: 'a',
+                        visible: true,
+                    },
+                    HangmanChar {
+                        char_: 'b',
+                        visible: true,
+                    },
+                    HangmanChar {
+                        char_: ' ',
+                        visible: true,
+                    },
+                    HangmanChar {
+                        char_: 'c',
+                        visible: false,
+                    },
+                    HangmanChar {
+                        char_: 'd',
+                        visible: false,
+                    },
+                ]
+                .to_vec(),
+            },
             lives: 2,
             last_guess: ' ',
         };
@@ -189,29 +214,31 @@ mod tests {
         game.guess('c');
         //println!("{:?}",game);
         let expected = Game {
-            secret: [
-                HangmanChar {
-                    char_: 'a',
-                    visible: true,
-                },
-                HangmanChar {
-                    char_: 'b',
-                    visible: true,
-                },
-                HangmanChar {
-                    char_: ' ',
-                    visible: true,
-                },
-                HangmanChar {
-                    char_: 'c',
-                    visible: true,
-                },
-                HangmanChar {
-                    char_: 'd',
-                    visible: false,
-                },
-            ]
-            .to_vec(),
+            secret: Secret {
+                chars: [
+                    HangmanChar {
+                        char_: 'a',
+                        visible: true,
+                    },
+                    HangmanChar {
+                        char_: 'b',
+                        visible: true,
+                    },
+                    HangmanChar {
+                        char_: ' ',
+                        visible: true,
+                    },
+                    HangmanChar {
+                        char_: 'c',
+                        visible: true,
+                    },
+                    HangmanChar {
+                        char_: 'd',
+                        visible: false,
+                    },
+                ]
+                .to_vec(),
+            },
             lives: 2,
             last_guess: 'c',
         };
@@ -223,29 +250,31 @@ mod tests {
         game.guess('x');
         //println!("{:?}",game);
         let expected = Game {
-            secret: [
-                HangmanChar {
-                    char_: 'a',
-                    visible: true,
-                },
-                HangmanChar {
-                    char_: 'b',
-                    visible: true,
-                },
-                HangmanChar {
-                    char_: ' ',
-                    visible: true,
-                },
-                HangmanChar {
-                    char_: 'c',
-                    visible: true,
-                },
-                HangmanChar {
-                    char_: 'd',
-                    visible: false,
-                },
-            ]
-            .to_vec(),
+            secret: Secret {
+                chars: [
+                    HangmanChar {
+                        char_: 'a',
+                        visible: true,
+                    },
+                    HangmanChar {
+                        char_: 'b',
+                        visible: true,
+                    },
+                    HangmanChar {
+                        char_: ' ',
+                        visible: true,
+                    },
+                    HangmanChar {
+                        char_: 'c',
+                        visible: true,
+                    },
+                    HangmanChar {
+                        char_: 'd',
+                        visible: false,
+                    },
+                ]
+                .to_vec(),
+            },
             lives: 1,
             last_guess: 'x',
         };
@@ -257,29 +286,31 @@ mod tests {
         game.guess('y');
         //println!("{:?}",game);
         let expected = Game {
-            secret: [
-                HangmanChar {
-                    char_: 'a',
-                    visible: true,
-                },
-                HangmanChar {
-                    char_: 'b',
-                    visible: true,
-                },
-                HangmanChar {
-                    char_: ' ',
-                    visible: true,
-                },
-                HangmanChar {
-                    char_: 'c',
-                    visible: true,
-                },
-                HangmanChar {
-                    char_: 'd',
-                    visible: true,
-                },
-            ]
-            .to_vec(),
+            secret: Secret {
+                chars: [
+                    HangmanChar {
+                        char_: 'a',
+                        visible: true,
+                    },
+                    HangmanChar {
+                        char_: 'b',
+                        visible: true,
+                    },
+                    HangmanChar {
+                        char_: ' ',
+                        visible: true,
+                    },
+                    HangmanChar {
+                        char_: 'c',
+                        visible: true,
+                    },
+                    HangmanChar {
+                        char_: 'd',
+                        visible: true,
+                    },
+                ]
+                .to_vec(),
+            },
             lives: 0,
             last_guess: 'y',
         };
