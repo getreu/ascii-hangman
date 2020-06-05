@@ -565,13 +565,12 @@ impl fmt::Display for Image {
                 point: (x, y),
                 code,
             } = ic;
-            i[(x as usize + y as usize * (x_max + 1)) ] = code;
+            i[(x as usize + y as usize * (x_max + 1))] = code;
         }
 
         write!(f, "{}", i.into_iter().collect::<String>())
     }
 }
-
 
 impl Image {
     /// Constructor reading image data from configuration files.

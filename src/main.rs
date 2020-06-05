@@ -284,16 +284,16 @@ fn main() {
                     dict.add(secret);
                     break 'running_game;
                 }
-                _ => {}
+                State::Ongoing => {
+                    print!("Type a letter, then press [Enter]: ");
+                    io::stdout().flush().unwrap();
+
+                    // Read next char and send it
+                    let guess = &mut String::new();
+                    io::stdin().read_line(guess).unwrap();
+                    game.guess(guess.chars().next().unwrap_or(' '));
+                }
             }
-
-            print!("Type a letter, then press [Enter]: ");
-            io::stdout().flush().unwrap();
-
-            // Read next char and send it
-            let guess = &mut String::new();
-            io::stdin().read_line(guess).unwrap();
-            game.guess(guess.chars().next().unwrap_or(' '));
         }
 
         if dict.is_empty() {

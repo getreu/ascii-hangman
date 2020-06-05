@@ -46,7 +46,7 @@ impl Render for UserInterface {
         )
         .unwrap();
 
-        println!("{}",self.image);
+        println!("{}", self.image);
 
         // print message field
         let mut emph = false;
