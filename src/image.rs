@@ -4,6 +4,8 @@
 extern crate crossterm;
 extern crate rand;
 use crate::dictionary::ConfigParseError;
+use crate::game::Game;
+use crate::LIVES;
 use rand::seq::SliceRandom;
 use rand::thread_rng;
 use std::cmp::{Ord, Ordering};
@@ -701,8 +703,20 @@ impl Image {
         }
     }
 
+    /// Discloses parts of the image according to the course of the play.
+    pub fn update(&mut self, game: &Game) {
+        match self.rewarding_scheme {
+            RewardingScheme::UnhideWhenGuessedChar => {
+                self.hide((game.secret.visible_chars(), game.secret.chars_to_guess));
+            }
+            RewardingScheme::UnhideWhenLostLife => {
+                self.hide((game.lives as usize, LIVES as usize));
+            }
+        };
+    }
+
     /// Sets how much of the image will be disclosed next time the image is rendered.
-    pub fn hide(&mut self, fraction: (usize, usize)) {
+    fn hide(&mut self, fraction: (usize, usize)) {
         let l = self.ichars.len();
 
         let as_points = |(n, d)| (5 * l * (d - n) as usize / d as usize + l) / 6;

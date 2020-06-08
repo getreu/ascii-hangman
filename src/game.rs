@@ -43,6 +43,7 @@ pub enum State {
 #[derive(Debug, PartialEq)]
 pub struct Secret {
     chars: Vec<HangmanChar>,
+    pub chars_to_guess: usize,
 }
 
 impl Secret {
@@ -68,7 +69,16 @@ impl Secret {
             //.inspect(|ref x| println!("after scan:\t{:?}", x))
             .collect();
 
-        Self { chars: w }
+        let chars_to_guess = w.iter().filter(|hc| !hc.visible).count();
+
+        Self {
+            chars: w,
+            chars_to_guess,
+        }
+    }
+
+    pub fn visible_chars(&self) -> usize {
+        self.chars.iter().filter(|hc| !hc.visible).count()
     }
 }
 
@@ -97,7 +107,7 @@ impl fmt::Display for Secret {
 /// The game state.
 #[derive(Debug, PartialEq)]
 pub struct Game {
-    secret: Secret,
+    pub secret: Secret,
     pub lives: u8,
     pub last_guess: char,
     pub state: State,
@@ -109,7 +119,6 @@ impl Game {
     pub fn new(secretstr: &str, lives: u8, last_game: bool) -> Self {
         // parse `secretsstr`, flip 'visible' every CONF_LINE_SECRET_MODIFIER__VISIBLE
         let secret = Secret::new(secretstr);
-
         Self {
             secret,
             lives,
@@ -156,11 +165,6 @@ impl Game {
         } else {
             State::Ongoing
         };
-    }
-
-    /// The number of disclosed characters of the secret.
-    pub fn visible_chars(&self) -> usize {
-        self.secret.chars.iter().filter(|hc| !hc.visible).count()
     }
 }
 
@@ -213,6 +217,7 @@ mod tests {
                     },
                 ]
                 .to_vec(),
+                chars_to_guess: 2,
             },
             lives: 2,
             last_guess: ' ',
@@ -220,7 +225,7 @@ mod tests {
             last_game: true,
         };
 
-        assert!(game == expected);
+        assert_eq!(game, expected);
 
         // now we guess right
         game.guess('c');
@@ -250,6 +255,7 @@ mod tests {
                     },
                 ]
                 .to_vec(),
+                chars_to_guess: 2,
             },
             lives: 2,
             last_guess: 'c',
@@ -257,7 +263,7 @@ mod tests {
             last_game: true,
         };
 
-        assert!(game == expected);
+        assert_eq!(game, expected);
 
         // now we guess wrong
         game.guess('x');
@@ -287,6 +293,7 @@ mod tests {
                     },
                 ]
                 .to_vec(),
+                chars_to_guess: 2,
             },
             lives: 1,
             last_guess: 'x',
@@ -294,7 +301,7 @@ mod tests {
             last_game: true,
         };
 
-        assert!(game == expected);
+        assert_eq!(game, expected);
 
         // we guess wrong again and we loose
         game.guess('y');
@@ -324,6 +331,7 @@ mod tests {
                     },
                 ]
                 .to_vec(),
+                chars_to_guess: 2,
             },
             lives: 0,
             last_guess: 'y',
@@ -331,6 +339,6 @@ mod tests {
             last_game: true,
         };
 
-        assert!(game == expected);
+        assert_eq!(game, expected);
     }
 }

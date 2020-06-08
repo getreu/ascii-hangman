@@ -8,7 +8,6 @@ mod user_interface;
 use user_interface::UserInterface;
 mod dictionary;
 use dictionary::Dict;
-use image::RewardingScheme;
 mod image;
 use std::env;
 use std::fs::File;
@@ -260,19 +259,9 @@ fn main() {
             Some(w) => w.to_owned(),
         };
         let mut game = Game::new(&secret, LIVES, dict.is_empty());
-        let chars_to_guess = game.visible_chars();
 
         // The game loop
         'running_game: loop {
-            match ui.image.rewarding_scheme {
-                RewardingScheme::UnhideWhenGuessedChar => {
-                    ui.image.hide((game.visible_chars(), chars_to_guess));
-                }
-                RewardingScheme::UnhideWhenLostLife => {
-                    ui.image.hide((game.lives as usize, LIVES as usize));
-                }
-            };
-
             let answer = ui.render(&game);
 
             match game.state {

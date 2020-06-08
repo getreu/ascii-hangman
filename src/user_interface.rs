@@ -31,7 +31,10 @@ pub struct UserInterface {
 impl UserInterface {
     /// Renders and prints the TUI.  It would be more consistent to implement Display for Image,
     /// but crossterm does not support `print!(f, ...)`. Therefor, it is not on option here.
-    pub fn render(&self, game: &Game) -> String {
+    pub fn render(&mut self, game: &Game) -> String {
+        // Disclose parts of the image.
+        self.image.update(&game);
+
         // Clear all lines in terminal;
         queue!(stdout(), Clear(ClearType::All), MoveTo(0, 0)).unwrap();
 
