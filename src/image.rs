@@ -1,7 +1,6 @@
 //! Holds a dictionary of built-in ASCII art images and manages the piecemeal disclosure to the
 //! image.  Also parses user provided images if given in the configuration file.
 
-extern crate crossterm;
 extern crate rand;
 use crate::dictionary::ConfigParseError;
 use crate::game::Game;
@@ -571,7 +570,6 @@ impl Ord for ImChar {
 /// An ASCII-art image.
 pub struct Image {
     pub ichars: Vec<ImChar>,
-    pub offset: (usize, usize),
     pub dimension: (u8, u8),
     pub visible_points: usize,
     pub rewarding_scheme: RewardingScheme,
@@ -602,7 +600,7 @@ impl fmt::Display for Image {
 
 impl Image {
     /// Constructor reading image data from configuration files.
-    pub fn new(string: &str, offset: (usize, usize)) -> Result<Self, ConfigParseError> {
+    pub fn new(string: &str) -> Result<Self, ConfigParseError> {
         let mut v: Vec<ImChar> = Vec::new();
         let mut rewarding_scheme = DEFAULT_REWARDING_SCHEME;
         let mut file_syntax_test1: Result<(), ConfigParseError> = Ok(());
@@ -691,11 +689,10 @@ impl Image {
         if v.is_empty() {
             let mut rng = thread_rng();
             // this is recursive!
-            Self::new((&DEFAULT_IMAGES).choose(&mut rng).unwrap(), offset)
+            Self::new((&DEFAULT_IMAGES).choose(&mut rng).unwrap())
         } else {
             Ok(Self {
                 ichars: v,
-                offset,
                 dimension,
                 visible_points: v_len,
                 rewarding_scheme,
@@ -740,7 +737,7 @@ mod tests {
         let config: &str = r#"
 |ab
 |cd"#;
-        let image = Image::new(&config, (10, 20));
+        let image = Image::new(&config);
         //println!("{:?}",image);
         let expected = Ok(Image {
             ichars: [
@@ -762,7 +759,6 @@ mod tests {
                 },
             ]
             .to_vec(),
-            offset: (10, 20),
             dimension: (2, 2),
             visible_points: 4,
             rewarding_scheme: DEFAULT_REWARDING_SCHEME,
@@ -777,7 +773,7 @@ mod tests {
         let config: &str = r#"
 |/\
 \/"#;
-        let image = Image::new(&config, (10, 20)).unwrap();
+        let image = Image::new(&config).unwrap();
         //println!("{:?}",image);
         let expected = Image {
             ichars: [
@@ -791,7 +787,6 @@ mod tests {
                 },
             ]
             .to_vec(),
-            offset: (10, 20),
             dimension: (2, 1),
             visible_points: 2,
             rewarding_scheme: DEFAULT_REWARDING_SCHEME,
@@ -808,7 +803,7 @@ mod tests {
 |      (_>
 "#;
         let expected: &str = ">o)      \n(_>   <o)\n      (_>\n";
-        let image = Image::new(&config, (10, 20)).unwrap();
+        let image = Image::new(&config).unwrap();
 
         assert!(image.visible_points > 0);
         assert_eq!(format!("{}", image), expected);
@@ -817,7 +812,7 @@ mod tests {
     #[test]
     fn test_image_parser_built_in_image() {
         let config: &str = "this is no image";
-        let image = Image::new(&config, (10, 20)).unwrap();
+        let image = Image::new(&config).unwrap();
         //println!("{:?}",image);
 
         assert!(image.visible_points > 0);
@@ -827,7 +822,7 @@ mod tests {
     #[test]
     fn test_image_parser_disclose() {
         let config: &str = "|abcde";
-        let mut image = Image::new(&config, (10, 20)).unwrap();
+        let mut image = Image::new(&config).unwrap();
         //println!("{:?}",image);
         let expected = Image {
             ichars: [
@@ -853,7 +848,6 @@ mod tests {
                 },
             ]
             .to_vec(),
-            offset: (10, 20),
             dimension: (5, 1),
             visible_points: 5,
             rewarding_scheme: DEFAULT_REWARDING_SCHEME,
@@ -876,7 +870,7 @@ mod tests {
     #[test]
     fn test_image_parser_error_misspelled() {
         let config = "\n\n:traditional-rewardXing";
-        let dict = Image::new(&config, (0, 0));
+        let dict = Image::new(&config);
         let expected = Err(ConfigParseError::GameModifier {
             line_number: 3,
             line: ":traditional-rewardXing".to_string(),

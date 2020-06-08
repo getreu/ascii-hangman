@@ -16,10 +16,7 @@ use crossterm::terminal::ClearType;
 use std::io;
 
 /// Title line.
-const TITLE: &str = "ASCII-ART HANGMAN FOR KIDS";
-
-/// Postion of the upper left corner of the image on the screen.
-const OFFSET: (usize, usize) = (1, 2);
+const TITLE: &str = "ASCII-ART HANGMAN FOR KIDS\n";
 
 /// State of the TUI.
 #[derive(Debug)]
@@ -112,7 +109,7 @@ impl UserInterface {
     /// Constructor.
     pub fn new(config: &str) -> Result<Self, ConfigParseError> {
         Ok(Self {
-            image: Image::new(&config, OFFSET)?,
+            image: Image::new(&config)?,
         })
     }
 }
