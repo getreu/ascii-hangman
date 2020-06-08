@@ -137,13 +137,6 @@ const CONF_DEMO: &str = "- _Demo: add own words to config file and start a_gain_
 
 // ------------------ MAIN ---------------------------------------------
 
-trait Render {
-    /// Renders a graphical text representation of Self. It would be more consistent to implement
-    /// Display instead, but crossterm does not support `print!(f, ...)`. Therefore, it is not on
-    /// option here.
-    fn render(&self);
-}
-
 /// Reads the configuration file.
 pub fn read_config(pathstr: &PathBuf) -> Result<String, io::Error> {
     let mut f = File::open(pathstr)?;
@@ -270,54 +263,33 @@ fn main() {
                 }
             };
 
-            ui.message = format!("{}\n", game);
-            ui.render();
+            let answer = ui.render(&game);
 
             match game.state {
                 State::Victory => {
-                    println!("Congratulations! You won!");
-                    println!("New game? Type [Y]es or [n]o: ");
-                    let s = &mut String::new();
-                    io::stdin().read_line(s).unwrap();
-                    let answer = s.chars().next().unwrap_or('Y');
-
-                    if answer == 'N' || answer == 'n' {
+                    let a = answer.chars().next().unwrap_or('Y');
+                    if a == 'N' || a == 'n' {
                         break 'playing;
                     } else {
                         continue 'playing;
                     }
                 }
                 State::VictoryGameOver => {
-                    println!("Congratulations! You won!");
-                    println!("There are no more secrets to guess. Game over. Press any key.");
-                    let s = &mut String::new();
-                    io::stdin().read_line(s).unwrap();
                     break 'playing;
                 }
                 State::Defeat | State::DefeatGameOver => {
-                    println!("You lost.");
                     // We will ask this again, so we never end the round with a defeat.
                     dict.add(secret.clone());
 
-                    println!("New game? Type [Y]es or [n]o: ");
-                    let s = &mut String::new();
-                    io::stdin().read_line(s).unwrap();
-                    let answer = s.chars().next().unwrap_or('Y');
-
-                    if answer == 'N' || answer == 'n' {
+                    let a = answer.chars().next().unwrap_or('Y');
+                    if a == 'N' || a == 'n' {
                         break 'playing;
                     } else {
                         continue 'playing;
                     }
                 }
                 State::Ongoing => {
-                    print!("Type a letter, then press [Enter]: ");
-                    io::stdout().flush().unwrap();
-
-                    // Read next char and send it
-                    let guess = &mut String::new();
-                    io::stdin().read_line(guess).unwrap();
-                    game.guess(guess.chars().next().unwrap_or(' '));
+                    game.guess(answer.chars().next().unwrap_or(' '));
                 }
             }
         }
