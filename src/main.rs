@@ -253,11 +253,7 @@ fn main() {
 
     // PLAY
 
-    'playing: loop {
-        let secret = match &mut dict.get_random_secret() {
-            None => break 'playing,
-            Some(w) => w.to_owned(),
-        };
+    'playing: while let Some(secret) = dict.get_random_secret() {
         let mut game = Game::new(&secret, LIVES, dict.is_empty());
 
         // The game loop
