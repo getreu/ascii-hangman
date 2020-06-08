@@ -160,6 +160,7 @@ pub fn write_config_template(pathstr: &PathBuf) -> Result<(), io::Error> {
 }
 
 /// Starts the game.
+#[allow(unused_labels)]
 fn main() {
     // SHOW HELP TEXT
     match env::args().nth(1) {
@@ -187,7 +188,7 @@ fn main() {
         conf_file_paths.push(PathBuf::from(PATHSTR))
     };
 
-    // read and concat all config files given on command line
+    // read and concatenate all config files given on command line
     let cwd = env::current_dir().unwrap();
 
     let mut config: String = String::new();
@@ -255,11 +256,10 @@ fn main() {
             None => break 'playing,
             Some(w) => w.to_owned(),
         };
-        let mut game = Game::new(&secret, LIVES);
+        let mut game = Game::new(&secret, LIVES, dict.is_empty());
         let chars_to_guess = game.visible_chars();
 
         // The game loop
-
         'running_game: loop {
             match dict.rewarding_scheme {
                 RewardingScheme::UnhideWhenGuessedChar => {
@@ -273,16 +273,42 @@ fn main() {
             ui.message = format!("{}\n", game);
             ui.render();
 
-            match game.get_state() {
+            match game.state {
                 State::Victory => {
                     println!("Congratulations! You won!");
-                    break 'running_game;
+                    println!("New game? Type [Y]es or [n]o: ");
+                    let s = &mut String::new();
+                    io::stdin().read_line(s).unwrap();
+                    let answer = s.chars().next().unwrap_or('Y');
+
+                    if answer == 'N' || answer == 'n' {
+                        break 'playing;
+                    } else {
+                        continue 'playing;
+                    }
                 }
-                State::Defeat => {
-                    println!("Sorry, you lost! Better luck next time!");
-                    // We will ask this again
-                    dict.add(secret);
-                    break 'running_game;
+                State::VictoryGameOver => {
+                    println!("Congratulations! You won!");
+                    println!("There are no more secrets to guess. Game over. Press any key.");
+                    let s = &mut String::new();
+                    io::stdin().read_line(s).unwrap();
+                    break 'playing;
+                }
+                State::Defeat | State::DefeatGameOver => {
+                    println!("You lost.");
+                    // We will ask this again, so we never end the round with a defeat.
+                    dict.add(secret.clone());
+
+                    println!("New game? Type [Y]es or [n]o: ");
+                    let s = &mut String::new();
+                    io::stdin().read_line(s).unwrap();
+                    let answer = s.chars().next().unwrap_or('Y');
+
+                    if answer == 'N' || answer == 'n' {
+                        break 'playing;
+                    } else {
+                        continue 'playing;
+                    }
                 }
                 State::Ongoing => {
                     print!("Type a letter, then press [Enter]: ");
@@ -295,22 +321,6 @@ fn main() {
                 }
             }
         }
-
-        if dict.is_empty() {
-            println!("Game over. Press any key.");
-            let s = &mut String::new();
-            io::stdin().read_line(s).unwrap();
-            break 'playing;
-        };
-
-        println!("New game? Type [Y]es or [n]o: ");
-        let s = &mut String::new();
-        io::stdin().read_line(s).unwrap();
-        let answer = s.chars().next().unwrap_or('Y');
-
-        if answer == 'N' || answer == 'n' {
-            break 'playing;
-        };
     }
 
     println!("\n{}", AUTHOR);

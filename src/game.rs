@@ -25,14 +25,18 @@ impl fmt::Display for HangmanChar {
 }
 
 /// A subset of the game state. Can be derived from `Game` struct.
-#[derive(PartialEq)]
+#[derive(Debug, PartialEq)]
 pub enum State {
     /// The game is ongoing.
     Ongoing,
-    /// The player won.
+    /// The player won and the game is continuable.
     Victory,
-    /// The player lost.
+    /// The player lost and the game is continuable.
     Defeat,
+    /// The player won and there are no more words to guess.
+    VictoryGameOver,
+    /// The player lost and there are no more secrets to guess.
+    DefeatGameOver,
 }
 
 /// The secret
@@ -96,22 +100,13 @@ pub struct Game {
     secret: Secret,
     pub lives: u8,
     pub last_guess: char,
+    pub state: State,
+    pub last_game: bool,
 }
 
 impl Game {
-    /// Derive State from Game data.
-    pub fn get_state(&self) -> State {
-        if self.lives == 0 {
-            State::Defeat
-        } else if self.secret.chars.iter().all(|c| c.visible) {
-            State::Victory
-        } else {
-            State::Ongoing
-        }
-    }
-
     /// Constructor.
-    pub fn new(secretstr: &str, lives: u8) -> Self {
+    pub fn new(secretstr: &str, lives: u8, last_game: bool) -> Self {
         // parse `secretsstr`, flip 'visible' every CONF_LINE_SECRET_MODIFIER__VISIBLE
         let secret = Secret::new(secretstr);
 
@@ -119,6 +114,8 @@ impl Game {
             secret,
             lives,
             last_guess: ' ',
+            state: State::Ongoing,
+            last_game,
         }
     }
 
@@ -140,11 +137,25 @@ impl Game {
             self.lives -= 1;
         }
 
-        if self.lives == 0 {
+        self.state = if self.lives == 0 {
+            // Disclose the secret
             for hc in &mut self.secret.chars {
                 hc.visible = true;
             }
-        }
+            if self.last_game {
+                State::DefeatGameOver
+            } else {
+                State::Defeat
+            }
+        } else if self.secret.chars.iter().all(|c| c.visible) {
+            if self.last_game {
+                State::VictoryGameOver
+            } else {
+                State::Victory
+            }
+        } else {
+            State::Ongoing
+        };
     }
 
     /// The number of disclosed characters of the secret.
@@ -174,7 +185,7 @@ mod tests {
     /// Play simulation
     #[test]
     fn test_game_simulation() {
-        let mut game = Game::new("_ab _cd", 2);
+        let mut game = Game::new("_ab _cd", 2, true);
 
         //println!("{:?}",game);
         let expected = Game {
@@ -205,10 +216,11 @@ mod tests {
             },
             lives: 2,
             last_guess: ' ',
+            state: State::Ongoing,
+            last_game: true,
         };
 
         assert!(game == expected);
-        assert!(game.get_state() == State::Ongoing);
 
         // now we guess right
         game.guess('c');
@@ -241,10 +253,11 @@ mod tests {
             },
             lives: 2,
             last_guess: 'c',
+            state: State::Ongoing,
+            last_game: true,
         };
 
         assert!(game == expected);
-        assert!(game.get_state() == State::Ongoing);
 
         // now we guess wrong
         game.guess('x');
@@ -277,10 +290,11 @@ mod tests {
             },
             lives: 1,
             last_guess: 'x',
+            state: State::Ongoing,
+            last_game: true,
         };
 
         assert!(game == expected);
-        assert!(game.get_state() == State::Ongoing);
 
         // we guess wrong again and we loose
         game.guess('y');
@@ -313,9 +327,10 @@ mod tests {
             },
             lives: 0,
             last_guess: 'y',
+            state: State::DefeatGameOver,
+            last_game: true,
         };
 
         assert!(game == expected);
-        assert!(game.get_state() == State::Defeat);
     }
 }

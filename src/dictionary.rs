@@ -169,7 +169,7 @@ impl Dict {
         }
     }
 
-    /// Is the dictionary empty?
+    /// Is there exactly one secret left?
     pub fn is_empty(&self) -> bool {
         self.wordlist.is_empty()
     }
