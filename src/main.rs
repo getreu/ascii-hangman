@@ -8,7 +8,7 @@ mod user_interface;
 use user_interface::UserInterface;
 mod dictionary;
 use dictionary::Dict;
-use dictionary::RewardingScheme;
+use image::RewardingScheme;
 mod image;
 use std::env;
 use std::fs::File;
@@ -228,7 +228,17 @@ fn main() {
 
     // INITIALISE GAME
 
-    let mut ui = UserInterface::new(&config);
+    let mut ui = match UserInterface::new(&config) {
+        Ok(d) => d,
+        Err(e) => {
+            eprintln!("ERROR IN CONFIGURATION FILE\n{}", e);
+
+            // wait for [Enter] key
+            let s = &mut String::new();
+            io::stdin().read_line(s).unwrap();
+            process::exit(1);
+        }
+    };
 
     let mut dict = match Dict::new(&config) {
         Ok(d) => d,
@@ -254,7 +264,7 @@ fn main() {
 
         // The game loop
         'running_game: loop {
-            match dict.rewarding_scheme {
+            match ui.image.rewarding_scheme {
                 RewardingScheme::UnhideWhenGuessedChar => {
                     ui.image.hide((game.visible_chars(), chars_to_guess));
                 }

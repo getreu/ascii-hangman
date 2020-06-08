@@ -4,6 +4,7 @@ use crate::game::State;
 use crate::image::Image;
 use std::io::{stdout, Write};
 extern crate crossterm;
+use crate::dictionary::ConfigParseError;
 use crossterm::cursor::MoveTo;
 use crossterm::cursor::MoveToNextLine;
 use crossterm::queue;
@@ -106,9 +107,9 @@ impl UserInterface {
 
 impl UserInterface {
     /// Constructor.
-    pub fn new(config: &str) -> Self {
-        Self {
-            image: Image::new(&config, OFFSET),
-        }
+    pub fn new(config: &str) -> Result<Self, ConfigParseError> {
+        Ok(Self {
+            image: Image::new(&config, OFFSET)?,
+        })
     }
 }

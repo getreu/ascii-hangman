@@ -2,26 +2,13 @@
 
 #![allow(clippy::filter_map)]
 extern crate rand;
+use crate::image::CONF_LINE_IDENTIFIER__CONTROL;
 use crate::image::CONF_LINE_IDENTIFIER__IMAGE;
 use rand::Rng;
 use thiserror::Error;
 
-/// Default game mode. Can be changed in the configuration file.
-const DEFAULT_REWARDING_SCHEME: RewardingScheme = RewardingScheme::UnhideWhenGuessedChar;
-
-/// Keyword in the configuration file to switch rewarding scheme in the enum `RewardingScheme`
-/// to `UnHideWhenLostLife`
-const UNHIDE_WHEN_LOST_LIVE_IDENTIFIER: &str = "traditional-rewarding";
-
-/// Keyword in the configuration file to switch rewarding scheme in the enum `RewardingScheme`
-/// to `UnHideWhenGuessedChar`
-const UNHIDE_WHEN_GUESSED_CHAR_IDENTIFIER: &str = "success-rewarding";
-
 /// Tags comment lines in the configuration file.
 pub const CONF_LINE_IDENTIFIER__COMMENT: char = '#';
-
-/// Tags control common lines in the configuration file.
-pub const CONF_LINE_IDENTIFIER__CONTROL: char = ':';
 
 /// Optionally tags secret strings in config-file. Can be omitted.
 pub const CONF_LINE_IDENTIFIER__WORD: char = '-';
@@ -34,7 +21,7 @@ pub const CONF_LINE_SECRET_MODIFIER__VISIBLE: char = '_';
 #[derive(Error, Debug, PartialEq)]
 pub enum ConfigParseError {
     #[error(
-        "Syntax error in line {line_number:?}: `{line}`\n\n\"
+        "Syntax error in line {line_number:?}: `{line}`\n\n\
     The game modifier must be one of the following:\n\
         :traditional-rewarding\n\
         :success-rewarding\n\n\
@@ -57,31 +44,17 @@ pub enum ConfigParseError {
     NoSecretString,
 }
 
-/// A game mode defining how the ASCII-art image will be disclosed progressively.
-#[derive(Debug, PartialEq)]
-pub enum RewardingScheme {
-    /// Game mode that is used together with the traditional gallows image (the gallows image
-    /// is not build in, but can be added in the configuration file. The image is disclosed
-    /// piecemeal after each wrong guess.
-    UnhideWhenLostLife,
-    /// Default game mode. The image is disclosed piecemeal after each right guess.
-    UnhideWhenGuessedChar,
-}
-
 /// A dictionary holding all secret sentences from among whom one is chosen randomly at the
 /// beginning of the game.
 #[derive(Debug, PartialEq)]
 pub struct Dict {
     wordlist: Vec<String>,
-    pub rewarding_scheme: RewardingScheme,
 }
 
 impl Dict {
     /// Parses the configuration data, sets game modifier variables and populates the dictionary
     /// with secrets.
     pub fn new(lines: &str) -> Result<Self, ConfigParseError> {
-        let mut rewarding_scheme = DEFAULT_REWARDING_SCHEME;
-        let mut file_syntax_test1: Result<(), ConfigParseError> = Ok(());
         let mut file_syntax_test2: Result<(), ConfigParseError> = Ok(());
 
         let wordlist =
@@ -90,28 +63,6 @@ impl Dict {
             // interpret identifier line
             .lines()
             .enumerate()
-            .filter(|&(n,l)| {
-                if l.starts_with(CONF_LINE_IDENTIFIER__CONTROL) {
-                    if l[1..].trim() == UNHIDE_WHEN_LOST_LIVE_IDENTIFIER {
-                        rewarding_scheme = RewardingScheme::UnhideWhenLostLife;
-                        false
-                    }
-                    else if l[1..].trim() == UNHIDE_WHEN_GUESSED_CHAR_IDENTIFIER {
-                        rewarding_scheme = RewardingScheme::UnhideWhenGuessedChar;
-                        false
-                    }
-                    else {
-                        // we only save the first error
-                        if file_syntax_test1.is_ok() {
-                            file_syntax_test1 = Err(ConfigParseError::GameModifier {
-                                line_number: n+1, line: l.to_string() });
-                        };
-                        false
-                    }
-                } else {
-                    true
-                }
-            })
             .filter(|&(_,l)|!( l.trim().is_empty() ||
                           l.starts_with(CONF_LINE_IDENTIFIER__COMMENT) ||
                           l.starts_with(CONF_LINE_IDENTIFIER__CONTROL) ||
@@ -139,9 +90,6 @@ impl Dict {
             )
             .collect::<Vec<String>>();
 
-        if file_syntax_test1.is_err() {
-            return Err(file_syntax_test1.unwrap_err());
-        };
         if file_syntax_test2.is_err() {
             return Err(file_syntax_test2.unwrap_err());
         };
@@ -150,10 +98,7 @@ impl Dict {
             return Err(ConfigParseError::NoSecretString {});
         }
 
-        Ok(Dict {
-            wordlist,
-            rewarding_scheme,
-        })
+        Ok(Dict { wordlist })
     }
 
     /// Chooses randomly one secret from the dictionary and removes the secret from list
@@ -184,7 +129,7 @@ impl Dict {
 
 #[cfg(test)]
 mod tests {
-    use super::{ConfigParseError, Dict, RewardingScheme};
+    use super::{ConfigParseError, Dict};
 
     /// parse all 3 data types in configuration file format
     #[test]
@@ -204,9 +149,8 @@ _good l_uck
                 "hang_man_".to_string(),
                 "_good l_uck".to_string(),
             ],
-            rewarding_scheme: RewardingScheme::UnhideWhenLostLife,
         });
-        assert!(dict == expected);
+        assert_eq!(dict, expected);
     }
 
     /// indent of secrets is allowed
@@ -217,7 +161,6 @@ _good l_uck
         let expected = Ok(Dict {
             wordlist: vec!["guess me".to_string()],
             // this is default
-            rewarding_scheme: RewardingScheme::UnhideWhenGuessedChar,
         });
         assert!(dict == expected);
     }
@@ -234,30 +177,6 @@ _good l_uck
         assert!(dict == expected);
     }
 
-    /// indent of game modifier is not allowed
-    #[test]
-    fn test_dictionary_parser_error_indent2() {
-        let config = "\n\n\n\n :success-rewarding";
-        let dict = Dict::new(&config);
-        let expected = Err(ConfigParseError::LineIdentifier {
-            line_number: 5,
-            line: " :success-rewarding".to_string(),
-        });
-        assert!(dict == expected);
-    }
-
-    /// test game modifier spelling
-    #[test]
-    fn test_dictionary_parser_error_misspelled() {
-        let config = "\n\n:traditional-rewardXing";
-        let dict = Dict::new(&config);
-        let expected = Err(ConfigParseError::GameModifier {
-            line_number: 3,
-            line: ":traditional-rewardXing".to_string(),
-        });
-        assert!(dict == expected);
-    }
-
     /// configuration must define at least one secret
     #[test]
     fn test_dictionary_parser_error_no_secrets() {
@@ -265,5 +184,16 @@ _good l_uck
         let dict = Dict::new(&config);
         let expected = Err(ConfigParseError::NoSecretString {});
         assert!(dict == expected);
+    }
+
+    #[test]
+    fn test_image_parser_error_indent() {
+        let config = "one secret\n\n :traditional-rewarding";
+        let dict = Dict::new(&config);
+        let expected = Err(ConfigParseError::LineIdentifier {
+            line_number: 3,
+            line: " :traditional-rewarding".to_string(),
+        });
+        assert_eq!(dict, expected);
     }
 }

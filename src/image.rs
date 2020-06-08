@@ -3,6 +3,7 @@
 
 extern crate crossterm;
 extern crate rand;
+use crate::dictionary::ConfigParseError;
 use rand::seq::SliceRandom;
 use rand::thread_rng;
 use std::cmp::{Ord, Ordering};
@@ -10,6 +11,20 @@ use std::fmt;
 
 /// Identifier tagging image data in configuration files.
 pub const CONF_LINE_IDENTIFIER__IMAGE: char = '|';
+
+/// Tags control common lines in the configuration file.
+pub const CONF_LINE_IDENTIFIER__CONTROL: char = ':';
+
+/// Default game mode. Can be changed in the configuration file.
+const DEFAULT_REWARDING_SCHEME: RewardingScheme = RewardingScheme::UnhideWhenGuessedChar;
+
+/// Keyword in the configuration file to switch rewarding scheme in the enum `RewardingScheme`
+/// to `UnHideWhenLostLife`
+const UNHIDE_WHEN_LOST_LIVE_IDENTIFIER: &str = "traditional-rewarding";
+
+/// Keyword in the configuration file to switch rewarding scheme in the enum `RewardingScheme`
+/// to `UnHideWhenGuessedChar`
+const UNHIDE_WHEN_GUESSED_CHAR_IDENTIFIER: &str = "success-rewarding";
 
 /// Threshold to decide from how many characters on the images is considered to be "big".
 /// Big images are disclosed with another algorithm.
@@ -512,6 +527,16 @@ const DEFAULT_IMAGES: &[&str] = &[
 "#,
 ];
 
+/// A game mode defining how the ASCII-art image will be disclosed progressively.
+#[derive(Clone, Debug, PartialEq)]
+pub enum RewardingScheme {
+    /// Game mode that is used together with the traditional gallows image (the gallows image
+    /// is not build in, but can be added in the configuration file. The image is disclosed
+    /// piecemeal after each wrong guess.
+    UnhideWhenLostLife,
+    /// Default game mode. The image is disclosed piecemeal after each right guess.
+    UnhideWhenGuessedChar,
+}
 /// One character of the ASCII art image.
 #[derive(PartialOrd, Eq, PartialEq, Debug, Copy, Clone)] //omitting Ord
 pub struct ImChar {
@@ -547,6 +572,7 @@ pub struct Image {
     pub offset: (usize, usize),
     pub dimension: (u8, u8),
     pub visible_points: usize,
+    pub rewarding_scheme: RewardingScheme,
 }
 
 /// Format an image.
@@ -574,12 +600,38 @@ impl fmt::Display for Image {
 
 impl Image {
     /// Constructor reading image data from configuration files.
-    pub fn new(string: &str, offset: (usize, usize)) -> Self {
+    pub fn new(string: &str, offset: (usize, usize)) -> Result<Self, ConfigParseError> {
         let mut v: Vec<ImChar> = Vec::new();
+        let mut rewarding_scheme = DEFAULT_REWARDING_SCHEME;
+        let mut file_syntax_test1: Result<(), ConfigParseError> = Ok(());
 
         for (y, line) in string
             // split in lines
             .lines()
+            .enumerate()
+            .filter(|&(n, l)| {
+                if l.starts_with(CONF_LINE_IDENTIFIER__CONTROL) {
+                    if l[1..].trim() == UNHIDE_WHEN_LOST_LIVE_IDENTIFIER {
+                        rewarding_scheme = RewardingScheme::UnhideWhenLostLife;
+                        false
+                    } else if l[1..].trim() == UNHIDE_WHEN_GUESSED_CHAR_IDENTIFIER {
+                        rewarding_scheme = RewardingScheme::UnhideWhenGuessedChar;
+                        false
+                    } else {
+                        // we only save the first error
+                        if file_syntax_test1.is_ok() {
+                            file_syntax_test1 = Err(ConfigParseError::GameModifier {
+                                line_number: n + 1,
+                                line: l.to_string(),
+                            });
+                        };
+                        false
+                    }
+                } else {
+                    true
+                }
+            })
+            .map(|(_, l)| l)
             // consider only lines starting with '|'
             .filter(|&l| l.starts_with(CONF_LINE_IDENTIFIER__IMAGE))
             .enumerate()
@@ -600,6 +652,10 @@ impl Image {
                 .collect();
             v.append(&mut ii);
         }
+
+        if file_syntax_test1.is_err() {
+            return Err(file_syntax_test1.unwrap_err());
+        };
 
         // find dimensions
         let dimension = if !v.is_empty() {
@@ -635,12 +691,13 @@ impl Image {
             // this is recursive!
             Self::new((&DEFAULT_IMAGES).choose(&mut rng).unwrap(), offset)
         } else {
-            Self {
+            Ok(Self {
                 ichars: v,
                 offset,
                 dimension,
                 visible_points: v_len,
-            }
+                rewarding_scheme,
+            })
         }
     }
 
@@ -671,7 +728,7 @@ mod tests {
 |cd"#;
         let image = Image::new(&config, (10, 20));
         //println!("{:?}",image);
-        let expected = Image {
+        let expected = Ok(Image {
             ichars: [
                 ImChar {
                     point: (0, 0),
@@ -694,7 +751,8 @@ mod tests {
             offset: (10, 20),
             dimension: (2, 2),
             visible_points: 4,
-        };
+            rewarding_scheme: DEFAULT_REWARDING_SCHEME,
+        });
 
         assert!(image == expected);
     }
@@ -705,7 +763,7 @@ mod tests {
         let config: &str = r#"
 |/\
 \/"#;
-        let image = Image::new(&config, (10, 20));
+        let image = Image::new(&config, (10, 20)).unwrap();
         //println!("{:?}",image);
         let expected = Image {
             ichars: [
@@ -722,9 +780,10 @@ mod tests {
             offset: (10, 20),
             dimension: (2, 1),
             visible_points: 2,
+            rewarding_scheme: DEFAULT_REWARDING_SCHEME,
         };
 
-        assert!(image == expected);
+        assert_eq!(image, expected);
     }
 
     #[test]
@@ -735,7 +794,7 @@ mod tests {
 |      (_>
 "#;
         let expected: &str = ">o)      \n(_>   <o)\n      (_>\n";
-        let image = Image::new(&config, (10, 20));
+        let image = Image::new(&config, (10, 20)).unwrap();
 
         assert!(image.visible_points > 0);
         assert_eq!(format!("{}", image), expected);
@@ -744,7 +803,7 @@ mod tests {
     #[test]
     fn test_image_parser_built_in_image() {
         let config: &str = "this is no image";
-        let image = Image::new(&config, (10, 20));
+        let image = Image::new(&config, (10, 20)).unwrap();
         //println!("{:?}",image);
 
         assert!(image.visible_points > 0);
@@ -754,7 +813,7 @@ mod tests {
     #[test]
     fn test_image_parser_disclose() {
         let config: &str = "|abcde";
-        let mut image = Image::new(&config, (10, 20));
+        let mut image = Image::new(&config, (10, 20)).unwrap();
         //println!("{:?}",image);
         let expected = Image {
             ichars: [
@@ -783,6 +842,7 @@ mod tests {
             offset: (10, 20),
             dimension: (5, 1),
             visible_points: 5,
+            rewarding_scheme: DEFAULT_REWARDING_SCHEME,
         };
         assert!(image == expected);
 
@@ -794,5 +854,19 @@ mod tests {
 
         image.hide((0, 5));
         assert!(image.visible_points == 5);
+    }
+
+    /// indent of game modifier is not allowed
+
+    /// test game modifier spelling
+    #[test]
+    fn test_image_parser_error_misspelled() {
+        let config = "\n\n:traditional-rewardXing";
+        let dict = Image::new(&config, (0, 0));
+        let expected = Err(ConfigParseError::GameModifier {
+            line_number: 3,
+            line: ":traditional-rewardXing".to_string(),
+        });
+        assert_eq!(dict, expected);
     }
 }
