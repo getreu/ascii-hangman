@@ -48,36 +48,33 @@ impl UserInterface {
         )
         .unwrap();
 
-        println!("{}", self.image);
+        // Print image.
+        queue!(stdout(), Print(&self.image), MoveToNextLine(1)).unwrap();
 
-        // print message field
-        let mut emph = false;
+        // Print game status.
+        #[cfg(not(windows))]
+        queue!(stdout(), SetForegroundColor(Color::White),).unwrap();
+        #[cfg(windows)]
+        queue!(stdout(), SetForegroundColor(Color::Grey),).unwrap();
+        queue!(stdout(), Print(&game)).unwrap();
 
-        for line in &mut format!("{}\n", &game).lines() {
-            if line == "" {
-                emph = !emph
-            };
-            if emph {
-                #[cfg(not(windows))]
-                queue!(stdout(), SetForegroundColor(Color::DarkGreen),).unwrap();
+        // Print secret.
+        #[cfg(not(windows))]
+        queue!(stdout(), SetForegroundColor(Color::DarkGreen),).unwrap();
+        #[cfg(windows)]
+        queue!(stdout(), SetForegroundColor(Color::White),).unwrap();
+        queue!(stdout(), Print(&game.secret), MoveToNextLine(1)).unwrap();
 
-                #[cfg(windows)]
-                queue!(stdout(), SetForegroundColor(Color::White),).unwrap();
-            } else {
-                #[cfg(not(windows))]
-                queue!(stdout(), SetForegroundColor(Color::White),).unwrap();
-
-                #[cfg(windows)]
-                queue!(stdout(), SetForegroundColor(Color::Grey),).unwrap();
-            }
-
-            // Print message line.
-            queue!(stdout(), Print(&line), MoveToNextLine(1)).unwrap();
-        }
+        #[cfg(not(windows))]
+        queue!(stdout(), SetForegroundColor(Color::White),).unwrap();
+        #[cfg(windows)]
+        queue!(stdout(), SetForegroundColor(Color::Grey),).unwrap();
 
         // Print queued.
         stdout().flush().unwrap();
 
+
+        // Print instructions
         match game.state {
             State::Victory => {
                 println!("Congratulations! You won!");

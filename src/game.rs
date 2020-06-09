@@ -175,9 +175,7 @@ impl fmt::Display for Game {
             f,
             "Lives:\t{}\tLast guess: {}\n",
             self.lives, self.last_guess
-        )?;
-
-        write!(f, "{}", self.secret)
+        )
     }
 }
 // ***********************
