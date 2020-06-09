@@ -92,7 +92,8 @@ impl Application {
             ),
             State::VictoryGameOver => String::from(
                 "Congratulations! You won!\n\
-                             There are no more secrets to guess. Game over. Press any key.",
+                             There are no more secrets to guess.\n\
+                             Game over. Press any key.",
             ),
             State::Defeat | State::DefeatGameOver => String::from(
                 "You lost.\n\
