@@ -704,7 +704,7 @@ impl Image {
     pub fn update(&mut self, game: &Game) {
         match self.rewarding_scheme {
             RewardingScheme::UnhideWhenGuessedChar => {
-                self.hide((game.secret.visible_chars(), game.secret.chars_to_guess));
+                self.hide((game.secret.hidden_chars(), game.secret.chars_to_guess));
             }
             RewardingScheme::UnhideWhenLostLife => {
                 self.hide((game.lives as usize, LIVES as usize));

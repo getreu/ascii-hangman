@@ -8,3 +8,4 @@ target
 tests/functional/output
 .idea
 doc/build/
+ascii-hangman-words.txt

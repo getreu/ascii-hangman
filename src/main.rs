@@ -2,13 +2,12 @@
 extern crate crossterm;
 extern crate rand;
 extern crate thiserror;
-mod game;
-use game::{Game, State};
-mod user_interface;
-use user_interface::UserInterface;
+mod application;
 mod dictionary;
-use dictionary::Dict;
+mod game;
 mod image;
+mod secret;
+use application::Application;
 use std::env;
 use std::fs::File;
 use std::io;
@@ -17,8 +16,21 @@ use std::io::Write;
 use std::path::PathBuf;
 use std::process;
 
+use crossterm::cursor::MoveTo;
+use crossterm::cursor::MoveToNextLine;
+use crossterm::queue;
+use crossterm::style::Color;
+use crossterm::style::Print;
+use crossterm::style::SetForegroundColor;
+use crossterm::terminal::Clear;
+use crossterm::terminal::ClearType;
+use std::io::stdout;
+
 const VERSION: Option<&'static str> = option_env!("CARGO_PKG_VERSION");
 const AUTHOR: &str = "(c) Jens Getreu, 2016-2020.";
+
+/// Title line.
+const TITLE: &str = "ASCII-ART HANGMAN FOR KIDS\n";
 
 /// Text to show as command-line help --help
 const COMMANDLINE_HELP: &str = r#"
@@ -225,9 +237,9 @@ fn main() {
         config.push_str(&c);
     }
 
-    // INITIALISE GAME
+    // INITIALISE THE GAME
 
-    let mut ui = match UserInterface::new(&config) {
+    let mut app = match Application::new(&config) {
         Ok(d) => d,
         Err(e) => {
             eprintln!("ERROR IN CONFIGURATION FILE\n{}", e);
@@ -239,56 +251,82 @@ fn main() {
         }
     };
 
-    let mut dict = match Dict::new(&config) {
-        Ok(d) => d,
-        Err(e) => {
-            eprintln!("ERROR IN CONFIGURATION FILE\n{}", e);
-
-            // wait for [Enter] key
-            let s = &mut String::new();
-            io::stdin().read_line(s).unwrap();
-            process::exit(1);
-        }
-    };
+    app.render();
 
     // PLAY
 
-    'playing: while let Some(secret) = dict.get_random_secret() {
-        let mut game = Game::new(&secret, LIVES, dict.is_empty());
+    'playing: loop {
+        // Read user input
+        io::stdout().flush().unwrap();
+        // Read next char and send it
+        let key = &mut String::new();
+        io::stdin().read_line(key).unwrap();
 
-        // The game loop
-        'running_game: loop {
-            let answer = ui.render(&game);
+        if !app.process_user_input(key) {
+            break;
+        };
 
-            match game.state {
-                State::Victory => {
-                    let a = answer.chars().next().unwrap_or('Y');
-                    if a == 'N' || a == 'n' {
-                        break 'playing;
-                    } else {
-                        continue 'playing;
-                    }
-                }
-                State::VictoryGameOver => {
-                    break 'playing;
-                }
-                State::Defeat | State::DefeatGameOver => {
-                    // We will ask this again, so we never end the round with a defeat.
-                    dict.add(secret.clone());
-
-                    let a = answer.chars().next().unwrap_or('Y');
-                    if a == 'N' || a == 'n' {
-                        break 'playing;
-                    } else {
-                        continue 'playing;
-                    }
-                }
-                State::Ongoing => {
-                    game.guess(answer.chars().next().unwrap_or(' '));
-                }
-            }
-        }
+        app.render();
     }
 
     println!("\n{}", AUTHOR);
+}
+
+trait Render {
+    fn render(&self) {}
+}
+
+impl Render for Application {
+    /// Renders and prints the TUI on the terminal.
+    fn render(&self) {
+        // Disclose parts of the image.
+
+        // Clear all lines in terminal;
+        queue!(stdout(), Clear(ClearType::All), MoveTo(0, 0)).unwrap();
+
+        #[cfg(not(windows))]
+        queue!(stdout(), SetForegroundColor(Color::White),).unwrap();
+        #[cfg(windows)]
+        queue!(stdout(), SetForegroundColor(Color::Grey),).unwrap();
+
+        queue!(
+            stdout(),
+            Print(&TITLE),
+            MoveToNextLine(1),
+            SetForegroundColor(Color::DarkYellow),
+        )
+        .unwrap();
+
+        // Print image.
+        queue!(stdout(), Print(self.render_image()), MoveToNextLine(1)).unwrap();
+
+        // Print game status.
+        #[cfg(not(windows))]
+        queue!(stdout(), SetForegroundColor(Color::White),).unwrap();
+        #[cfg(windows)]
+        queue!(stdout(), SetForegroundColor(Color::Grey),).unwrap();
+        queue!(stdout(), Print(self.render_game_status())).unwrap();
+
+        // Print secret.
+        #[cfg(not(windows))]
+        queue!(stdout(), SetForegroundColor(Color::DarkGreen),).unwrap();
+        #[cfg(windows)]
+        queue!(stdout(), SetForegroundColor(Color::White),).unwrap();
+        queue!(stdout(), Print(self.render_secret()), MoveToNextLine(1)).unwrap();
+
+        // Print instructions.
+        #[cfg(not(windows))]
+        queue!(stdout(), SetForegroundColor(Color::White),).unwrap();
+        #[cfg(windows)]
+        queue!(stdout(), SetForegroundColor(Color::Grey),).unwrap();
+
+        queue!(
+            stdout(),
+            Print(self.render_instructions()),
+            MoveToNextLine(1)
+        )
+        .unwrap();
+        // Print queued.
+        stdout().flush().unwrap();
+    }
 }
