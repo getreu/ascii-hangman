@@ -39,7 +39,7 @@ pub enum ConfigParseError {
     Edit config file and start again.\n"
     )]
     LineIdentifier { line_number: usize, line: String },
-    #[error["A config file must have a least one secret string, which is\
+    #[error["A config file must have a least one secret string, which is\n\
     a non-empty line starting with a letter, digit, '_' or '-'."]]
     NoSecretString,
 }
