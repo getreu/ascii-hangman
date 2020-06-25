@@ -707,7 +707,7 @@ impl Image {
                 self.hide((game.secret.hidden_chars(), game.secret.chars_to_guess));
             }
             RewardingScheme::UnhideWhenLostLife => {
-                self.hide((game.lives as usize, LIVES as usize));
+                self.hide((game.lifes as usize, LIVES as usize));
             }
         };
     }

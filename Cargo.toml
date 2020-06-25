@@ -13,7 +13,7 @@ license = "MIT/Apache-2.0"
 [dependencies]
 rand = "0.7.3"
 crossterm = "0.17.5"
-thiserror = "1.0.19"
+thiserror = "1.0.20"
 
 [package.metadata.deb]
 maintainer = "Jens Getreu, <getreu@web.de>"

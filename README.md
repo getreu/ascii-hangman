@@ -33,7 +33,7 @@ ASCII-ART HANGMAN FOR KIDS
          /_]'|_| /_
             /_]'  /
 
-Lives:	7	Last guess: k
+Lifes:	7	Last guess: k
 
  g o o d   l u _ k
 

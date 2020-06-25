@@ -75,7 +75,7 @@ impl Secret {
         found
     }
 
-    /// We disclose all characters when all lives are used and the
+    /// We disclose all characters when all lifes are used and the
     /// game is over.
     pub fn disclose_all(&mut self) {
         // Disclose the secret

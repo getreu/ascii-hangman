@@ -56,7 +56,7 @@ ASCII-ART HANGMAN FOR KIDS
         /_]'|_| /_)_/
            /_]'  /_]'
 
-Lives:  1       Last guess: 3
+Lifes:  1       Last guess: 3
 
  g o o _ _ l _ _ k
 
