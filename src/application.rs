@@ -8,7 +8,7 @@ pub const VERSION: Option<&'static str> = option_env!("CARGO_PKG_VERSION");
 pub const AUTHOR: &str = "(c) Jens Getreu, 2016-2020.";
 
 /// Title line.
-pub const TITLE: &str = "ASCII-Art Hangman for Kids\n";
+pub const TITLE: &str = "ASCII-Hangman for Kids\n";
 
 /// Number of wrong guess allowed.
 pub const LIVES: u8 = 7;
