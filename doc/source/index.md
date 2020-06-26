@@ -40,6 +40,9 @@ Lifes:	7	Last guess: k
 Type a letter, then press [Enter]: 
 ```
 
+ASCII Hangman is available as a Web-Application and as a Dektop-Terminal-Application for serveral architetures.
+Try [ASCII-Hangman-Web-App](/projects/ascii-hangman/web-app/) online.
+
 Read more in [ASCII-Hangman's user manual](/projects/ascii-hangman/ascii-hangman--manual.html).
 
 ## Documentation

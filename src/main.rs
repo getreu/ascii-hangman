@@ -1,4 +1,7 @@
 //! Loads the configuration and runs the game workflow.
+//! This file not sourced for the wasm32 (wasm) target.
+#![cfg(not(target_arch = "wasm32"))]
+
 extern crate crossterm;
 extern crate rand;
 extern crate thiserror;
@@ -8,6 +11,8 @@ mod game;
 mod image;
 mod secret;
 use application::Application;
+use application::{AUTHOR, CONF_TEMPLATE, TITLE, VERSION};
+use game::State;
 use std::env;
 use std::fs::File;
 use std::io;
@@ -25,12 +30,6 @@ use crossterm::style::SetForegroundColor;
 use crossterm::terminal::Clear;
 use crossterm::terminal::ClearType;
 use std::io::stdout;
-
-const VERSION: Option<&'static str> = option_env!("CARGO_PKG_VERSION");
-const AUTHOR: &str = "(c) Jens Getreu, 2016-2020.";
-
-/// Title line.
-const TITLE: &str = "ASCII-ART HANGMAN FOR KIDS\n";
 
 /// Text to show as command-line help --help
 const COMMANDLINE_HELP: &str = r#"
@@ -129,19 +128,9 @@ If you prefer a traditional gallows image, add the following:
 
 "#;
 
-/// Number of wrong guess allowed.
-const LIVES: u8 = 7;
 /// Default configuration filename when no filename is given at the command-line.
 const PATHSTR: &str = "ascii-hangman-words.txt";
 /// Fallback sample configuration when no configuration file can be found.
-const CONF_TEMPLATE: &str =
-    "# Type `ascii-hangman -h` to learn how to insert custom ASCII-art images here. \r
-\r
-guess me\r
-hang_man_\r
-_good l_uck\r
-_3*_7_=21_\r
-";
 
 /// Fallback secret when no configuration file can be found.
 const CONF_DEMO: &str = "- _Demo: add own words to config file and start a_gain_!";
@@ -164,6 +153,7 @@ pub fn write_config_template(pathstr: &PathBuf) -> Result<(), io::Error> {
 }
 
 /// Starts the game.
+/// This is the terminal application
 #[allow(unused_labels)]
 fn main() {
     // SHOW HELP TEXT
@@ -262,14 +252,28 @@ fn main() {
         let key = &mut String::new();
         io::stdin().read_line(key).unwrap();
 
-        if !app.process_user_input(key) {
-            break;
-        };
-
+        app.process_user_input(key);
         app.render();
+        io::stdout().flush().unwrap();
+        let state = app.get_state();
+        if state != State::Ongoing {
+            if state != State::VictoryGameOver {
+                queue!(
+                    stdout(),
+                    Print("Press any key to continue or [Cntr-C] to quit.")
+                )
+                .unwrap();
+                stdout().flush().unwrap();
+            } else {
+                break;
+            };
+        };
     }
 
-    println!("\n{}", AUTHOR);
+    queue!(stdout(), MoveToNextLine(1), Print(AUTHOR)).unwrap();
+    stdout().flush().unwrap();
+    let key = &mut String::new();
+    io::stdin().read_line(key).unwrap();
 }
 
 trait Render {
@@ -305,7 +309,13 @@ impl Render for Application {
         queue!(stdout(), SetForegroundColor(Color::White),).unwrap();
         #[cfg(windows)]
         queue!(stdout(), SetForegroundColor(Color::Grey),).unwrap();
-        queue!(stdout(), Print(self.render_game_status())).unwrap();
+        queue!(stdout(), Print(self.render_game_lifes()), Print("\t")).unwrap();
+        queue!(
+            stdout(),
+            Print(self.render_game_last_guess()),
+            MoveToNextLine(2)
+        )
+        .unwrap();
 
         // Print secret.
         #[cfg(not(windows))]

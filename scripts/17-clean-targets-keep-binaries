@@ -11,6 +11,9 @@ find target -mindepth 2 -not -path "*/release/ascii-hangman" \
                         -exec rm -r {} \;
 
 rm -r target/debug
+rm -r target/wasm32-unknown-unknown
 rm -r target/release
 rm -r target/rls
 rm target/.rustc_info.json
+rm -r doc/build/pkg
+

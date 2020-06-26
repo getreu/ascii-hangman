@@ -1,0 +1,26 @@
+#!/bin/sh
+BUILD_DIR="./doc/build/"
+PKG_DIR="$BUILD_DIR/pkg/"
+WWW_DIR="$BUILD_DIR/html/web-app/"
+
+set -x
+cd ../
+
+cp Cargo.toml Cargo.toml.bak
+
+cat << EOF >> Cargo.toml
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+EOF
+
+cp Cargo.toml Cargo.toml.debug
+
+rm -r ./build/
+mkdir -p "$PKG_DIR"
+mkdir -p "$WWW_DIR"
+cp ./static/* "$WWW_DIR"
+wasm-pack build --target web --out-name wasm --out-dir "$PKG_DIR"
+cp "$PKG_DIR"/* "$WWW_DIR"
+
+mv Cargo.toml.bak Cargo.toml

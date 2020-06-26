@@ -1,11 +1,5 @@
-doc/build/html/_downloads/
 target
-*.sw?
-*.html
-*.1
-*.1.gz
 .vscode/
 tests/functional/output
-.idea
 doc/build/
 ascii-hangman-words.txt

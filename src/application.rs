@@ -3,7 +3,23 @@ use crate::dictionary::Dict;
 use crate::game::Game;
 use crate::game::State;
 use crate::image::Image;
-use crate::LIVES;
+
+pub const VERSION: Option<&'static str> = option_env!("CARGO_PKG_VERSION");
+pub const AUTHOR: &str = "(c) Jens Getreu, 2016-2020.";
+
+/// Title line.
+pub const TITLE: &str = "ASCII-Art Hangman for Kids\n";
+
+/// Number of wrong guess allowed.
+pub const LIVES: u8 = 7;
+/// Fallback sample configuration when no configuration file can be found.
+pub const CONF_TEMPLATE: &str = "# Add own secrets here, one per line.\r
+\r
+guess me\r
+_good l_uck\r
+_3*_7_=21_\r
+_der Hund = _the dog\r
+";
 
 /// State of the application.
 #[derive(Debug)]
@@ -26,44 +42,29 @@ impl Application {
     }
 
     /// The user_input is a key stroke. The meaning depends on the game's state:
-    /// Either it is a guess or it is the answer to a yes or no question. Returns false if the
-    /// game ended and the dictionary is empty or, if the user wants to quit.
-    pub fn process_user_input(&mut self, inp: &str) -> bool {
+    pub fn process_user_input(&mut self, inp: &str) {
         match self.game.state {
             State::Victory => {
-                let a = inp.chars().next().unwrap_or('Y');
-                if a == 'N' || a == 'n' {
-                    false
-                } else {
-                    // Start a new game. As we did not get a `State::VictoryGameOver` we know
-                    // there is at least one secret left.
-                    let secret = self.dict.get_random_secret().unwrap();
-                    self.game = Game::new(&secret, LIVES, self.dict.is_empty());
-                    self.image.update(&self.game);
-                    true
-                }
+                // Start a new game. As we did not get a `State::VictoryGameOver` we know
+                // there is at least one secret left.
+                let secret = self.dict.get_random_secret().unwrap();
+                self.game = Game::new(&secret, LIVES, self.dict.is_empty());
+                self.image.update(&self.game);
             }
 
-            State::VictoryGameOver => false,
+            State::VictoryGameOver => {}
 
             State::Defeat | State::DefeatGameOver => {
-                let a = inp.chars().next().unwrap_or('Y');
-                if a == 'N' || a == 'n' {
-                    false
-                } else {
-                    // We will ask this secret again; this way we never end a game with a defeat.
-                    self.dict.add((self.game.secret).to_string());
-                    // Start a new game. As we just added a secret, we know there is at least one.
-                    let secret = self.dict.get_random_secret().unwrap();
-                    self.game = Game::new(&secret, LIVES, self.dict.is_empty());
-                    self.image.update(&self.game);
-                    true
-                }
+                // We will ask this secret again; this way we never end a game with a defeat.
+                self.dict.add((self.game.secret).to_string());
+                // Start a new game. As we just added a secret, we know there is at least one.
+                let secret = self.dict.get_random_secret().unwrap();
+                self.game = Game::new(&secret, LIVES, self.dict.is_empty());
+                self.image.update(&self.game);
             }
             State::Ongoing => {
                 self.game.guess(inp.chars().next().unwrap_or(' '));
                 self.image.update(&self.game);
-                true
             }
         }
     }
@@ -73,33 +74,39 @@ impl Application {
         format!("{}", self.image)
     }
 
+    /// Forward the private image dimension
+    #[allow(dead_code)]
+    pub fn get_image_dimension(&self) -> (u8, u8) {
+        self.image.dimension
+    }
+
     /// Renders the partly hidden secret.
     pub fn render_secret(&self) -> String {
         format!("{}", self.game.secret)
     }
 
-    /// Informs about some game statistics.
-    pub fn render_game_status(&self) -> String {
-        format!("{}", self.game)
+    /// Informs about some game statistics: lifes
+    pub fn render_game_lifes(&self) -> String {
+        format!("Lifes: {}", self.game.lifes)
+    }
+
+    /// Informs about some game statistics: last guess
+    pub fn render_game_last_guess(&self) -> String {
+        format!("Last guess: {}", self.game.last_guess)
     }
 
     /// Tells the user what to do next.
     pub fn render_instructions(&self) -> String {
         match self.game.state {
-            State::Victory => String::from(
-                "Congratulations! You won!\n\
-                             New game? Type [Y]es or [n]o: ",
-            ),
-            State::VictoryGameOver => String::from(
-                "Congratulations! You won!\n\
-                             There are no more secrets to guess.\n\
-                             Game over. Press any key.",
-            ),
-            State::Defeat | State::DefeatGameOver => String::from(
-                "You lost.\n\
-                             New game? Type [Y]es or [n]o: ",
-            ),
+            State::Victory => String::from("Congratulations! You won!"),
+            State::VictoryGameOver => String::from("Congratulations! You won!"),
+            State::Defeat | State::DefeatGameOver => String::from("You lost."),
             State::Ongoing => String::from("Type a letter, then press [Enter]: "),
         }
+    }
+
+    /// Forwards the game's state
+    pub fn get_state(&self) -> State {
+        self.game.state.clone()
     }
 }

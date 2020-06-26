@@ -5,6 +5,10 @@ v4.10.1, 17.1.2020
 :toc:
 :numbering:
 
+
+.Linux version
+image::hangman-tut.gif[ASCII-Hangman Web Application,640,480,pdfwidth=50%,scaledwidth=50%]
+
 ----
 ASCII-ART HANGMAN FOR KIDS
 

@@ -1,0 +1,67 @@
+html,
+body {
+    margin: 0;
+    padding: 0;
+    text-align: center;
+}
+
+body {
+    font: 14px 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    line-height: 1.4em;
+    color: #000000;
+    min-width: 230px;
+	max-width: 1000px;
+    margin: 0 auto;
+    font-weight: 300;
+    background-color: rgb(226, 219, 180);
+}
+
+.game-status {
+    border-collapse: separate;
+    border-spacing: 15px; 
+    margin: 0px auto;
+}
+
+.config {
+    font-family: monospace;
+}
+
+.conf-text {
+    font-family: monospace;
+    width: 600px;
+    height: 300px;
+}
+
+.image {
+    background-color: rgb(114, 97, 71);
+    color: yellow;
+    font-size: large;
+    padding: 15px;
+}
+
+.secret{
+    font-family: monospace;
+    padding: 5px;
+    font-size: larger;
+    color: darkgreen;
+}
+
+
+.instructions {
+    padding: 10px;
+}
+
+.guess{
+    font-size: large;
+    margin-left: 4ex;
+    padding: 2px
+}
+
+.button {
+    color: darkgrey;
+}
+
+.footer {
+    padding: 1em;
+    font-size: x-small;
+}

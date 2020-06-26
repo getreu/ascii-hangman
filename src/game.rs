@@ -3,7 +3,7 @@ use crate::secret::Secret;
 use std::fmt;
 
 /// A subset of the game state. Can be derived from `Game` struct.
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone)]
 pub enum State {
     /// The game is ongoing.
     Ongoing,
@@ -80,7 +80,7 @@ impl fmt::Display for Game {
     fn fmt(&self, f: &mut fmt::Formatter) -> Result<(), fmt::Error> {
         writeln!(
             f,
-            "Lifes:\t{}\tLast guess: {}\n",
+            "Lives:\t{}\tLast guess: {}\n",
             self.lifes, self.last_guess
         )
     }
@@ -97,18 +97,17 @@ mod tests {
         let mut game = Game::new("_ab _cd", 2, true);
         //println!("{:?}",game);
 
-        assert_eq!(format!("{}",game.secret), " a b   _ _\n");
+        assert_eq!(format!("{}", game.secret), " a b   _ _\n");
         assert_eq!(game.lifes, 2);
         assert_eq!(game.last_guess, ' ');
         assert_eq!(game.state, State::Ongoing);
         assert_eq!(game.last_game, true);
 
-
         // now we guess right
         game.guess('c');
         //println!("{:?}",game);
-        
-        assert_eq!(format!("{}",game.secret), " a b   c _\n");
+
+        assert_eq!(format!("{}", game.secret), " a b   c _\n");
         assert_eq!(game.lifes, 2);
         assert_eq!(game.last_guess, 'c');
         assert_eq!(game.state, State::Ongoing);
@@ -118,17 +117,16 @@ mod tests {
         game.guess('x');
         //println!("{:?}",game);
 
-        assert_eq!(format!("{}",game.secret), " a b   c _\n");
+        assert_eq!(format!("{}", game.secret), " a b   c _\n");
         assert_eq!(game.lifes, 1);
         assert_eq!(game.last_guess, 'x');
         assert_eq!(game.state, State::Ongoing);
         assert_eq!(game.last_game, true);
 
-
         // we guess wrong again and we loose
         game.guess('y');
         //println!("{:?}",game);
-        assert_eq!(format!("{}",game.secret), " a b   c d\n");
+        assert_eq!(format!("{}", game.secret), " a b   c d\n");
         assert_eq!(game.lifes, 0);
         assert_eq!(game.last_guess, 'y');
         assert_eq!(game.state, State::DefeatGameOver);

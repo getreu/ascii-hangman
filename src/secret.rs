@@ -5,7 +5,7 @@ use std::fmt;
 const LINE_WIDTH: usize = 20;
 
 /// One character of the secret string.
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Clone, Debug, PartialEq)]
 struct HangmanChar {
     character: char,
     visible: bool,
@@ -75,7 +75,7 @@ impl Secret {
         found
     }
 
-    /// We disclose all characters when all lifes are used and the
+    /// We disclose all characters when all lives are used and the
     /// game is over.
     pub fn disclose_all(&mut self) {
         // Disclose the secret
@@ -128,7 +128,7 @@ impl fmt::Display for Secret {
 mod tests {
     use super::*;
 
-    /// Play simulation
+    /// Game simulation
     #[test]
     fn test_secret() {
         let mut secret = Secret::new("_ab _cd");

@@ -6,5 +6,9 @@
 ./13b-make-cross-compile
 ./14-make-doc
 ./15-build-packages
-./16-clean-targets-keep-binaries
-./17-make-dist
+./16-make-wasm
+./17-clean-targets-keep-binaries
+./18-make-dist
+#./20-serve-wasm
+
+
