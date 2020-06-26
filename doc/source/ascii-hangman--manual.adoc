@@ -1,51 +1,37 @@
 = ASCII Art Hangman for Kids
 Jens Getreu <getreu@web.de>
-v4.10.1, 17.1.2020
+v4.10.3, 26.6.2020
 :imagesdir: images
 :toc:
 :numbering:
 
 
-.Linux version
-image::hangman-tut.gif[ASCII-Hangman Web Application,640,480,pdfwidth=50%,scaledwidth=50%]
-
-----
-ASCII-ART HANGMAN FOR KIDS
-
-          ,.
-         (_|,.
-        ,' /, )_____
-     __j o``-'
-    (")
-     `-j
-       `-._(
-          |_\  |--^.
-         /_]'|_| /_
-            /_]'  /
-
-Lifes:	7	Last guess: k
-
- g o o d   l u _ k
-
-Type a letter, then press [Enter]: 
-----
-
-
 
 // excerpt-begin
 
-Hangman is a paper and pencil guessing game for two or more players.  One player
+_ASCII-Hangman_ is a paper and pencil guessing game for two or more players.  One player
 thinks of a word, phrase or sentence and the other tries to guess it by
 suggesting letters or numbers, within a certain number of guesses. In this
 version for children the computer selects a word, phrase or sentence randomly
 out of a word-list defined in a configuration file. 
 // excerpt-end
 
-In the course of the game
-ASCII-Art images - designed for children - are progressively disclosed. There
-are 30 built in ASCII-Art images from which one is chosen randomly at the
-beginning of the game. Alternatively own ASCII-Art can be provided in the
-configuration file.
+In the course of the game ASCII-Art images - designed for children - are
+progressively disclosed. There are 30 built in ASCII-Art images from which one
+is chosen randomly at the beginning of the game. Alternatively own ASCII-Art
+can be provided in the configuration file.
+
+_ASCII-Hangman_ is available as web-application and can be played online here:
+https://blog.getreu.net/projects/ascii-hangman/web-app/[ASCII-Hangman Web-App].
+
+.ASCII Hangman web-app version
+image::ASCII-Hangman-Web-App.gif[ASCII-Hangman Web Application,500,400,pdfwidth=50%,scaledwidth=50%]
+
+_ASCII-Hangman_ is also available as desktop-terminal-application for Linux, Mac and Windows. Download and installation instruction are here: 
+https://blog.getreu.net/projects/ascii-hangman/#distribution[ASCII-Hangman Desktop App].
+
+.ASCII Hangman terminal version
+image::ASCII-Hangman-Terminal.png[ASCII-Hangman Web Application,400,320,pdfwidth=40%,scaledwidth=40%]
 
 
 The project is hosted on Github:
@@ -57,14 +43,75 @@ https://blog.getreu.net/_downloads/ascii-hangman.pdf[
 pdf rendition] of this document and compiled 
 https://blog.getreu.net/_downloads/ascii-hangman.zip[binaries].
 
-== ASCII-Art-Hangman configuration
+== Getting started
+
+=== ASCII-Hangman installation
+
+The web-app version does not need to be installed. Just navigate to
+https://blog.getreu.net/projects/ascii-hangman/web-app/[ASCII-Hangman Web-App].
+
+There is installation in the proper sense required, as the whole application
+consists of only one binary file. Download this file here:
+https://blog.getreu.net/projects/ascii-hangman/#distribution[ASCII-Hangman
+Desktop App] and just execute it.
+
+=== ASCII-Hangman invocation: how to start the game
+
+==== Web-App
+
+Navigate to https://blog.getreu.net/projects/ascii-hangman/web-app[ASCII-Hangman-Web-App].
+
+
+==== Linux
+
+1. Open a terminal
+
+2. Navigate to a folder containing configuration files, e.g.
+  
+     cd vocabulary-chapter-1
+
+3. If the folder contains only one configuration file `hangman-words.txt`
+just type
+
+     ascii-hangman
++
+otherwise type, e.g.
+
+     ascii-hangman words-page3.txt words-page5.txt
+
+==== Windows
+
+1. Open the folder where the `ascii-hangman.exe` file resides.
+
+2. Open a second explorer window and navigate to a folder with a configuration
+file.
+
+3. Drag and drop one or more configuration files on `ascii-hangman.exe`.
+
+
+
+
+== ASCII-Hangman configuration
+
+_ASCII-Hangman_ needs a custom list of secrets it can choose secrets to let the
+user guess.  This list is provided by a configuration file with a very simple
+syntax explained below. When you start the desktop version for the first time,
+a sample configuration file, named `ascii-hangman-words.txt`, is created.
+Adding own secrets to this file can be done with any text editor. Next time
+_ASCII-Hangman_ starts, its will read the modified list of secrets.
+
+The Web-App version of _ASCII-Hangman_ works similar. Here the programm starts
+with a configuration page allowing you to enter the list of secrets directly
+without external editor. If you wish, you can download a prepared list of 
+secrets from a file on your disk. Note, it is possible to select more than one
+file in the file-selector-dialogue.
+
+
 
 === Linux configuration
 
-For installation instruction see 
-https://github.com/getreu/ascii-hangman[getreu/ascii-hangman].
 
-. Run ASCII-Hangman once. It creates a configuration file
+. Run _ASCII-Hangman_ once. It creates a configuration file
   `ascii-hangman-words.txt` in the current working directory.
 
 . Edit the configuration file
@@ -74,9 +121,7 @@ https://github.com/getreu/ascii-hangman[getreu/ascii-hangman].
 . Start the game
 
  ./ascii-hangman
-+
-.Linux version
-image::01-Screenshot-Linux.png[Linux version,640,480,pdfwidth=50%,scaledwidth=50%]
+
 
 === Windows configuration
 
@@ -94,13 +139,11 @@ editor. Add own secrets, one per line.
 . Start the game
 +
 Double-click on `ascii-hangman.exe`.
-+
-image::02-Screenshot-Windows.png[]
 
 
 === Synopsis and syntax
 
-include::../../../src/main.rs[lines="67..129"]
+include::../../../src/main.rs[lines="66..107"]
 
 
 
@@ -177,7 +220,7 @@ disclosed after each lost life.
 ----
 
 
-== Play the game 
+== Play the game in the classroom
 
 The game is designed for classroom usage, but can be played alone as well.
 
@@ -185,10 +228,15 @@ The game is designed for classroom usage, but can be played alone as well.
 
 *  Big screen or projector
 
+*  Browser with Internet access - or -
+
 *  Windows or Linux Computer with `ascii-hangman.exe` or `ascii-hangman` 
    binary installed.
 
 === Prepare a configuration file with secret words
+
+The following may serve as a suggestion how to integrate the game in
+a lesson in class:
 
 The aim of the game is to consolidate recently learned vocabulary. 
 For this purpose the class composes a vocabulary list of words or expressions,
@@ -214,7 +262,8 @@ hereafter referred to as list of secrets words.
 
 === Game rules
 
-The following rules make sure that the whole class participates.  
+The following rules are designed to stimulate the participation of the
+whole group of learners. Vary them according to your needs.
 
 1. The whole class is asked to write down all guessed letters on a sheet of 
    paper.
@@ -236,32 +285,3 @@ The following rules make sure that the whole class participates.
 Alternatively, the game can be played in a more disorganized manner:  In order
 to activate a group, choose a game master who will type the letters the 
 group calls in.
-
-=== Start the game
-
-==== Linux
-
-1. Open a terminal
-
-2. Navigate to a folder containing configuration files, e.g.
-  
-     cd vocabulary-chapter-1
-
-3. If the folder contains only one configuration file `hangman-words.txt`
-just type
-
-     ascii-hangman
-+
-otherwise type, e.g.
-
-     ascii-hangman words-page3.txt words-page5.txt
-
-==== Windows
-
-1. Open the folder where the `ascii-hangman.exe` file resides.
-
-2. Open a second explorer window and navigate to a folder with a configuration
-file.
-
-3. Drag and drop one or more configuration files on `ascii-hangman.exe`.
-
