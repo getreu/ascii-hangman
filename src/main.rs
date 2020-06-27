@@ -260,7 +260,8 @@ fn main() {
             if state != State::VictoryGameOver {
                 queue!(
                     stdout(),
-                    Print("Press any key to continue or [Cntr-C] to quit.")
+                    MoveToNextLine(1), 
+                    Print("Press any key to continue or [Ctrl+C] to quit.")
                 )
                 .unwrap();
                 stdout().flush().unwrap();
@@ -332,8 +333,7 @@ impl Render for Application {
 
         queue!(
             stdout(),
-            Print(self.render_instructions()),
-            MoveToNextLine(1)
+            Print(self.render_instructions()), Print(" ")
         )
         .unwrap();
         // Print queued.

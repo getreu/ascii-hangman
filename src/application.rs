@@ -101,7 +101,7 @@ impl Application {
             State::Victory => String::from("Congratulations! You won!"),
             State::VictoryGameOver => String::from("Congratulations! You won!"),
             State::Defeat | State::DefeatGameOver => String::from("You lost."),
-            State::Ongoing => String::from("Type a letter, then press [Enter]: "),
+            State::Ongoing => String::from("Type a letter, then press [Enter]:"),
         }
     }
 
