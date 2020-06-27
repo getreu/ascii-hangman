@@ -7,4 +7,5 @@ cargo update
 rm -r ../target
 rm -r ../doc/build
 
+cd ..
 grep -F -v -e [lib] -e cdylib Cargo.toml  > Cargo.toml.tmp && mv Cargo.toml.tmp Cargo.toml
