@@ -1,3 +1,5 @@
+//! This module provides the backend API for the game logic
+
 use crate::dictionary::ConfigParseError;
 use crate::dictionary::Dict;
 use crate::game::Game;
@@ -29,9 +31,41 @@ pub struct Application {
     image: Image,
 }
 
-impl Application {
+/// API to interact with all game logic. This is used by the desktop frontend
+/// in `main.rs` or by the web-app frontend in `lib.rs`.
+pub trait HangmanBackend {
     /// Initialize the application with config data and start the first game.
-    pub fn new(config: &str) -> Result<Self, ConfigParseError> {
+    fn new(config: &str) -> Result<Self, ConfigParseError>
+    where
+        Self: std::marker::Sized;
+
+    /// The user_input is a key stroke. The meaning depends on the game's state:
+    fn process_user_input(&mut self, inp: &str);
+
+    /// Renders the image. Make sure it is up to date with `self.image.update()`.
+    fn render_image(&self) -> String;
+
+    /// Forward the private image dimension
+    fn get_image_dimension(&self) -> (u8, u8);
+
+    /// Renders the partly hidden secret.
+    fn render_secret(&self) -> String;
+
+    /// Informs about some game statistics: lifes
+    fn render_game_lifes(&self) -> String;
+
+    /// Informs about some game statistics: last guess
+    fn render_game_last_guess(&self) -> String;
+
+    /// Tells the user what to do next.
+    fn render_instructions(&self) -> String;
+
+    /// Forwards the game's state
+    fn get_state(&self) -> State;
+}
+
+impl HangmanBackend for Application {
+    fn new(config: &str) -> Result<Self, ConfigParseError> {
         let mut dict = Dict::new(&config)?;
         // A dictionary guaranties to have least one secret.
         let secret = dict.get_random_secret().unwrap();
@@ -41,8 +75,7 @@ impl Application {
         Ok(Self { dict, game, image })
     }
 
-    /// The user_input is a key stroke. The meaning depends on the game's state:
-    pub fn process_user_input(&mut self, inp: &str) {
+    fn process_user_input(&mut self, inp: &str) {
         match self.game.state {
             State::Victory => {
                 // Start a new game. As we did not get a `State::VictoryGameOver` we know
@@ -69,34 +102,28 @@ impl Application {
         }
     }
 
-    /// Renders the image. Make sure it is up to date with `self.image.update()`.
-    pub fn render_image(&self) -> String {
+    fn render_image(&self) -> String {
         format!("{}", self.image)
     }
 
-    /// Forward the private image dimension
     #[allow(dead_code)]
-    pub fn get_image_dimension(&self) -> (u8, u8) {
+    fn get_image_dimension(&self) -> (u8, u8) {
         self.image.dimension
     }
 
-    /// Renders the partly hidden secret.
-    pub fn render_secret(&self) -> String {
+    fn render_secret(&self) -> String {
         format!("{}", self.game.secret)
     }
 
-    /// Informs about some game statistics: lifes
-    pub fn render_game_lifes(&self) -> String {
+    fn render_game_lifes(&self) -> String {
         format!("Lifes: {}", self.game.lifes)
     }
 
-    /// Informs about some game statistics: last guess
-    pub fn render_game_last_guess(&self) -> String {
+    fn render_game_last_guess(&self) -> String {
         format!("Last guess: {}", self.game.last_guess)
     }
 
-    /// Tells the user what to do next.
-    pub fn render_instructions(&self) -> String {
+    fn render_instructions(&self) -> String {
         match self.game.state {
             State::Victory => String::from("Congratulations! You won!"),
             State::VictoryGameOver => String::from("Congratulations! You won!"),
@@ -105,8 +132,7 @@ impl Application {
         }
     }
 
-    /// Forwards the game's state
-    pub fn get_state(&self) -> State {
+    fn get_state(&self) -> State {
         self.game.state.clone()
     }
 }

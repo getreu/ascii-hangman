@@ -11,6 +11,7 @@ mod image;
 mod secret;
 
 use crate::application::Application;
+use crate::application::HangmanBackend;
 use crate::application::{AUTHOR, CONF_TEMPLATE, TITLE, VERSION};
 use crate::game::State;
 use wasm_bindgen::prelude::*;

@@ -11,6 +11,7 @@ mod game;
 mod image;
 mod secret;
 use application::Application;
+use application::HangmanBackend;
 use application::{AUTHOR, CONF_TEMPLATE, TITLE, VERSION};
 use game::State;
 use std::env;
@@ -260,7 +261,7 @@ fn main() {
             if state != State::VictoryGameOver {
                 queue!(
                     stdout(),
-                    MoveToNextLine(1), 
+                    MoveToNextLine(1),
                     Print("Press any key to continue or [Ctrl+C] to quit.")
                 )
                 .unwrap();
@@ -277,12 +278,13 @@ fn main() {
     io::stdin().read_line(key).unwrap();
 }
 
+/// Trait to render the text user interface (TUI)
 trait Render {
+    /// Renders and prints the TUI on the terminal.
     fn render(&self) {}
 }
 
 impl Render for Application {
-    /// Renders and prints the TUI on the terminal.
     fn render(&self) {
         // Disclose parts of the image.
 
@@ -331,11 +333,7 @@ impl Render for Application {
         #[cfg(windows)]
         queue!(stdout(), SetForegroundColor(Color::Grey),).unwrap();
 
-        queue!(
-            stdout(),
-            Print(self.render_instructions()), Print(" ")
-        )
-        .unwrap();
+        queue!(stdout(), Print(self.render_instructions()), Print(" ")).unwrap();
         // Print queued.
         stdout().flush().unwrap();
     }
