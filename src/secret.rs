@@ -66,7 +66,7 @@ impl Secret {
     pub fn guess(&mut self, character: char) -> bool {
         let mut found = false;
         for h_char in &mut self.hangman_chars {
-            if h_char.character.eq_ignore_ascii_case(&character) {
+            if h_char.visible == false && h_char.character.eq_ignore_ascii_case(&character) {
                 h_char.visible = true;
                 found = true;
             }
