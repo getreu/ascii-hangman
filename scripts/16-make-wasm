@@ -14,7 +14,7 @@ cat << EOF >> Cargo.toml
 crate-type = ["cdylib", "rlib"]
 EOF
 
-cp Cargo.toml Cargo.toml.debug
+# cp Cargo.toml Cargo.toml.debug
 
 rm -r ./build/
 mkdir -p "$PKG_DIR"
