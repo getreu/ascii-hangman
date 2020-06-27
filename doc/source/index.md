@@ -9,11 +9,11 @@ https://docs.rs/ascii-hangman)
 [![License](https://img.shields.io/badge/license-MIT%2FApache--2.0-blue.svg)](
 https://github.com/getreu/ascii-hangman)
 
-A little game designed for primary kids to revise vocabulary in classroom. Setting
-up the vocabulary list is part of the learning process.
+A little game designed for primary kids to revise vocabulary in classroom.
+Setting up the vocabulary list is part of the learning process.
 
-Hangman is a paper and pencil guessing game for two or more players.  One player
-thinks of a word, phrase or sentence and the other tries to guess it by
+Hangman is a paper and pencil guessing game for two or more players.  One
+player thinks of a word, phrase or sentence and the other tries to guess it by
 suggesting letters or numbers, within a certain number of guesses. In this
 version for children the computer selects a word, phrase or sentence randomly
 out of a word-list defined in a configuration file. As a reward, with every
@@ -33,17 +33,18 @@ ASCII-ART HANGMAN FOR KIDS
          /_]'|_| /_
             /_]'  /
 
-Lifes:	7	Last guess: k
+Lifes:	7 	Last guess: k
 
  g o o d   l u _ k
 
-Type a letter, then press [Enter]: 
+Type a letter, then press [Enter]:
 ```
 
-ASCII Hangman is available as a Web-Application and as a Dektop-Terminal-Application for serveral architetures.
+ASCII Hangman is available as a Web-Application and as a Desktop-Terminal-Application for several architectures.
 Try [ASCII-Hangman-Web-App](/projects/ascii-hangman/web-app/) online.
 
 Read more in [ASCII-Hangman's user manual](/projects/ascii-hangman/ascii-hangman--manual.html).
+
 
 ## Documentation
 
@@ -69,6 +70,15 @@ Repository:
 
 
 ## Distribution
+
+### ASCII-Hangman web application
+
+As the _ASCII-Hangman-Web-App_ is hosted on
+[https://getreu.net](https://getreu.net), there is nothing to
+install.  Just follow the link and enjoy playing:
+[ASCII-Hangman-Web-App](/projects/ascii-hangman/web-app/)
+
+### ASCII-Hangman desktop version
 
 * Binaries for latest release (Linux, Windows, iOS)
 
@@ -106,6 +116,9 @@ Repository:
 
 
 ## Building and installing
+
+This section describes how to download and build the desktop version
+of _ASCII-Hangman_.
 
 1. [Install Rust](https://www.rust-lang.org/tools/install), e.g.
 
