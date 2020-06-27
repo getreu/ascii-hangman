@@ -1,6 +1,6 @@
 = ASCII Art Hangman for Kids
 Jens Getreu <getreu@web.de>
-v5.0.1, 26.6.2020
+v5.1.0, 26.6.2020
 :imagesdir: images
 :toc:
 :numbering:
