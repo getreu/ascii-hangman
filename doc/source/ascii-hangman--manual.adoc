@@ -50,8 +50,9 @@ https://blog.getreu.net/_downloads/ascii-hangman.zip[binaries].
 The web-app version does not need to be installed. Just navigate to
 https://blog.getreu.net/projects/ascii-hangman/web-app/[ASCII-Hangman Web-App].
 
-There is installation in the proper sense required, as the whole application
-consists of only one binary file. Download this file here:
+As far as the desktop version is concerned, there is no installation in the
+proper sense either, as the whole application consists of only one binary file.
+Download this file here:
 https://blog.getreu.net/projects/ascii-hangman/#distribution[ASCII-Hangman
 Desktop App] and just execute it.
 
