@@ -53,8 +53,9 @@ body {
 
 .guess{
     font-size: large;
-    margin-left: 4ex;
-    padding: 2px
+    margin-left: 1ex;
+    padding: 2px;
+    width: 1.2em;
 }
 
 .button {
