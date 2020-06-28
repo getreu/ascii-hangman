@@ -181,9 +181,10 @@ impl Component for Model {
         };
         let footer = move || -> Html {
             html! { <footer class="footer">
-            <a href="https://blog.getreu.net/projects/ascii-hangman/"> {"ASCII-Hangman"} </a>
-            {", "} <a href="https://blog.getreu.net/projects/ascii-hangman/#distribution"> {"Desktop-Version"} </a>
-            {", "} <a href="https://github.com/getreu/ascii-hangman"> {"Github"} </a>
+            <a href="https://blog.getreu.net/projects/ascii-hangman/ascii-hangman--manual.html"> {"User Manual"} </a>
+            {", "} <a href="https://blog.getreu.net/projects/ascii-hangman/#distribution"> {"Desktop Version"} </a>
+            {", "} <a href="https://blog.getreu.net/projects/ascii-hangman/"> {"Documentation"} </a>
+            {", "} <a href="https://github.com/getreu/ascii-hangman"> {"Source Code"} </a>
             {", Version "} {VERSION.unwrap()} {", "} {AUTHOR}  </footer> }
         };
         match self.scene {
