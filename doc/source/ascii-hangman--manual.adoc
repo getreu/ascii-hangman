@@ -286,3 +286,14 @@ whole group of learners. Vary them according to your needs.
 Alternatively, the game can be played in a more disorganized manner:  In order
 to activate a group, choose a game master who will type the letters the 
 group calls in.
+
+
+== Data privacy statement
+
+All versions of _ASCII-Hangman_ run locally on your computer and do not
+collect or transfer any data. 
+
+This applies in particular to the web application version of _ASCII-Hangman_:
+due to its Web-Assembly-technology, the programm runs - once started - entirely
+in your Web-Browser's sandbox without any networks connection.
+
