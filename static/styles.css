@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat&family=Roboto&display=swap');
 html,
 body {
     margin: 0;
@@ -6,14 +7,69 @@ body {
 }
 
 body {
-    font: 14px 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font: 14px 'Roboto', Helvetica, Arial, sans-serif;
     line-height: 1.4em;
-    color: #000000;
+    color: #6a6a00;
     min-width: 230px;
 	max-width: 1000px;
     margin: 0 auto;
     font-weight: 300;
     background-color: rgb(226, 219, 180);
+}
+
+h1 {
+    font: Montserrat;
+}
+
+/* unvisited link */
+a:link {
+    color: #6a6a00;
+}
+
+/* visited link */
+a:visited {
+  color: #6a6a00;
+}
+
+/* mouse over link */
+a:hover {
+  color: green;
+}
+
+/* selected link */
+a:active {
+  color: green;
+}
+
+button {
+    background-color: rgb(226, 219, 180);
+    padding: 5px;
+    border-radius: 8px;
+}
+
+button:hover {
+    background-color: rgb(206, 199, 161);
+}
+
+.custom-file-input {
+    visibility: hidden;
+  }
+
+.upload-link {
+    padding: 5px;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.upload-link:hover {
+    padding: 5px;
+    color: green;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.upload-container {
+    padding: 10px;
 }
 
 .game-status {
@@ -23,11 +79,11 @@ body {
 }
 
 .config {
-    font-family: monospace;
+    font-family: "Lucida Console", Monaco, monospace;
 }
 
 .conf-text {
-    font-family: monospace;
+    font-family: "Lucida Console", Monaco, monospace;
     width: 600px;
     height: 300px;
 }
@@ -40,15 +96,20 @@ body {
 }
 
 .secret{
-    font-family: monospace;
-    padding: 5px;
+    font-family: "Lucida Console", Monaco, monospace;
+    padding-top: 10px;
+    padding-left: 5px;
+    padding-right: 5px;
+    padding-bottom: 0px;
     font-size: larger;
     color: darkgreen;
+    line-height: 1.7em;
 }
 
 
 .instructions {
     padding: 10px;
+    color: darkgreen;
 }
 
 .guess{
@@ -56,10 +117,6 @@ body {
     margin-left: 1ex;
     padding: 2px;
     width: 1.2em;
-}
-
-.button {
-    color: darkgrey;
 }
 
 .footer {

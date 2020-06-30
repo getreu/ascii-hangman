@@ -193,15 +193,16 @@ impl Component for Model {
                 <div class="ascii-hangman-wasm">
                     <div> {"Enter your secrets here:"}</div>
                     <div>
-                    <textarea class=("conf-text")
+                    <textarea class="conf-text"
                         placeholder=CONF_TEMPLATE
                         cols=80
                         rows=25
                         value=&self.state.config_text
                         oninput=self.link.callback(|e: InputData| Msg::ConfigTextUpdate(e.value)) />
                     </div>
-                    <div> { "or load secrets from files: "}
-                        <input type="file" multiple=true onchange=self.link.callback(move |value| {
+                    <div class="upload-container"> { "or load secrets from files: "}
+                        <label class="upload-link" for="upload">{"Upload Files ..."}</label>
+                        <input class="custom-file-input" type="file" id="upload" multiple=true onchange=self.link.callback(move |value| {
                                 let mut result = Vec::new();
                                 if let ChangeData::Files(files) = value {
                                     let files = js_sys::try_iter(&files)
