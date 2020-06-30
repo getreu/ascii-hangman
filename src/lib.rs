@@ -275,6 +275,7 @@ impl Component for Model {
                         <button disabled={app.get_state() != State::VictoryGameOver}
                                 onclick=self.link.callback(|_| Msg::SwitchTo(Scene::GameOver))>{ "End Game" }</button>
                     </div>
+                    {footer()}
                     </>
                 }
             }
