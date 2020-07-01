@@ -1,6 +1,6 @@
 [package]
 name = "ascii-hangman"
-version = "5.1.0"
+version = "5.2.0"
 authors = ["Jens Getreu <getreu@web.de>"]
 edition = "2018"
 readme = "README.md"
@@ -31,10 +31,10 @@ thiserror = "1.0.20"
 [target.'cfg(target_arch = "wasm32")'.dependencies]
 rand = { version = "0.7.3", features = ["getrandom"] }
 getrandom = { version = "0.1.14", features = ["wasm-bindgen"] }
-yew-macro = "0.16.1"
-yew = "0.16.2"
-wasm-bindgen = "0.2.63"
-js-sys = "0.3.40"
+yew-macro = "0.17.0"
+yew = "0.17.0"
+wasm-bindgen = "0.2.64"
+js-sys = "0.3.41"
 
 # this is we need for the console application
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies]
