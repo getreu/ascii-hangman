@@ -89,7 +89,7 @@ impl HangmanBackend for Application {
 
             State::Defeat | State::DefeatGameOver => {
                 // We will ask this secret again; this way we never end a game with a defeat.
-                self.dict.add((self.game.secret).to_string());
+                self.dict.add((self.game.secret).to_raw_string());
                 // Start a new game. As we just added a secret, we know there is at least one.
                 let secret = self.dict.get_random_secret().unwrap();
                 self.game = Game::new(&secret, LIVES, self.dict.is_empty());

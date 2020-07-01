@@ -97,7 +97,7 @@ impl Secret {
 
     /// Used in case the secret was not guessed and we want to inject
     /// it to the dictionary again.
-    pub fn to_string(&self) -> String {
+    pub fn to_raw_string(&self) -> String {
         self.raw.clone()
     }
 }
@@ -133,27 +133,27 @@ mod tests {
     fn test_secret() {
         let mut secret = Secret::new("_ab _cd");
 
-        assert_eq!(secret.to_string(), "_ab _cd");
+        assert_eq!(secret.to_raw_string(), "_ab _cd");
         assert_eq!(format!("{}", secret), " a b   _ _\n");
         assert_eq!(secret.hidden_chars(), 2);
         assert!(!secret.is_fully_disclosed());
 
         secret.guess('x');
 
-        assert_eq!(secret.to_string(), "_ab _cd");
+        assert_eq!(secret.to_raw_string(), "_ab _cd");
         assert_eq!(format!("{}", secret), " a b   _ _\n");
         assert_eq!(secret.hidden_chars(), 2);
         assert!(!secret.is_fully_disclosed());
 
         secret.guess('d');
 
-        assert_eq!(secret.to_string(), "_ab _cd");
+        assert_eq!(secret.to_raw_string(), "_ab _cd");
         assert_eq!(format!("{}", secret), " a b   _ d\n");
         assert_eq!(secret.hidden_chars(), 1);
         assert!(!secret.is_fully_disclosed());
 
         secret.disclose_all();
-        assert_eq!(secret.to_string(), "_ab _cd");
+        assert_eq!(secret.to_raw_string(), "_ab _cd");
         assert_eq!(format!("{}", secret), " a b   c d\n");
         assert_eq!(secret.hidden_chars(), 0);
         assert!(secret.is_fully_disclosed());
