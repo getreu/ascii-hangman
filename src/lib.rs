@@ -41,7 +41,6 @@ pub struct Model {
     // Disable debugging code.
     //console: ConsoleService,
     filereader_tasks: Vec<ReaderTask>,
-    dialog: DialogService,
     scene: Scene,
     state: GuiState,
 }
@@ -76,7 +75,6 @@ impl Component for Model {
             // Disable debugging code.
             //console: ConsoleService::new(),
             filereader_tasks: vec![],
-            dialog: DialogService::new(),
             scene: Scene::ConfigureGame,
             state,
         }
@@ -121,7 +119,7 @@ impl Component for Model {
                 }
 
                 Msg::SwitchTo(Scene::GameOver) => {
-                    if self.dialog.confirm("Do you really want to quit this game?") {
+                    if DialogService::confirm("Do you really want to quit this game?") {
                         new_scene = Some(Scene::GameOver);
                     }
                 }
@@ -130,8 +128,7 @@ impl Component for Model {
                     if let Ok(s) = std::str::from_utf8(&file.content) {
                         self.state.config_text.push_str(s);
                     } else {
-                        self.dialog
-                            .alert(&format!("Can not read text file: {}", file.name));
+                        DialogService::alert(&format!("Can not read text file: {}", file.name));
                     }
                 }
                 Msg::Files(files) => {
@@ -149,9 +146,9 @@ impl Component for Model {
                             self.link
                                 .send_message(Msg::SwitchTo(Scene::Playground(app)));
                         }
-                        Err(e) => self
-                            .dialog
-                            .alert(&format!("Can not parse configuration:\n {}", e)),
+                        Err(e) => {
+                            DialogService::alert(&format!("Can not parse configuration:\n {}", e))
+                        }
                     };
                 }
                 unexpected => {
