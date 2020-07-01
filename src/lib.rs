@@ -18,7 +18,9 @@ use wasm_bindgen::prelude::*;
 use yew::events::KeyboardEvent;
 use yew::prelude::*;
 use yew::services::reader::{File, FileData, ReaderService, ReaderTask};
-use yew::services::{ConsoleService, DialogService};
+// Disable debugging code.
+//use yew::services::ConsoleService;
+use yew::services::DialogService;
 use yew::{html, Component, ComponentLink, Html, InputData, ShouldRender};
 
 #[derive(Debug)]
@@ -36,7 +38,8 @@ pub struct GuiState {
 pub struct Model {
     link: ComponentLink<Self>,
     reader: ReaderService,
-    console: ConsoleService,
+    // Disable debugging code.
+    //console: ConsoleService,
     filereader_tasks: Vec<ReaderTask>,
     dialog: DialogService,
     scene: Scene,
@@ -70,7 +73,8 @@ impl Component for Model {
         Model {
             link,
             reader: ReaderService::new(),
-            console: ConsoleService::new(),
+            // Disable debugging code.
+            //console: ConsoleService::new(),
             filereader_tasks: vec![],
             dialog: DialogService::new(),
             scene: Scene::ConfigureGame,
@@ -90,7 +94,8 @@ impl Component for Model {
                 }
                 Msg::UpdateGuess(val) => {
                     self.state.guess = val.chars().rev().take(1).collect();
-                    self.console.debug(&self.state.guess);
+                    // Disable debugging code.
+                    //self.console.debug(&self.state.guess);
                 }
                 Msg::Guess => {
                     app.process_user_input(&self.state.guess);
