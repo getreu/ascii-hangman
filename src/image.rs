@@ -875,9 +875,7 @@ impl Image {
             v.append(&mut ii);
         }
 
-        if file_syntax_test1.is_err() {
-            return Err(file_syntax_test1.unwrap_err());
-        };
+        file_syntax_test1?;
 
         // find dimensions
         let dimension = if !v.is_empty() {

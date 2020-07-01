@@ -90,9 +90,7 @@ impl Dict {
             )
             .collect::<Vec<String>>();
 
-        if file_syntax_test2.is_err() {
-            return Err(file_syntax_test2.unwrap_err());
-        };
+        file_syntax_test2?;
 
         if wordlist.is_empty() {
             return Err(ConfigParseError::NoSecretString {});
