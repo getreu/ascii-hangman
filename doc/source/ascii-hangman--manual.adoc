@@ -220,6 +220,9 @@ disclosed after each lost life.
 ||_________|
 ----
 
+Note: The gallows image is not part of the built-in ASCII-art. If wished for,
+it can be defined it the configuration file.
+
 
 == Play the game in the classroom
 
