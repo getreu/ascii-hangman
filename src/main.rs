@@ -27,6 +27,8 @@ use crossterm::cursor::MoveToNextLine;
 use crossterm::queue;
 use crossterm::style::Color;
 use crossterm::style::Print;
+#[cfg(not(target_os = "windows"))]
+use crossterm::style::ResetColor;
 use crossterm::style::SetForegroundColor;
 use crossterm::terminal::Clear;
 use crossterm::terminal::ClearType;
@@ -292,7 +294,7 @@ impl Render for Application {
         queue!(stdout(), Clear(ClearType::All), MoveTo(0, 0)).unwrap();
 
         #[cfg(not(windows))]
-        queue!(stdout(), SetForegroundColor(Color::White),).unwrap();
+        queue!(stdout(), ResetColor).unwrap();
         #[cfg(windows)]
         queue!(stdout(), SetForegroundColor(Color::Grey),).unwrap();
 
@@ -309,7 +311,7 @@ impl Render for Application {
 
         // Print game status.
         #[cfg(not(windows))]
-        queue!(stdout(), SetForegroundColor(Color::White),).unwrap();
+        queue!(stdout(), ResetColor).unwrap();
         #[cfg(windows)]
         queue!(stdout(), SetForegroundColor(Color::Grey),).unwrap();
         queue!(stdout(), Print(self.render_game_lifes()), Print("\t")).unwrap();
@@ -329,7 +331,7 @@ impl Render for Application {
 
         // Print instructions.
         #[cfg(not(windows))]
-        queue!(stdout(), SetForegroundColor(Color::White),).unwrap();
+        queue!(stdout(), ResetColor).unwrap();
         #[cfg(windows)]
         queue!(stdout(), SetForegroundColor(Color::Grey),).unwrap();
 
