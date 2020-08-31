@@ -26,7 +26,7 @@ ASCII-art is gradually disclosed.
 '''
 
 [dependencies]
-ascii-hangman-backend = { path = "../ascii-hangman-backend" }
+ascii-hangman-backend = { version = "5.2.2", path = "../ascii-hangman-backend" }
 thiserror = "1.0.20"
 rand = { version = "0.7.3", features = ["getrandom"] }
 getrandom = { version = "0.1.14", features = ["wasm-bindgen"] }
