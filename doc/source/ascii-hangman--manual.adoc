@@ -161,7 +161,7 @@ Double-click on `ascii-hangman.exe`.
 
 === Synopsis and syntax
 
-include::../../../ascii-hangman/src/main.rs[lines="68..110"]
+include::../../../ascii-hangman/src/main.rs[lines="65..106"]
 
 
 
