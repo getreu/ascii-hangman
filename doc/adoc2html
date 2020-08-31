@@ -38,7 +38,7 @@ render () {
     cp -r  "$InDir/images/" "$OutDir"
     cp "$InPath" "$OutDir"
     cd "$OutDir"
-    asciidoctor -b html5 -a data-uri! "$InFile"
+    asciidoctor -a sectnumlevels=2 -a sectnums -b html5 -a data-uri! "$InFile"
 
     rm "$InFile"
 }

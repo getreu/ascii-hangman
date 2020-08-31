@@ -1,14 +1,9 @@
 #/bin/sh
 
 ./10-clear-all-builds
-./11-test
-./12-make-targets
-./13b-make-cross-compile
-./14-make-doc
-./15-build-packages
-./16-make-wasm
-./17-clean-targets-keep-binaries
-./18-make-dist
-#./20-serve-wasm
+./12-make-ascii-hangman-dektop
+./13-make-ascii-hangman-webapp
+./14-clean-targets-keep-binaries
+./15-make-dist
 
 

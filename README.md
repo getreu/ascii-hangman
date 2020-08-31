@@ -43,6 +43,27 @@ Type a letter, then press [Enter]:
 ASCII Hangman is available as a Web-Application and as a Desktop-Terminal-Application for several architectures.
 Try [ASCII-Hangman-Web-App](https://blog.getreu.net/projects/ascii-hangman/web-app/) online.
 
+Highlights:
+
+- simple, non distracting user interface,
+- setting up word lists is part of the learning process,
+- visual non distracting reward system with 50 built-in ASCII-art images,
+- no built in traditional gallows image,
+- designed for group learning in classroom,
+- fully configurable:
+  * design own ASCII-art (depending on the learning subject) and associate it
+    to a word list,
+  * provide the user with hints by disclosing some characters from the start,
+- web-application: play without installation,
+- desktop versions: play without network access,
+- open source software: guaranteed availability, always free of charge.
+
+The first versions of ASCII-hangman were published as desktop versions only.
+With the rising of cyber-crime and the following security related restrictions,
+it became more and more difficult for teachers to install their own software.
+This is why from version 5.0 on, ASCII-hangman is also available as
+web-application.
+
 Read more in [ASCII-Hangman's user manual](https://blog.getreu.net/projects/ascii-hangman/ascii-hangman--manual.html).
 
 
@@ -148,5 +169,5 @@ Copyright:
 <!--
 Build status:
 
-* ![status](https://travis-ci.org/getreu/ascii-hangman.svg?branch=master)  
+* ![status](https://travis-ci.org/getreu/ascii-hangman.svg?branch=master)
 -->

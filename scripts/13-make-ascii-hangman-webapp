@@ -1,0 +1,4 @@
+#!/bin/sh
+cd ../ascii-hangman-webapp/scripts/
+./01-make-all
+

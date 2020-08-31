@@ -42,6 +42,6 @@ pack () {
 #        OutPath="${1%.*}.html" # $2 is empty
 #fi
 #pack "$1" "$OutPath"
-
-pack "../doc/build/" "../doc/build/dist/ascii-hangman.zip" 
+cd "../doc/build"
+pack "." "./dist/ascii-hangman.zip" 
 

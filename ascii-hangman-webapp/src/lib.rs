@@ -4,16 +4,12 @@
 #![cfg(target_arch = "wasm32")]
 #![recursion_limit = "512"]
 
-mod application;
-mod dictionary;
-mod game;
-mod image;
-mod secret;
+extern crate ascii_hangman_backend;
 
-use crate::application::Application;
-use crate::application::HangmanBackend;
-use crate::application::{AUTHOR, CONF_TEMPLATE, TITLE, VERSION};
-use crate::game::State;
+use ascii_hangman_backend::game::State;
+use ascii_hangman_backend::Backend;
+use ascii_hangman_backend::HangmanBackend;
+use ascii_hangman_backend::{AUTHOR, CONF_TEMPLATE, TITLE, VERSION};
 use wasm_bindgen::prelude::*;
 use yew::events::KeyboardEvent;
 use yew::prelude::*;
@@ -25,7 +21,7 @@ use yew::{html, Component, ComponentLink, Html, InputData, ShouldRender};
 
 #[derive(Debug)]
 pub enum Scene {
-    Playground(Application),
+    Playground(Backend),
     ConfigureGame,
     GameOver,
 }
@@ -141,7 +137,7 @@ impl Component for Model {
                     }
                 }
                 Msg::ConfigReady => {
-                    match Application::new(self.state.config_text.as_str()) {
+                    match Backend::new(self.state.config_text.as_str()) {
                         Ok(app) => {
                             self.link
                                 .send_message(Msg::SwitchTo(Scene::Playground(app)));

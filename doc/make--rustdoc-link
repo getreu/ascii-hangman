@@ -6,6 +6,5 @@ mkdir --parents ./build/html/_downloads
 
 cd  ./build/html/_downloads
 ln -sf ../../../../target/* .
-# ln -sf ../../../build/man/man1/tp-note.1.gz .
 
 

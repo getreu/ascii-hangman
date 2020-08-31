@@ -1,0 +1,20 @@
+#!/bin/sh
+BUILD_DIR="../doc/build/"
+PKG_DIR="$BUILD_DIR/pkg/"
+WWW_DIR="$BUILD_DIR/html/web-app/"
+STATIC_SRC_DIR="../static/"
+
+#set -x
+cd ./../
+
+
+rm -r "$BUILD_DIR"
+mkdir -p "$PKG_DIR"
+mkdir -p "$WWW_DIR"
+cp "$STATIC_SRC_DIR"* "$WWW_DIR"
+
+
+wasm-pack build --target web --out-name wasm --out-dir "$PKG_DIR"
+
+cp "$PKG_DIR"* "$WWW_DIR"
+rm -r "$PKG_DIR"

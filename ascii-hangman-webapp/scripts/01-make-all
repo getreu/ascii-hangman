@@ -1,0 +1,6 @@
+#/bin/sh
+
+./11-test
+./12-make-wasm
+#./20-serve-wasm
+

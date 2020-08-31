@@ -4,7 +4,7 @@
 ### "Let's cross-compile examples from rust-sdl2 project from Ubuntu to 
 ### Windows x86_64 [source].
 
-set -x
+#set -x
 
 cat ~/.cargo/config|grep "target.x86_64-pc-windows-gnu"
 if [ $? -ne 0 ]
@@ -27,7 +27,7 @@ rustup target add x86_64-pc-windows-gnu
 # links to packages https://www.libsdl.org/download-2.0.php
 
 #sudo apt-get install libsdl2-dev -y
-curl -s https://www.libsdl.org/release/SDL2-devel-2.0.10-mingw.tar.gz | tar xvz -C /tmp
+curl -s https://www.libsdl.org/release/SDL2-devel-2.0.10-mingw.tar.gz | tar xvz -C /tmp >/dev/null
 
 # Prepare files for building
 

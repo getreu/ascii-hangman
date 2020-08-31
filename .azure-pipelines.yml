@@ -84,6 +84,7 @@ stages:
             condition: eq( variables['Agent.OS'], 'Windows_NT' )
           - script: |
               rustup target add $TARGET
+              cd ascii-hangman
               cargo build --release --target $TARGET
               strip '$(Build.SourcesDirectory)/target/$(TARGET)/release/ascii-hangman'
             condition: ne( variables['Agent.OS'], 'Windows_NT' )
@@ -95,11 +96,14 @@ stages:
             condition: eq( variables['Agent.OS'], 'Linux' )
             displayName: Build documentation
           - script: |
+              rustup target add $TARGET
+              cd ascii-hangman
               cargo deb --target $TARGET
             condition: eq( variables['Agent.OS'], 'Linux' )
             displayName: Build deb package
           - script: |
               rustup target add %TARGET%
+              cd ascii-hangman
               cargo build --release --target %TARGET%
             condition: eq( variables['Agent.OS'], 'Windows_NT' )
             displayName: Build on Windows

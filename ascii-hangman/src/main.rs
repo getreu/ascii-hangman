@@ -2,18 +2,14 @@
 //! This file not sourced for the wasm32 (wasm) target.
 #![cfg(not(target_arch = "wasm32"))]
 
+extern crate ascii_hangman_backend;
 extern crate crossterm;
 extern crate rand;
 extern crate thiserror;
-mod application;
-mod dictionary;
-mod game;
-mod image;
-mod secret;
-use application::Application;
-use application::HangmanBackend;
-use application::{AUTHOR, CONF_TEMPLATE, TITLE, VERSION};
-use game::State;
+use ascii_hangman_backend::game::State;
+use ascii_hangman_backend::Backend;
+use ascii_hangman_backend::HangmanBackend;
+use ascii_hangman_backend::{AUTHOR, CONF_TEMPLATE, TITLE, VERSION};
 use std::env;
 use std::fs::File;
 use std::io;
@@ -232,7 +228,7 @@ fn main() {
 
     // INITIALISE THE GAME
 
-    let mut app = match Application::new(&config) {
+    let mut app = match Backend::new(&config) {
         Ok(d) => d,
         Err(e) => {
             eprintln!("ERROR IN CONFIGURATION FILE\n{}", e);
@@ -286,7 +282,7 @@ trait Render {
     fn render(&self) {}
 }
 
-impl Render for Application {
+impl Render for Backend {
     fn render(&self) {
         // Disclose parts of the image.
 

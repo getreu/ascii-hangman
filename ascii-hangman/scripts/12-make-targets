@@ -1,11 +1,11 @@
 # !/bin/sh
-set -x
+#set -x
 rustup default stable
 rustup target add x86_64-unknown-linux-musl
 
 cargo build --target x86_64-unknown-linux-gnu  --release
-strip -s ../target/x86_64-unknown-linux-gnu/release/ascii-hangman
+strip -s ../../target/x86_64-unknown-linux-gnu/release/ascii-hangman
 
 cargo build --target x86_64-unknown-linux-musl --release
-strip -s ../target/x86_64-unknown-linux-musl/release/ascii-hangman
+strip -s ../../target/x86_64-unknown-linux-musl/release/ascii-hangman
 

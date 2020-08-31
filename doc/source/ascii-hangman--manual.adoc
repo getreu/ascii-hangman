@@ -9,17 +9,34 @@ v5.2.1, 8.7.2020
 
 // excerpt-begin
 
-_ASCII-Hangman_ is a paper and pencil guessing game for two or more players.  One player
-thinks of a word, phrase or sentence and the other tries to guess it by
-suggesting letters or numbers, within a certain number of guesses. In this
-version for children the computer selects a word, phrase or sentence randomly
-out of a word-list defined in a configuration file. 
+_ASCII-Hangman_ is a paper and pencil guessing game for two or more players.
+One player thinks of a word, phrase or sentence and the other tries to guess it
+by suggesting letters or numbers, within a certain number of guesses.
+_ASCII-Hangman_ is a variant of the game especially designed for children: the
+computer selects a word, phrase or sentence randomly out of a word-list defined
+in a configuration file.
 // excerpt-end
 
-In the course of the game ASCII-Art images - designed for children - are
-progressively disclosed. There are 30 built in ASCII-Art images from which one
-is chosen randomly at the beginning of the game. Alternatively own ASCII-Art
-can be provided in the configuration file.
+In the course of the game, ASCII-Art images - designed for children - are
+progressively disclosed. There are more than 50 built in ASCII-Art images from
+which one is chosen randomly at the beginning of the game. Alternatively own
+ASCII-Art can be provided in the configuration file.
+
+Highlights:
+
+- simple, non distracting user interface,
+- setting up word lists is part of the learning process,
+- visual non distracting reward system with 50 built-in ASCII-art images,
+- no built in traditional gallows image,
+- designed for group learning in classroom,
+- fully configurable:
+  * design own ASCII-art (depending on the learning subject) and associate it
+    to a word list,
+  * provide the user with hints by disclosing some characters from the start,
+- web-application: play without installation,
+- desktop versions: play without network access,
+- open source software: guaranteed availability, always free of charge.
+
 
 _ASCII-Hangman_ is available as web-application and can be played online here:
 https://blog.getreu.net/projects/ascii-hangman/web-app/[ASCII-Hangman Web-App].
@@ -27,7 +44,7 @@ https://blog.getreu.net/projects/ascii-hangman/web-app/[ASCII-Hangman Web-App].
 .ASCII Hangman web-app version
 image::ASCII-Hangman-Web-App.gif[ASCII-Hangman Web Application,500,400,pdfwidth=50%,scaledwidth=50%]
 
-_ASCII-Hangman_ is also available as desktop-terminal-application for Linux, Mac and Windows. Download and installation instruction are here: 
+_ASCII-Hangman_ is also available as desktop-terminal-application for Linux, Mac and Windows. Download and installation instruction are here:
 https://blog.getreu.net/projects/ascii-hangman/#distribution[ASCII-Hangman Desktop App].
 
 .ASCII Hangman terminal version
@@ -40,15 +57,17 @@ The project's webpage is on
 http://blog.getreu.net/projects/ascii-hangman/[getreu.net].
 There you also find a
 https://blog.getreu.net/_downloads/ascii-hangman.pdf[
-pdf rendition] of this document and compiled 
+pdf rendition] of this document and compiled
 https://blog.getreu.net/_downloads/ascii-hangman.zip[binaries].
 
 == Getting started
 
 === ASCII-Hangman installation
 
-The web-app version does not need to be installed. Just navigate to
-https://blog.getreu.net/projects/ascii-hangman/web-app/[ASCII-Hangman Web-App].
+The web-app version does not need to be installed on your computer. Just
+navigate to
+https://blog.getreu.net/projects/ascii-hangman/web-app/[ASCII-Hangman Web-App]
+and start playing.
 
 As far as the desktop version is concerned, there is no installation in the
 proper sense either, as the whole application consists of only one binary file.
@@ -65,27 +84,27 @@ Navigate to https://blog.getreu.net/projects/ascii-hangman/web-app[ASCII-Hangman
 
 ==== Linux
 
-1. Open a terminal
+1. Open a terminal.
 
 2. Navigate to a folder containing configuration files, e.g.
-  
+
      cd vocabulary-chapter-1
 
-3. If the folder contains only one configuration file `hangman-words.txt`
-just type
+3. If the folder contains only one configuration file named `hangman-words.txt`
+   just type:
 
      ascii-hangman
 +
-otherwise type, e.g.
+otherwise type, e.g.:
 
      ascii-hangman words-page3.txt words-page5.txt
 
 ==== Windows
 
-1. Open the folder where the `ascii-hangman.exe` file resides.
+1. Open the folder in which the `ascii-hangman.exe` executable file resides.
 
 2. Open a second explorer window and navigate to a folder with a configuration
-file.
+   file, e.g. `hangman-words`.
 
 3. Drag and drop one or more configuration files on `ascii-hangman.exe`.
 
@@ -99,18 +118,16 @@ user guess.  This list is provided by a configuration file with a very simple
 syntax explained below. When you start the desktop version for the first time,
 a sample configuration file, named `ascii-hangman-words.txt`, is created.
 Adding own secrets to this file can be done with any text editor. Next time
-_ASCII-Hangman_ starts, its will read the modified list of secrets.
+_ASCII-Hangman_ starts, it will read the modified list of secrets.
 
-The Web-App version of _ASCII-Hangman_ works similar. Here the programm starts
+The Web-App version of _ASCII-Hangman_ works similar. Here the program starts
 with a configuration page allowing you to enter the list of secrets directly
-without external editor. If you wish, you can download a prepared list of 
+without external editor. If you wish, you can download a prepared list of
 secrets from a file on your disk. Note, it is possible to select more than one
-file in the file-selector-dialogue.
-
+file in the file selector dialogue.
 
 
 === Linux configuration
-
 
 . Run _ASCII-Hangman_ once. It creates a configuration file
   `ascii-hangman-words.txt` in the current working directory.
@@ -134,7 +151,7 @@ This creates the file `ascii-hangman_words.txt`
 
 . Edit the configuration file
 +
-Double-click on `ascii-hangman-words.txt`. This opens the file in the `Notepad` 
+Double-click on `ascii-hangman-words.txt`. This opens the file in the `Notepad`
 editor. Add own secrets, one per line.
 
 . Start the game
@@ -144,7 +161,7 @@ Double-click on `ascii-hangman.exe`.
 
 === Synopsis and syntax
 
-include::../../../src/main.rs[lines="66..107"]
+include::../../../ascii-hangman/src/main.rs[lines="68..110"]
 
 
 
@@ -170,7 +187,7 @@ _3*_7_=21_
 
 ==== Configuration file with custom image
 
-A configuration file may contain a custom image. The image is gradually 
+A configuration file may contain a custom image. The image is gradually
 disclosed after each right guess.
 
 ----
@@ -221,7 +238,7 @@ disclosed after each lost life.
 ----
 
 Note: The gallows image is not part of the built-in ASCII-art. If wished for,
-it can be defined it the configuration file.
+it can be provided through the configuration file.
 
 
 == Play the game in the classroom
@@ -230,73 +247,74 @@ The game is designed for classroom usage, but can be played alone as well.
 
 === Classroom requirements
 
-*  Big screen or projector
+*  Bigger screen or projector
 
 *  Browser with Internet access - or -
 
-*  Windows or Linux Computer with `ascii-hangman.exe` or `ascii-hangman` 
-   binary installed.
+*  Windows or Linux Computer with the `ascii-hangman.exe` (Windows) or
+   `Ascii-Hangman` (MacOs and Linux) binary installed.
 
 === Prepare a configuration file with secret words
 
 The following may serve as a suggestion how to integrate the game in
 a lesson in class:
 
-The aim of the game is to consolidate recently learned vocabulary. 
+The aim of the game is to consolidate recently learned vocabulary.
 For this purpose the class composes a vocabulary list of words or expressions,
 hereafter referred to as list of secrets words.
 
-*  The class composes the list of secrets together with the teacher. 
-   To optimize the learning progress, it is most useful to involve the pupils 
+*  The class composes the list of secrets together with the teacher.
+   To optimize the learning progress, it is most useful to involve the pupils
    in the preparation of the list of secrets, e.g.:
    One pupil types the suggested words into the configuration file, the others
-   follow at the screen and correct spelling mistakes. 
+   follow on the screen and correct spelling mistakes.
 
-*  The list of secrets can be recent vocabulary or calculation exercises. A
-   secret is always encoded as one line in the configuration file and can be a
-   word or a whole sentence of vocabulary or even a math exercise.
+*  The list of secrets can be recent vocabulary or even some simple calculation
+   exercises. A secret is always encoded as one line in the configuration file.
+   This can be a word or a whole sentence or expression.
 
-*  To give an additional hint it, is possible to tag a part of the secret
-   sentence. This part will be disclosed immediately when the game starts.   
+*  To give an additional hint it, is possible to tag some letters of the secret
+   sentence (see examples above). This part will be disclosed immediately when
+   the game starts.
 
-*  When the game starts the computer will choose one secret of the list
-   randomly. The teacher can play also as he does not know the next secret
-   either. Every secret appears only once, unless it is not guessed
-   correctly. Then it will appear again at some random time in the future.
+*  At the beginning of the game, the computer chooses randomly one secret
+   out of the list. When a secret is guessed correctly, it will not be asked
+   again. The game ends, when all secrets are guessed correctly.
 
-=== Game rules
+
+=== Suggested game rules for the classroom
 
 The following rules are designed to stimulate the participation of the
 whole group of learners. Vary them according to your needs.
 
-1. The whole class is asked to write down all guessed letters on a sheet of 
+1. Each pupil is asked to write down all already guessed letters on a sheet of
    paper.
 
-2. A player can guess again when when the last guess was right, meaning the
-   secret contained the guessed letter.
+2. A player is allowed to guess once more, when the last guess was right.
 
-3. If not, the next player may try it. In bigger groups the next player should
-   be chosen randomly. This incites the whole group as nobody knows who will 
-   be the next.
 
-4. A player is not allowed to ask others to remind him if a letter was already
-   tried or not. He has to solely rely on his own notes.
+3. When he fails, he passes the turn to the next player. In bigger groups the
+   next player may be chosen randomly. This keeps more pupils concentrated,
+   as nobody knows who will be the next.
 
-5. The winner of the game it the person who discloses the last letter of the
+4. A player is not allowed to ask others what letters are guessed already.
+   He has to solely rely on his own notes.
+
+5. The winner of the game is the player who discloses the last letter of the
    secret word.
 
 
-Alternatively, the game can be played in a more disorganized manner:  In order
-to activate a group, choose a game master who will type the letters the 
-group calls in.
+Alternatively, as activation activity, the game can be played in a more
+disorganized manner: First the group chooses a game master.  he will then type
+in the guesses the group calls in loudly.
 
 
 == Data privacy statement
 
-All versions of _ASCII-Hangman_ run locally on your computer and do not
-collect or transfer any data. 
+All desktop versions of _ASCII-Hangman_ run locally on your computer and do not
+collect or transfer any data.
 
-This applies in particular to the web application version of _ASCII-Hangman_:
-due to its Web-Assembly-technology, the programm runs - once started - entirely
-in your Web-Browser's sandbox without any networks connection.
+This applies to the web application version of _ASCII-Hangman_ also: due to its
+Web-Assembly-technology, the program runs - once started - entirely in your
+Web-Browser's sandbox and never connects to the Internet.
 

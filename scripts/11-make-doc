@@ -1,0 +1,17 @@
+#!/bin/sh
+ASCII_HANGMAN_BACKEND="ascii-hangman-backend"
+
+cd ..
+cd "$ASCII_HANGMAN_BACKEND"
+cargo doc  -p ascii-hangman --no-deps --document-private-items
+cd ..
+
+
+cd doc
+./make--all
+cd ..
+
+
+
+
+

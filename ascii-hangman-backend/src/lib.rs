@@ -1,5 +1,11 @@
 //! This module provides the backend API for the game logic
 
+extern crate rand;
+extern crate thiserror;
+mod dictionary;
+pub mod game;
+mod image;
+mod secret;
 use crate::dictionary::ConfigParseError;
 use crate::dictionary::Dict;
 use crate::game::Game;
@@ -25,7 +31,7 @@ _der Hund = _the dog\r
 
 /// State of the application.
 #[derive(Debug)]
-pub struct Application {
+pub struct Backend {
     dict: Dict,
     game: Game,
     image: Image,
@@ -64,7 +70,7 @@ pub trait HangmanBackend {
     fn get_state(&self) -> State;
 }
 
-impl HangmanBackend for Application {
+impl HangmanBackend for Backend {
     fn new(config: &str) -> Result<Self, ConfigParseError> {
         let mut dict = Dict::new(&config)?;
         // A dictionary guaranties to have least one secret.

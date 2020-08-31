@@ -2,9 +2,9 @@
 //! image.  Also parses user provided images if given in the configuration file.
 
 extern crate rand;
-use crate::application::LIVES;
 use crate::dictionary::ConfigParseError;
 use crate::game::Game;
+use crate::LIVES;
 use rand::seq::SliceRandom;
 use rand::thread_rng;
 use std::cmp::{Ord, Ordering};
