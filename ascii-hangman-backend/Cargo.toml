@@ -1,6 +1,6 @@
 [package]
 name = "ascii-hangman-backend"
-version = "5.2.1"
+version = "5.2.2"
 authors = ["Jens Getreu <getreu@web.de>"]
 edition = "2018"
 readme = "../README.md"
