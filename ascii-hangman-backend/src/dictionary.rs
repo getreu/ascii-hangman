@@ -17,6 +17,9 @@ pub const CONF_LINE_IDENTIFIER__WORD: char = '-';
 /// "guess_-me_" will be displayed in the game as "_ _ _ _ _ - m e"
 pub const CONF_LINE_SECRET_MODIFIER__VISIBLE: char = '_';
 
+/// A tag to insert a linebreak when the secret is displayed.
+pub const CONF_LINE_SECRET_MODIFIER__LINEBREAK: char = '|';
+
 // Custom error type used expressing potential syntax errors when parsing the configuration file.
 #[derive(Error, Debug, PartialEq)]
 pub enum ConfigParseError {
