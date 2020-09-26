@@ -1,4 +1,5 @@
-use crate::dictionary::CONF_LINE_SECRET_MODIFIER__LINEBREAK;
+use crate::dictionary::CONF_LINE_SECRET_MODIFIER__LINEBREAK1;
+use crate::dictionary::CONF_LINE_SECRET_MODIFIER__LINEBREAK2;
 use crate::dictionary::CONF_LINE_SECRET_MODIFIER__VISIBLE;
 use std::fmt;
 
@@ -37,19 +38,22 @@ impl Secret {
         let w: Vec<HangmanChar> = secretstr
             .chars()
             // For every `_` found flip `visible_on`.
-            // CONF_LINE_SECRET_MODIFIER__LINEBREAK found, set `whitespace_on=true`.
+            // CONF_LINE_SECRET_MODIFIER__LINEBREAK1 found, set `whitespace_on=true`.
             // Non whitespace found, set `whitespace_on=false`.
             .map(|c| {
                 if whitespace_on && !c.is_whitespace() {
                     whitespace_on = false;
                 };
-                if c == CONF_LINE_SECRET_MODIFIER__LINEBREAK {
+                if (c == CONF_LINE_SECRET_MODIFIER__LINEBREAK1)
+                    || (c == CONF_LINE_SECRET_MODIFIER__LINEBREAK2)
+                {
                     whitespace_on = true;
                 };
                 visible_on ^= c == CONF_LINE_SECRET_MODIFIER__VISIBLE;
                 let ct = match (c, visible_on, whitespace_on) {
                     (CONF_LINE_SECRET_MODIFIER__VISIBLE, _, _) => HangmanCharType::Formatter,
-                    (CONF_LINE_SECRET_MODIFIER__LINEBREAK, _, _) => HangmanCharType::Formatter,
+                    (CONF_LINE_SECRET_MODIFIER__LINEBREAK1, _, _) => HangmanCharType::Formatter,
+                    (CONF_LINE_SECRET_MODIFIER__LINEBREAK2, _, _) => HangmanCharType::Formatter,
                     (_, _, true) => HangmanCharType::Ignored,
                     (_, true, false) => HangmanCharType::Visible,
                     (_, false, false) => HangmanCharType::Hidden,
@@ -136,7 +140,8 @@ impl fmt::Display for Secret {
                 linebreak = true
             };
             if matches!(c.chartype, HangmanCharType::Formatter)
-                && c.character == CONF_LINE_SECRET_MODIFIER__LINEBREAK
+                && (c.character == CONF_LINE_SECRET_MODIFIER__LINEBREAK1
+                    || c.character == CONF_LINE_SECRET_MODIFIER__LINEBREAK2)
             {
                 linebreak = true
             };
@@ -144,7 +149,8 @@ impl fmt::Display for Secret {
             if linebreak
                 && (!matches!(c.chartype, HangmanCharType::Formatter) && (c.character == ' ')
                     || (matches!(c.chartype, HangmanCharType::Formatter)
-                        && c.character == CONF_LINE_SECRET_MODIFIER__LINEBREAK))
+                        && ((c.character == CONF_LINE_SECRET_MODIFIER__LINEBREAK1)
+                            || (c.character == CONF_LINE_SECRET_MODIFIER__LINEBREAK2))))
             {
                 linebreak = false;
                 n = 0;
@@ -223,7 +229,7 @@ mod tests {
         );
 
         let secret = Secret::new("_abc|  def _hij| \n  klm");
-        assert_eq!(secret.to_string(), " a b c\n d e f   _ _ _\n _ _ _\n");
+        assert_eq!(secret.to_string(), " a b c\n d e f   _ _ _\n\n _ _ _\n");
         assert_eq!(secret.to_raw_string(), "_abc|  def _hij| \n  klm");
         assert_eq!(secret.hidden_chars(), 6);
         assert!(!secret.is_fully_disclosed());

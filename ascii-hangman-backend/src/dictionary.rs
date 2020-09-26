@@ -21,7 +21,8 @@ pub const CONF_LINE_IDENTIFIER__WORD: char = '-';
 pub const CONF_LINE_SECRET_MODIFIER__VISIBLE: char = '_';
 
 /// A tag to insert a linebreak when the secret is displayed.
-pub const CONF_LINE_SECRET_MODIFIER__LINEBREAK: char = '|';
+pub const CONF_LINE_SECRET_MODIFIER__LINEBREAK1: char = '\n';
+pub const CONF_LINE_SECRET_MODIFIER__LINEBREAK2: char = '|';
 
 // Custom error type used expressing potential syntax errors when parsing the configuration file.
 #[derive(Error, Debug)]
@@ -51,7 +52,7 @@ pub enum ConfigParseError {
     #[error["Could not parse the proprietary format, because this is\n\
     meant to be in (erroneous) YAML format."]]
     NotInProprietaryFormat,
-    #[error("Invalid format:\n\t{0}")]
+    #[error("Invalid format:\n{0}")]
     NotInYamlFormat(#[from] serde_yaml::Error),
     #[error["Frist line must be: `secrets:` (no spaces allowed before)."]]
     YamlSecretsLineMissing,
@@ -83,7 +84,6 @@ impl Dict {
 
     /// Parse configuration file as toml data.
     pub fn new_toml(lines: &str) -> Result<Self, ConfigParseError> {
-
         // Trim BOM
         let lines = lines.trim_start_matches('\u{feff}');
 
@@ -132,7 +132,7 @@ impl Dict {
                         } else {
                              // Lines starting alphanumerically are secret strings also.
                              // We can safely unwrap here since all empty lines had been filtered.
-                             let c = l.trim().chars().next().unwrap();
+                             let c = l.chars().next().unwrap();
                              if c.is_alphanumeric() || c == CONF_LINE_SECRET_MODIFIER__VISIBLE {
                                 l.trim().to_string()
                              } else {
@@ -210,7 +210,7 @@ _good l_uck
         };
         assert_eq!(dict, expected);
 
-        let config: &str = "   guess me";
+        let config: &str = "guess me";
         let dict = Dict::new(&config);
         let expected = Ok(Dict {
             secrets: vec!["guess me".to_string()],

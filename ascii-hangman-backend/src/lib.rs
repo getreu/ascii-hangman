@@ -23,7 +23,7 @@ pub const LIVES: u8 = 7;
 /// Fallback sample configuration when no configuration file can be found.
 pub const CONF_TEMPLATE: &str = "# Add own secrets here, one per line.\r
 \r
-secrets:
+secrets:\r
 - guess me\r
 - _good l_uck\r
 - _der Hund_| the dog\r
