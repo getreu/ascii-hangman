@@ -46,6 +46,8 @@ pub enum ConfigParseError {
     Edit config file and start again.\n"
     )]
     LineIdentifier { line_number: usize, line: String },
+    #[error["No image data found."]]
+    NoImageData,
     #[error["A config file must have a least one secret string, which is\n\
     a non-empty line starting with a letter, digit, '_' or '-'."]]
     NoSecretString,
@@ -75,15 +77,15 @@ pub struct Dict {
 }
 
 impl Dict {
-    /// Parses the configuration data, sets game modifier variables and populates the dictionary
+    /// First try ot parse YAML, if it fails try the depreciated proprietary format and populate the dictionary
     /// with secrets.
-    pub fn new(lines: &str) -> Result<Self, ConfigParseError> {
+    pub fn from(lines: &str) -> Result<Self, ConfigParseError> {
         // If both return an error, return the first one here.
-        Self::new_toml(&lines).or_else(|e| Self::new_proprietary(&lines).or(Err(e)))
+        Self::from_yaml(&lines).or_else(|e| Self::from_proprietary(&lines).or(Err(e)))
     }
 
     /// Parse configuration file as toml data.
-    pub fn new_toml(lines: &str) -> Result<Self, ConfigParseError> {
+    pub fn from_yaml(lines: &str) -> Result<Self, ConfigParseError> {
         // Trim BOM
         let lines = lines.trim_start_matches('\u{feff}');
 
@@ -105,7 +107,7 @@ impl Dict {
     }
 
     /// Parse the old configuration data format.
-    fn new_proprietary(lines: &str) -> Result<Self, ConfigParseError> {
+    fn from_proprietary(lines: &str) -> Result<Self, ConfigParseError> {
         if lines
             .lines()
             .any(|s| s.trim().starts_with("secrets:") || s.trim().starts_with("image:"))
@@ -199,7 +201,7 @@ hang_man_
 _good l_uck
 :traditional-rewarding
 ";
-        let dict = Dict::new(&config).unwrap();
+        let dict = Dict::from(&config).unwrap();
 
         let expected = Dict {
             secrets: vec![
@@ -211,7 +213,7 @@ _good l_uck
         assert_eq!(dict, expected);
 
         let config: &str = "guess me";
-        let dict = Dict::new(&config);
+        let dict = Dict::from(&config);
         let expected = Ok(Dict {
             secrets: vec!["guess me".to_string()],
             // this is default
@@ -220,7 +222,7 @@ _good l_uck
 
         // indent of comments is not allowed
         let config = "\n\n\n   # comment";
-        let dict = Dict::new_proprietary(&config);
+        let dict = Dict::from_proprietary(&config);
         let expected = Err(ConfigParseError::LineIdentifier {
             line_number: 4,
             line: "   # comment".to_string(),
@@ -229,12 +231,12 @@ _good l_uck
 
         // configuration must define at least one secret
         let config = "# nothing but comment";
-        let dict = Dict::new_proprietary(&config);
+        let dict = Dict::from_proprietary(&config);
         let expected = Err(ConfigParseError::NoSecretString {});
         assert_eq!(dict, expected);
 
         let config = "one secret\n\n :traditional-rewarding";
-        let dict = Dict::new_proprietary(&config);
+        let dict = Dict::from_proprietary(&config);
         let expected = Err(ConfigParseError::LineIdentifier {
             line_number: 3,
             line: " :traditional-rewarding".to_string(),
@@ -245,36 +247,36 @@ _good l_uck
     #[test]
     fn test_new_toml() {
         let config = "# comment\nsecrets:\n  - guess me\n";
-        let dict = Dict::new_toml(&config);
+        let dict = Dict::from_yaml(&config);
         let expected = Ok(Dict {
             secrets: vec!["guess me".to_string()],
         });
         assert_eq!(dict, expected);
 
         let config = "# comment\nsecrets:\n- guess me\n";
-        let dict = Dict::new_toml(&config);
+        let dict = Dict::from_yaml(&config);
         let expected = Ok(Dict {
             secrets: vec!["guess me".to_string()],
         });
         assert_eq!(dict, expected);
 
         let config = "# comment\nsecrets:\n- 222\n";
-        let dict = Dict::new_toml(&config);
+        let dict = Dict::from_yaml(&config);
         let expected = Ok(Dict {
             secrets: vec!["222".to_string()],
         });
         assert_eq!(dict, expected);
 
         let config = "sxxxecrets:";
-        let dict = Dict::new_toml(&config).unwrap_err();
+        let dict = Dict::from_yaml(&config).unwrap_err();
         assert!(matches!(dict, ConfigParseError::YamlSecretsLineMissing));
 
         let config = "  - guess me\nsecrets:\n";
-        let dict = Dict::new_toml(&config).unwrap_err();
+        let dict = Dict::from_yaml(&config).unwrap_err();
         assert!(matches!(dict, ConfigParseError::YamlSecretsLineMissing));
 
         let config = "# comment\nsecrets:\n   guess me\n";
-        let dict = Dict::new_toml(&config).unwrap_err();
+        let dict = Dict::from_yaml(&config).unwrap_err();
         assert!(matches!(dict, ConfigParseError::NotInYamlFormat(_)));
     }
 }

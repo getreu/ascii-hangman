@@ -73,11 +73,11 @@ pub trait HangmanBackend {
 
 impl HangmanBackend for Backend {
     fn new(config: &str) -> Result<Self, ConfigParseError> {
-        let mut dict = Dict::new(&config)?;
+        let mut dict = Dict::from(&config)?;
         // A dictionary guaranties to have least one secret.
         let secret = dict.get_random_secret().unwrap();
         let game = Game::new(&secret, LIVES, dict.is_empty());
-        let mut image = Image::new(&config)?;
+        let mut image = Image::from(&config)?;
         image.update(&game);
         Ok(Self { dict, game, image })
     }
