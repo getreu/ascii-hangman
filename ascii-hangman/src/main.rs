@@ -78,9 +78,10 @@ written into the current working directory. Multiple `[FILE]`s are concatenated.
 `[FILE]` is a UTF-8 file containing 4 different line-types:
 
 - lines starting with a letter, a digit or '-' are secret strings. At the
-  beginning of the game one line is randomly chosen and all characters are
-  hidden. If you want to give an additional hint, enclose some characters
+  beginning of the game one line (secret) is randomly chosen and all characters
+  are hidden. If you want to give an additional hint, enclose some characters
   with `_`.  The enclosed is then displayed in clear when the game starts.
+  Furthermore, the `|` acts as a hard line break and is not printed.
   For example the configuration line:
 
       Guess _me_
