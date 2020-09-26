@@ -2,9 +2,12 @@
 
 #![allow(clippy::filter_map)]
 extern crate rand;
+extern crate serde;
+extern crate serde_yaml;
 use crate::image::CONF_LINE_IDENTIFIER__CONTROL;
 use crate::image::CONF_LINE_IDENTIFIER__IMAGE;
 use rand::Rng;
+use serde::Deserialize;
 use thiserror::Error;
 
 /// Tags comment lines in the configuration file.
@@ -21,7 +24,7 @@ pub const CONF_LINE_SECRET_MODIFIER__VISIBLE: char = '_';
 pub const CONF_LINE_SECRET_MODIFIER__LINEBREAK: char = '|';
 
 // Custom error type used expressing potential syntax errors when parsing the configuration file.
-#[derive(Error, Debug, PartialEq)]
+#[derive(Error, Debug)]
 pub enum ConfigParseError {
     #[error(
         "Syntax error in line {line_number:?}: `{line}`\n\n\
@@ -45,19 +48,71 @@ pub enum ConfigParseError {
     #[error["A config file must have a least one secret string, which is\n\
     a non-empty line starting with a letter, digit, '_' or '-'."]]
     NoSecretString,
+    #[error["Could not parse the proprietary format, because this is\n\
+    meant to be in (erroneous) YAML format."]]
+    NotInProprietaryFormat,
+    #[error("Invalid format:\n\t{0}")]
+    NotInYamlFormat(#[from] serde_yaml::Error),
+    #[error["Frist line must be: `secrets:` (no spaces allowed before)."]]
+    YamlSecretsLineMissing,
+}
+
+/// We need this because `serde_yaml::Error` does not implement `PartialEq`.
+/// We compare only types.
+impl PartialEq for ConfigParseError {
+    fn eq(&self, other: &Self) -> bool {
+        std::mem::discriminant(self) == std::mem::discriminant(other)
+            && (self.to_string() == other.to_string())
+    }
 }
 
 /// A dictionary holding all secret sentences from among whom one is chosen randomly at the
 /// beginning of the game.
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Deserialize)]
 pub struct Dict {
-    wordlist: Vec<String>,
+    secrets: Vec<String>,
 }
 
 impl Dict {
     /// Parses the configuration data, sets game modifier variables and populates the dictionary
     /// with secrets.
     pub fn new(lines: &str) -> Result<Self, ConfigParseError> {
+        // If both return an error, return the first one here.
+        Self::new_toml(&lines).or_else(|e| Self::new_proprietary(&lines).or(Err(e)))
+    }
+
+    /// Parse configuration file as toml data.
+    pub fn new_toml(lines: &str) -> Result<Self, ConfigParseError> {
+
+        // Trim BOM
+        let lines = lines.trim_start_matches('\u{feff}');
+
+        for l in lines
+            .lines()
+            .filter(|s| !s.trim_start().starts_with('#'))
+            .filter(|s| s.trim() != "")
+        {
+            if l.trim_end() == "secrets:" {
+                break;
+            } else {
+                return Err(ConfigParseError::YamlSecretsLineMissing);
+            }
+        }
+
+        let dict: Dict = serde_yaml::from_str(&lines)?;
+
+        Ok(dict)
+    }
+
+    /// Parse the old configuration data format.
+    fn new_proprietary(lines: &str) -> Result<Self, ConfigParseError> {
+        if lines
+            .lines()
+            .any(|s| s.trim().starts_with("secrets:") || s.trim().starts_with("image:"))
+        {
+            return Err(ConfigParseError::NotInProprietaryFormat {});
+        };
+
         let mut file_syntax_test2: Result<(), ConfigParseError> = Ok(());
 
         let wordlist =
@@ -99,30 +154,30 @@ impl Dict {
             return Err(ConfigParseError::NoSecretString {});
         }
 
-        Ok(Dict { wordlist })
+        Ok(Dict { secrets: wordlist })
     }
 
     /// Chooses randomly one secret from the dictionary and removes the secret from list
     pub fn get_random_secret(&mut self) -> Option<String> {
-        match self.wordlist.len() {
+        match self.secrets.len() {
             0 => None,
-            1 => Some(self.wordlist.swap_remove(0)),
+            1 => Some(self.secrets.swap_remove(0)),
             _ => {
                 let mut rng = rand::thread_rng();
-                let i = rng.gen_range(0, &self.wordlist.len() - 1);
-                Some(self.wordlist.swap_remove(i))
+                let i = rng.gen_range(0, &self.secrets.len() - 1);
+                Some(self.secrets.swap_remove(i))
             }
         }
     }
 
     /// Is there exactly one secret left?
     pub fn is_empty(&self) -> bool {
-        self.wordlist.is_empty()
+        self.secrets.is_empty()
     }
 
     /// Add a secret to the list.
     pub fn add(&mut self, secret: String) {
-        self.wordlist.push(secret);
+        self.secrets.push(secret);
     }
 }
 
@@ -130,11 +185,12 @@ impl Dict {
 
 #[cfg(test)]
 mod tests {
-    use super::{ConfigParseError, Dict};
+    use super::ConfigParseError;
+    use super::Dict;
 
     /// parse all 3 data types in configuration file format
     #[test]
-    fn test_dictionary_parser_syntax() {
+    fn test_new_proprietary() {
         let config: &str = "
 #  comment
 
@@ -143,58 +199,82 @@ hang_man_
 _good l_uck
 :traditional-rewarding
 ";
-        let dict = Dict::new(&config);
-        let expected = Ok(Dict {
-            wordlist: vec![
+        let dict = Dict::new(&config).unwrap();
+
+        let expected = Dict {
+            secrets: vec![
                 "guess me".to_string(),
                 "hang_man_".to_string(),
                 "_good l_uck".to_string(),
             ],
-        });
+        };
         assert_eq!(dict, expected);
-    }
 
-    /// indent of secrets is allowed
-    #[test]
-    fn test_dictionary_parser_indent() {
         let config: &str = "   guess me";
         let dict = Dict::new(&config);
         let expected = Ok(Dict {
-            wordlist: vec!["guess me".to_string()],
+            secrets: vec!["guess me".to_string()],
             // this is default
         });
-        assert!(dict == expected);
-    }
+        assert_eq!(dict, expected);
 
-    /// indent of comments is not allowed
-    #[test]
-    fn test_dictionary_parser_error_indent() {
+        // indent of comments is not allowed
         let config = "\n\n\n   # comment";
-        let dict = Dict::new(&config);
+        let dict = Dict::new_proprietary(&config);
         let expected = Err(ConfigParseError::LineIdentifier {
             line_number: 4,
             line: "   # comment".to_string(),
         });
-        assert!(dict == expected);
-    }
+        assert_eq!(dict, expected);
 
-    /// configuration must define at least one secret
-    #[test]
-    fn test_dictionary_parser_error_no_secrets() {
+        // configuration must define at least one secret
         let config = "# nothing but comment";
-        let dict = Dict::new(&config);
+        let dict = Dict::new_proprietary(&config);
         let expected = Err(ConfigParseError::NoSecretString {});
-        assert!(dict == expected);
-    }
+        assert_eq!(dict, expected);
 
-    #[test]
-    fn test_image_parser_error_indent() {
         let config = "one secret\n\n :traditional-rewarding";
-        let dict = Dict::new(&config);
+        let dict = Dict::new_proprietary(&config);
         let expected = Err(ConfigParseError::LineIdentifier {
             line_number: 3,
             line: " :traditional-rewarding".to_string(),
         });
         assert_eq!(dict, expected);
+    }
+
+    #[test]
+    fn test_new_toml() {
+        let config = "# comment\nsecrets:\n  - guess me\n";
+        let dict = Dict::new_toml(&config);
+        let expected = Ok(Dict {
+            secrets: vec!["guess me".to_string()],
+        });
+        assert_eq!(dict, expected);
+
+        let config = "# comment\nsecrets:\n- guess me\n";
+        let dict = Dict::new_toml(&config);
+        let expected = Ok(Dict {
+            secrets: vec!["guess me".to_string()],
+        });
+        assert_eq!(dict, expected);
+
+        let config = "# comment\nsecrets:\n- 222\n";
+        let dict = Dict::new_toml(&config);
+        let expected = Ok(Dict {
+            secrets: vec!["222".to_string()],
+        });
+        assert_eq!(dict, expected);
+
+        let config = "sxxxecrets:";
+        let dict = Dict::new_toml(&config).unwrap_err();
+        assert!(matches!(dict, ConfigParseError::YamlSecretsLineMissing));
+
+        let config = "  - guess me\nsecrets:\n";
+        let dict = Dict::new_toml(&config).unwrap_err();
+        assert!(matches!(dict, ConfigParseError::YamlSecretsLineMissing));
+
+        let config = "# comment\nsecrets:\n   guess me\n";
+        let dict = Dict::new_toml(&config).unwrap_err();
+        assert!(matches!(dict, ConfigParseError::NotInYamlFormat(_)));
     }
 }
