@@ -26,7 +26,7 @@ pub const CONF_TEMPLATE: &str = "# Add own secrets here, one per line.\r
 guess me\r
 _good l_uck\r
 _3*_7_=21_\r
-_der Hund_|the dog\r
+_der Hund_| the dog\r
 ";
 
 /// State of the application.

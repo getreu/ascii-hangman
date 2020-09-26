@@ -11,6 +11,7 @@ enum HangmanCharType {
     Visible,
     Hidden,
     Formatter,
+    Ignored,
 }
 
 /// One character of the secret string.
@@ -23,7 +24,6 @@ struct HangmanChar {
 /// The secret
 #[derive(Debug, PartialEq)]
 pub struct Secret {
-    raw: String,
     hangman_chars: Vec<HangmanChar>,
     pub chars_to_guess: usize,
 }
@@ -32,25 +32,33 @@ impl Secret {
     /// Constructor.
     pub fn new(secretstr: &str) -> Self {
         // parse `secretsstr`, flip 'visible' every CONF_LINE_SECRET_MODIFIER__VISIBLE
+        let mut whitespace_on = false;
+        let mut visible_on = false;
         let w: Vec<HangmanChar> = secretstr
             .chars()
-            // for every * found flip v_acc
-            .scan(false, |v_acc, c| {
-                *v_acc ^= c == CONF_LINE_SECRET_MODIFIER__VISIBLE;
-                let ct = match (c, *v_acc) {
-                    (CONF_LINE_SECRET_MODIFIER__VISIBLE, _) => HangmanCharType::Formatter,
-                    (CONF_LINE_SECRET_MODIFIER__LINEBREAK, _) => HangmanCharType::Formatter,
-                    (_, true) => HangmanCharType::Visible,
-                    (_, false) => HangmanCharType::Hidden,
+            // For every `_` found flip `visible_on`.
+            // CONF_LINE_SECRET_MODIFIER__LINEBREAK found, set `whitespace_on=true`.
+            // Non whitespace found, set `whitespace_on=false`.
+            .map(|c| {
+                if whitespace_on && !c.is_whitespace() {
+                    whitespace_on = false;
                 };
-                Some(Some(HangmanChar {
+                if c == CONF_LINE_SECRET_MODIFIER__LINEBREAK {
+                    whitespace_on = true;
+                };
+                visible_on ^= c == CONF_LINE_SECRET_MODIFIER__VISIBLE;
+                let ct = match (c, visible_on, whitespace_on) {
+                    (CONF_LINE_SECRET_MODIFIER__VISIBLE, _, _) => HangmanCharType::Formatter,
+                    (CONF_LINE_SECRET_MODIFIER__LINEBREAK, _, _) => HangmanCharType::Formatter,
+                    (_, _, true) => HangmanCharType::Ignored,
+                    (_, true, false) => HangmanCharType::Visible,
+                    (_, false, false) => HangmanCharType::Hidden,
+                };
+                HangmanChar {
                     character: c,
                     chartype: ct,
-                }))
+                }
             })
-            // omit None and unwrap
-            .filter_map(|s| s)
-            //.inspect(|ref x| println!("after scan:\t{:?}", x))
             .collect();
 
         let chars_to_guess = w
@@ -59,7 +67,6 @@ impl Secret {
             .count();
 
         Self {
-            raw: secretstr.to_string(),
             hangman_chars: w,
             chars_to_guess,
         }
@@ -87,7 +94,7 @@ impl Secret {
         for hc in &mut self
             .hangman_chars
             .iter_mut()
-            .filter(|c| !matches!(c.chartype, HangmanCharType::Formatter))
+            .filter(|c| matches!(c.chartype, HangmanCharType::Hidden))
         {
             hc.chartype = HangmanCharType::Visible;
         }
@@ -95,10 +102,11 @@ impl Secret {
 
     /// Method used to find out if the user has won.
     pub fn is_fully_disclosed(&self) -> bool {
-        self.hangman_chars
+        !self
+            .hangman_chars
             .iter()
-            .filter(|&c| !matches!(c.chartype, HangmanCharType::Formatter))
-            .all(|c| matches!(c.chartype, HangmanCharType::Visible))
+            .filter(|&c| matches!(c.chartype, HangmanCharType::Hidden))
+            .any(|c| matches!(c.chartype, HangmanCharType::Hidden))
     }
 
     /// Information used to calculate how much of the image should
@@ -113,7 +121,7 @@ impl Secret {
     /// Used in case the secret was not guessed and we want to inject
     /// it to the dictionary again.
     pub fn to_raw_string(&self) -> String {
-        self.raw.clone()
+        self.hangman_chars.iter().map(|hc| hc.character).collect()
     }
 }
 
@@ -127,12 +135,16 @@ impl fmt::Display for Secret {
             if n >= LINE_WIDTH {
                 linebreak = true
             };
-            if c.character == CONF_LINE_SECRET_MODIFIER__LINEBREAK {
+            if matches!(c.chartype, HangmanCharType::Formatter)
+                && c.character == CONF_LINE_SECRET_MODIFIER__LINEBREAK
+            {
                 linebreak = true
             };
 
             if linebreak
-                && (c.character == ' ' || c.character == CONF_LINE_SECRET_MODIFIER__LINEBREAK)
+                && (!matches!(c.chartype, HangmanCharType::Formatter) && (c.character == ' ')
+                    || (matches!(c.chartype, HangmanCharType::Formatter)
+                        && c.character == CONF_LINE_SECRET_MODIFIER__LINEBREAK))
             {
                 linebreak = false;
                 n = 0;
@@ -148,6 +160,7 @@ impl fmt::Display for Secret {
                         n += 1;
                     }
                     HangmanCharType::Formatter => {}
+                    HangmanCharType::Ignored => {}
                 };
             }
         }
@@ -201,11 +214,18 @@ mod tests {
         assert_eq!(secret.to_string(), " a b c\n d e f   h i j\n k l m\n");
         assert_eq!(secret.hidden_chars(), 0);
         assert!(secret.is_fully_disclosed());
+        assert_eq!(secret.to_raw_string(), "_abc|def _hij|klm");
 
         let secret = Secret::new("_123456789012345 789012345 789012_");
         assert_eq!(
             secret.to_string(),
             " 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5   7 8 9 0 1 2 3 4 5\n 7 8 9 0 1 2\n"
         );
+
+        let secret = Secret::new("_abc|  def _hij| \n  klm");
+        assert_eq!(secret.to_string(), " a b c\n d e f   _ _ _\n _ _ _\n");
+        assert_eq!(secret.to_raw_string(), "_abc|  def _hij| \n  klm");
+        assert_eq!(secret.hidden_chars(), 6);
+        assert!(!secret.is_fully_disclosed());
     }
 }
