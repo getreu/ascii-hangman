@@ -77,7 +77,7 @@ impl HangmanBackend for Backend {
         // A dictionary guaranties to have least one secret.
         let secret = dict.get_random_secret().unwrap();
         let game = Game::new(&secret, LIVES, dict.is_empty());
-        let mut image = Image::from(&config)?;
+        let mut image = Image::from(&config).or_else(|_| Image::new())?;
         image.update(&game);
         Ok(Self { dict, game, image })
     }

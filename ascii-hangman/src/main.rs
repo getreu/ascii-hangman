@@ -133,7 +133,7 @@ const PATHSTR: &str = "ascii-hangman-words.txt";
 /// Fallback sample configuration when no configuration file can be found.
 
 /// Fallback secret when no configuration file can be found.
-const CONF_DEMO: &str = "- _Demo: add own words to config file and start a_gain_!";
+const CONF_DEMO: &str = "secrets:\n - \"_Demo: add own words to config file and start a_gain_!\"";
 
 // ------------------ MAIN ---------------------------------------------
 
