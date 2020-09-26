@@ -29,7 +29,8 @@ const UNHIDE_WHEN_GUESSED_CHAR_IDENTIFIER: &str = "success-rewarding";
 
 /// Threshold to decide from how many characters on the images is considered to be "big".
 /// Big images are disclosed with another algorithm.
-const BIG_IMAGE: usize = 100; // sort algorithm <-> random algorithm
+/// This is just big enough that the gallow image stays small.
+const BIG_IMAGE: usize = 60; // sort algorithm <-> random algorithm
 
 /// A collection of built-in images from whom one is chosen at the start of the game.
 // first char of image lines must be '|'
@@ -1023,7 +1024,9 @@ impl Image {
     pub fn update(&mut self, game: &Game) {
         match self.rewarding_scheme {
             RewardingScheme::UnhideWhenGuessedChar => {
-                self.hide((game.secret.hidden_chars(), game.secret.chars_to_guess));
+                if game.lifes != 0 {
+                    self.hide((game.secret.hidden_chars(), game.secret.chars_to_guess()));
+                }
             }
             RewardingScheme::UnhideWhenLostLife => {
                 self.hide((game.lifes as usize, LIVES as usize));

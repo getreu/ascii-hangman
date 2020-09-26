@@ -106,9 +106,7 @@ impl HangmanBackend for Backend {
                 self.game.guess(inp.chars().next().unwrap_or(' '));
                 // In case we lost, all secrets will be disclosed. Prevent disclosing the image in
                 // that case.
-                if self.game.state != State::Defeat && self.game.state != State::DefeatGameOver {
-                    self.image.update(&self.game);
-                }
+                self.image.update(&self.game);
             }
         }
     }

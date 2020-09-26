@@ -26,7 +26,7 @@ struct HangmanChar {
 #[derive(Debug, PartialEq)]
 pub struct Secret {
     hangman_chars: Vec<HangmanChar>,
-    pub chars_to_guess: usize,
+    chars_to_guess: usize,
 }
 
 impl Secret {
@@ -120,6 +120,11 @@ impl Secret {
             .iter()
             .filter(|hc| matches!(hc.chartype, HangmanCharType::Hidden))
             .count()
+    }
+
+    /// How many hidden chars we had at the beginning of the game?
+    pub fn chars_to_guess(&self) -> usize {
+        self.chars_to_guess
     }
 
     /// Used in case the secret was not guessed and we want to inject
