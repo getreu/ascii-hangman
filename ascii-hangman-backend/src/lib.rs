@@ -21,13 +21,19 @@ pub const TITLE: &str = "ASCII-Hangman for Kids\n";
 /// Number of wrong guess allowed.
 pub const LIVES: u8 = 7;
 /// Fallback sample configuration when no configuration file can be found.
-pub const CONF_TEMPLATE: &str = "# Add own secrets here, one per line.\r
+pub const CONF_TEMPLATE: &str = "# Add own secrets here, one per line:\r
 \r
 secrets:\r
 - guess me\r
 - _good l_uck\r
-- _der Hund_| the dog\r
+- \"_der Hund:_| the dog\"\r
 - _3*_7_=21_\r
+\r
+# Uncomment 3 lines to use a custom image:\r
+\r
+#image: |1\r
+#   ::\r
+# C|__|\r
 ";
 
 /// State of the application.

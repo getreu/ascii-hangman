@@ -54,12 +54,23 @@ pub enum ConfigParseError {
     #[error["Could not parse the proprietary format, because this is\n\
     meant to be in (erroneous) YAML format."]]
     NotInProprietaryFormat,
-    #[error("Invalid format:\n\
-             Hint: If a secret contains a colon (:), like in\n\
-             -  animal: giraffe\n\
-             you must enclose it with double quotes (\"):\n\
-             -  \"animal: giraffe\"\n\n\
-             {0}")]
+    #[error(
+        "Syntax error: Please follow example:\n\
+             \tsecrets: \n\
+             \t- guess me\n\
+             \t- \"guess me: with colon\"\n\
+             \t- line| break\n\
+             \t- _disclose _partly\n\
+             \n\
+             \t # The following is optional.\n\
+             \ttraditional: false\n\
+             \t # Optional ASCII-art lines start with 1 space ' '.\n\
+
+             \timage: |1\n\
+             \t   ::\n\
+             \t C|__|\n\n\
+             {0}"
+    )]
     NotInYamlFormat(#[from] serde_yaml::Error),
     #[error["First line must be: `secrets:` (no spaces allowed before)."]]
     YamlSecretsLineMissing,
