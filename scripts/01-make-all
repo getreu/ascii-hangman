@@ -1,6 +1,7 @@
 #/bin/sh
 
 ./10-clear-all-builds
+./11-make-doc
 ./12-make-ascii-hangman-dektop
 ./13-make-ascii-hangman-webapp
 ./14-clean-targets-keep-binaries
