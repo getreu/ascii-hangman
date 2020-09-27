@@ -1,7 +1,9 @@
 #!/bin/sh
 
 rustup update
-cargo upgrade
+### Better comment it out here, because in `ascii-hangman-backend/Cargo.toml`
+### is a dependency that need manual adjustment.
+# cargo upgrade --all
 cargo update
 
 rm -r ../target

@@ -28,7 +28,7 @@ secrets:\r
 - _3*_7_=21_\r
 \r
 \r
-# Uncomment 3 lines to use a custom image:\r
+# Uncomment 3 lines to use an optional custom image:\r
 \r
 #image: |1\r
 #   ::\r
