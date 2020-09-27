@@ -35,7 +35,7 @@ version for children the computer selects a word, phrase or sentence randomly
 out of a word-list defined in a configuration file. In the course of the game
 Ascii-Art images - designed for children - are progressively disclosed.
 
-===================================
+```
 -----------------------------------
 ASCII-ART HANGMAN FOR KIDS
 
@@ -56,72 +56,76 @@ Lifes:  1       Last guess: 3
 
 Type a letter then type [Enter]:
 -----------------------------------
-===================================
+```
+```
+
 
  Usage: ascii-hangman
-        ascii-hangman [FILE]...
+        ascii-hangman [FILE]
         ascii-hangman -h|--help
-        asciiart-ascii-hangman-for-kids -V|--version
+        ascii-hangman -V|--version
+```
 
+`[FILE]` are configuration files containing one word-list hereafter referred to as "secrets" and
+optionally one Ascii-Art image.
 
-`[FILE]` are configuration files containing word-lists and optionally Ascii-Art
-images.
+When no `[FILE]` argument is given, `[FILE]` defaults to `ascii-hangman-words.txt`. In case no
+`[FILE]` is found, a template configuration file `ascii-hangman-words.txt` is written into the
+current working directory. Multiple `[FILE]`s are concatenated.
 
-When no `[FILE]` argument is given, `[FILE]` defaults to `ascii-hangman-words.txt`. In
-case no `[FILE]` is found, a template configuration file `ascii-hangman-words.txt` is
-written into the current working directory. Multiple `[FILE]`s are concatenated.
+`[FILE]` is a UTF-8 YAML formatted file containing 3 different variables:
 
-`[FILE]` is a UTF-8 file containing 4 different line-types:
+- `secrets:` is an array of secrets, one per line. A secret is a string, that interprets the `|`
+  character as newline and the `_` character as visibility switch. This switch allows to
+  disclose a part of the secret when the game starts.
+- `traditional:` is an optional boolean variable indicating how the ASCII-art image should be
+  disclosed:
+  - `true`: the image gets disclosed with every lost life,
+  - `false`: the image gets disclosed with every guessed character (default).
+- `image: |1` is an optional multiline string providing own ASCII-art. When missing, built-in
+  ASCII-art is chosen randomly.
+- Lines starting with `#` are ignored.
 
-- lines starting with a letter, a digit or '-' are secret strings. At the
-  beginning of the game one line (secret) is randomly chosen and all characters
-  are hidden. If you want to give an additional hint, enclose some characters
-  with `_`.  The enclosed is then displayed in clear when the game starts.
-  Furthermore, the `| ` acts as a hard line break and is not printed.
-  For example the configuration line:
+Example:
 
-      Guess _me_
+  secrets:
+   - guess me
+   - \"guess me: with colon
+   - line| break
+   - _disclose _partly
 
-  is shown in the game as:
+    # The following is optional.
+   traditional: false
+    # Optional ASCII-art lines start with 1 space ' '.
 
-      _ _ _ _ _ _ m e
+   image: |1
+      ::
+    C|__|
 
-- lines starting with `#` are ignored. This can be used for comments.
+A traditional (not built-in) configuration could look like this:
 
-- lines starting with `|` are part of an optional custom ASCII-Art image shown
-  progressively in the course of the game. If not defined here, built in
-  ASCII-Art images are used instead.
+   secrets:
+   - guess me
+   - _good l_uck
+   - "_der Hund:_| the dog"
+   - _3*_7_=21_
 
-- lines starting with `:` are game modifier. They change the logic how the image
-  is progressively disclosed:
+   traditional: true
 
-   `:success-rewarding`       Every guessed character shows a bit more of
-                              the image. This mode is default.
-   `:traditional-rewarding`   Every lost live discloses a bit more of the
-                              image. Choose this mode together with a
-                              traditional gallows image (not built in).
+   image: |1
+      ______
+      |    |
+      |    O
+      |   /|\
+      |    |
+      |   / \
+    __|_____
+    |      |___
+    |_________|
 
-The following shows an example of a custom image (copy it left-aligned
-into the config-file):
-
-        |  ,~~--~~-.
-        | +      | |\
-        | || |~ |`,/-\
-        | *\_) \_) `-'
-
-If you prefer a traditional gallows image, add the following:
-
-        :traditional-rewarding
-        |  ______
-        |  |    |
-        |  |    O
-        |  |   /|\
-        |  |    |
-        |  |   / \
-        |__|_____
-        ||      |___
-        ||_________|
-
+When the word `secrets:` is not found in `[FILE]`, _ASCII-Hangman_ switches into backward
+compatibility mode, allowing to use old non-YAML configuration files without modification.
+To learn more about the YAML format visit: <https://en.wikipedia.org/wiki/YAML>
 "#;
 
 /// Default configuration filename when no filename is given at the command-line.

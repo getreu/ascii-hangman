@@ -6,9 +6,7 @@ v5.3.0, 8.7.2020
 :numbering:
 
 
-
 // excerpt-begin
-
 _ASCII-Hangman_ is a paper and pencil guessing game for two or more players.
 One player thinks of a word, phrase or sentence and the other tries to guess it
 by suggesting letters or numbers, within a certain number of guesses.
@@ -97,7 +95,7 @@ Navigate to https://blog.getreu.net/projects/ascii-hangman/web-app[ASCII-Hangman
 +
 otherwise type, e.g.:
 
-     ascii-hangman words-page3.txt words-page5.txt
+     ascii-hangman words-page3.txt
 
 ==== Windows
 
@@ -161,7 +159,15 @@ Double-click on `ascii-hangman.exe`.
 
 === Synopsis and syntax
 
-include::../../../ascii-hangman/src/main.rs[lines="65..106"]
+Newer versions of _ASCII-Hangman_ expect their configuration file in
+https://en.wikipedia.org/wiki/YAML[YAML] format. However, when _ASCII-Hangman_
+does not find the word `secrets:` at the beginning of the document, it falls
+back into some backward-compatibility mode, where it tries to parse the file
+according to the former proprietary format. This way you can continue using
+your old configuration files without modification.
+
+
+include::../../../ascii-hangman/src/main.rs[lines="60..104"]
 
 
 
@@ -170,19 +176,22 @@ include::../../../ascii-hangman/src/main.rs[lines="65..106"]
 ==== Simple configuration file
 
 ----
-guess me
-hangman
-good luck
-3*7=21
+secrets:
+- guess me
+- hangman
+- good luck
+- 3*7=21
 ----
 
 ==== Simple configuration file with hints
 
 ----
-guess me
-hang_man_
-_good l_uck
-_3*_7_=21_
+secrets:
+- guess me
+- hang_man_
+- _der Hund_| the dog
+- _good l_uck
+- _3*_7_=21_
 ----
 
 ==== Configuration file with custom image
@@ -191,23 +200,25 @@ A configuration file may contain a custom image. The image is gradually
 disclosed after each right guess.
 
 ----
+secrets:
 - _guess_ me
 - hang_man_
 - good luck
 - _3*_7_=21_
 
-
-:success-rewarding
-|      !!!!\\\\
-|    '`!_  ||||
-|     ` \`-'''|
-|       `\   /
-|        )\  \
-| ejm   /  \  \
-|           \|
+image: |1
+      !!!!\\\\
+    '`!_  ||||
+     ` \`-'''|
+       `\   /
+        )\  \
+ ejm   /  \  \
+           \|
 
 # Author: ejm
 ----
+
+IMPORTANT: ASCII-art lines must start with at least one (invisible) space character.
 
 It is also possible to split the word list and the image into two files and load
 them separately:
@@ -220,21 +231,22 @@ The following image has a different rewarding mode: The image is gradually
 disclosed after each lost life.
 
 ----
+secrets:
 - _guess _me
 - hang_man_
 - _good l_uck
 
-
-:traditional-rewarding
-|  ______
-|  |    |
-|  |    O
-|  |   /|\
-|  |    |
-|  |   / \
-|__|_____
-||      |___
-||_________|
+traditional: true
+image: |1
+  ______
+  |    |
+  |    O
+  |   /|\
+  |    |
+  |   / \
+__|_____
+|      |___
+|_________|
 ----
 
 Note: The gallows image is not part of the built-in ASCII-art. If wished for,
