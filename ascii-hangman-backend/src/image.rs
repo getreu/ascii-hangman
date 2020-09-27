@@ -840,7 +840,7 @@ impl Image {
         #[derive(Debug, PartialEq, Deserialize)]
         pub struct RawImage {
             image: Option<String>,
-            traditional_rewarding: Option<bool>,
+            traditional: Option<bool>,
         }
 
         let mut v: Vec<ImChar> = Vec::new();
@@ -849,15 +849,15 @@ impl Image {
 
         let raw: RawImage = serde_yaml::from_str(&input)?;
 
-        let (image, rewarding_scheme): (String, RewardingScheme) = match raw {
+        let (image, rewarding_scheme) = match raw {
             RawImage { image: None, .. } => return Err(ConfigParseError::NoImageData),
             RawImage {
                 image: Some(i),
-                traditional_rewarding: None,
+                traditional: None,
             } => (i, RewardingScheme::UnhideWhenGuessedChar),
             RawImage {
                 image: Some(i),
-                traditional_rewarding: Some(r),
+                traditional: Some(r),
             } => (
                 i,
                 if r {
@@ -1255,7 +1255,13 @@ mod tests {
         assert_eq!(image.visible_points, 6);
     }
 
-    /// indent of game modifier is not allowed
+    #[test]
+    fn test_built_in_images() {
+        assert!(DEFAULT_IMAGES
+            .iter()
+            .map(|i| { Image::from_yaml(i) })
+            .all(|r| r.is_ok()))
+    }
 
     /// test game modifier spelling
     #[test]
