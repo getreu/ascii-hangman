@@ -54,9 +54,14 @@ pub enum ConfigParseError {
     #[error["Could not parse the proprietary format, because this is\n\
     meant to be in (erroneous) YAML format."]]
     NotInProprietaryFormat,
-    #[error("Invalid format:\n{0}")]
+    #[error("Invalid format:\n\
+             Hint: If a secret contains a colon (:), like in\n\
+             -  animal: giraffe\n\
+             you must enclose it with double quotes (\"):\n\
+             -  \"animal: giraffe\"\n\n\
+             {0}")]
     NotInYamlFormat(#[from] serde_yaml::Error),
-    #[error["Frist line must be: `secrets:` (no spaces allowed before)."]]
+    #[error["First line must be: `secrets:` (no spaces allowed before)."]]
     YamlSecretsLineMissing,
 }
 
@@ -134,7 +139,7 @@ impl Dict {
                         } else {
                              // Lines starting alphanumerically are secret strings also.
                              // We can safely unwrap here since all empty lines had been filtered.
-                             let c = l.chars().next().unwrap();
+                             let c = l.trim().chars().next().unwrap();
                              if c.is_alphanumeric() || c == CONF_LINE_SECRET_MODIFIER__VISIBLE {
                                 l.trim().to_string()
                              } else {
