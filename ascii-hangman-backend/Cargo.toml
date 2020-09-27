@@ -27,12 +27,15 @@ ASCII-art is gradually disclosed.
 
 [dependencies]
 thiserror = "1.0.20"
-serde = "*"
-serde_yaml = "*"
+serde = "1.0.116"
+serde_yaml = "0.8.13"
+serde_derive = "1.0.116"
 
 [target.'cfg(target_arch = "wasm32")'.dependencies]
 rand = { version = "0.7.3", features = ["getrandom"] }
-getrandom = { version = "0.1.14", features = ["wasm-bindgen"] }
+# This has to fit the version required by `rand` above!
+#   getrandom = { version = "0.1.15", features = ["wasm-bindgen"] }
+getrandom = { version = "0.1.15", features = ["wasm-bindgen"] }
 
 # this is what we need for the console application
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies]

@@ -1,7 +1,5 @@
 //! This module provides the backend API for the game logic
 
-extern crate rand;
-extern crate thiserror;
 mod dictionary;
 pub mod game;
 mod image;

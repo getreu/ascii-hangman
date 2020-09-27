@@ -4,8 +4,6 @@
 #![cfg(target_arch = "wasm32")]
 #![recursion_limit = "512"]
 
-extern crate ascii_hangman_backend;
-
 use ascii_hangman_backend::game::State;
 use ascii_hangman_backend::Backend;
 use ascii_hangman_backend::HangmanBackend;

@@ -1,14 +1,12 @@
 //! This module deals with configuration data including the management of the list of secrets
 
 #![allow(clippy::filter_map)]
-extern crate rand;
-extern crate serde;
-extern crate serde_yaml;
 use crate::image::CONF_LINE_IDENTIFIER__CONTROL;
 use crate::image::CONF_LINE_IDENTIFIER__IMAGE;
 use rand::Rng;
-use serde::Deserialize;
 use thiserror::Error;
+//use serde::Deserialize;
+use serde_derive::Deserialize;
 
 /// Tags comment lines in the configuration file.
 pub const CONF_LINE_IDENTIFIER__COMMENT: char = '#';

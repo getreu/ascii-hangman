@@ -6,7 +6,7 @@ use crate::game::Game;
 use crate::LIVES;
 use rand::seq::SliceRandom;
 use rand::thread_rng;
-use serde::Deserialize;
+use serde_derive::Deserialize;
 use std::cmp::{Ord, Ordering};
 use std::fmt;
 

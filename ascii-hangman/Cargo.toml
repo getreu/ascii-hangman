@@ -28,6 +28,5 @@ ASCII-art is gradually disclosed.
 [dependencies]
 ascii-hangman-backend = { version = "5.3.0", path = "../ascii-hangman-backend" }
 thiserror = "1.0.20"
-crossterm = "0.17.6"
+crossterm = "0.17.7"
 rand = "0.7.3"
-

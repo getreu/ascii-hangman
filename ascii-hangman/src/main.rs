@@ -2,10 +2,6 @@
 //! This file not sourced for the wasm32 (wasm) target.
 #![cfg(not(target_arch = "wasm32"))]
 
-extern crate ascii_hangman_backend;
-extern crate crossterm;
-extern crate rand;
-extern crate thiserror;
 use ascii_hangman_backend::game::State;
 use ascii_hangman_backend::Backend;
 use ascii_hangman_backend::HangmanBackend;
