@@ -123,7 +123,7 @@ impl Dict {
     fn from_proprietary(lines: &str) -> Result<Self, ConfigParseError> {
         if lines
             .lines()
-            .any(|s| s.trim().starts_with("secrets:") || s.trim().starts_with("image:"))
+            .any(|s| s.trim().starts_with("secrets") || s.trim().starts_with("image:"))
         {
             return Err(ConfigParseError::NotInProprietaryFormat {});
         };
