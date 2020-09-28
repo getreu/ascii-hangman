@@ -17,7 +17,8 @@ player thinks of a word, phrase or sentence and the other tries to guess it by
 suggesting letters or numbers, within a certain number of guesses. In this
 version for children the computer selects a word, phrase or sentence randomly
 out of a word-list defined in a configuration file. As a reward, with every
-guessed letter, some ASCII-art is gradually disclosed.
+guessed letter, some ASCII-art is gradually disclosed. ASCII-Hangman comes
+with a library containing more than 300 different built-in ASCII-art images.
 
 ```
 ASCII-ART HANGMAN FOR KIDS

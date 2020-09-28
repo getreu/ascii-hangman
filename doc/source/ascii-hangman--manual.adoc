@@ -16,7 +16,7 @@ in a configuration file.
 // excerpt-end
 
 In the course of the game, ASCII-Art images - designed for children - are
-progressively disclosed. There are more than 50 built in ASCII-Art images from
+progressively disclosed. There are more than 300 built in ASCII-Art images from
 which one is chosen randomly at the beginning of the game. Alternatively own
 ASCII-Art can be provided in the configuration file.
 
