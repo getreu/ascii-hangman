@@ -37,33 +37,32 @@ Ascii-Art images - designed for children - are progressively disclosed.
 
 ```
 -----------------------------------
-ASCII-ART HANGMAN FOR KIDS
+    ASCII-ART HANGMAN FOR KIDS
 
-         ,.
-        (_|,.
-       ,' /, )_______
-    __j o``-'        `
-   (")
-    `-j                |
-      `-._(           /
-         |_\  |--^.  /
-        /_]'|_| /_)_/
-           /_]'  /_]'
+             ,.
+            (_|,.
+           ,' /, )_______
+        __j o``-'        `
+       (")
+        `-j                |
+          `-._(           /
+             |_\  |--^.  /
+            /_]'|_| /_)_/
+               /_]'  /_]'
 
-Lifes:  1       Last guess: 3
+    Lifes:  1       Last guess: 3
 
- g o o _ _ l _ _ k
+     g o o _ _ l _ _ k
 
-Type a letter then type [Enter]:
+    Type a letter then type [Enter]:
 -----------------------------------
 ```
+
 ```
-
-
- Usage: ascii-hangman
-        ascii-hangman [FILE]
-        ascii-hangman -h|--help
-        ascii-hangman -V|--version
+    Usage: ascii-hangman
+           ascii-hangman [FILE]
+           ascii-hangman -h|--help
+           ascii-hangman -V|--version
 ```
 
 `[FILE]` are configuration files containing one word-list hereafter referred to as "secrets" and
@@ -80,39 +79,42 @@ current working directory. Multiple `[FILE]`s are concatenated.
   disclose a part of the secret when the game starts.
 - `traditional:` is an optional boolean variable indicating how the ASCII-art image should be
   disclosed:
-  - `true`: the image gets disclosed with every lost life,
-  - `false`: the image gets disclosed with every guessed character (default).
+  * `true`: the image gets disclosed with every lost life,
+  * `false`: the image gets disclosed with every guessed character (default).
 - `image: |1` is an optional multiline string providing own ASCII-art. When missing, built-in
   ASCII-art is chosen randomly.
 - Lines starting with `#` are ignored.
 
 Example:
 
-  secrets:
-   - guess me
-   - \"guess me: with colon
-   - line| break
-   - _disclose _partly
+```
+   secrets:
+    - guess me
+    - \"guess me: with colon
+    - line| break
+    - _disclose _partly
 
-    # The following is optional.
-   traditional: false
-    # Optional ASCII-art lines start with 1 space ' '.
+     # The following is optional.
+    traditional: false
+     # Optional ASCII-art lines start with 1 space ' '.
 
-   image: |1
-      ::
-    C|__|
+    image: |1
+       ::
+     C|__|
+```
 
 A traditional (not built-in) configuration could look like this:
 
-   secrets:
-   - guess me
-   - _good l_uck
-   - "_der Hund:_| the dog"
-   - _3*_7_=21_
+```
+    secrets:
+    - guess me
+    - _good l_uck
+    - "_der Hund:_| the dog"
+    - _3*_7_=21_
 
-   traditional: true
+    traditional: true
 
-   image: |1
+    image: |1
       ______
       |    |
       |    O
@@ -123,7 +125,9 @@ A traditional (not built-in) configuration could look like this:
     |      |___
     |_________|
 
-When the word `secrets:` is not found in `[FILE]`, _ASCII-Hangman_ switches into backward
+```
+
+When the word `secrets` is not found in `[FILE]`, _ASCII-Hangman_ switches into backward
 compatibility mode, allowing to use old non-YAML configuration files without modification.
 To learn more about the YAML format visit: <https://en.wikipedia.org/wiki/YAML>
 "#;

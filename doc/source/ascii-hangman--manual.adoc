@@ -175,48 +175,48 @@ include::../../../ascii-hangman/src/main.rs[lines="60..104"]
 
 ==== Simple configuration file
 
-----
-secrets:
-- guess me
-- hangman
-- good luck
-- 3*7=21
-----
+```
+    secrets:
+    - guess me
+    - hangman
+    - good luck
+    - 3*7=21
+```
 
 ==== Simple configuration file with hints
 
-----
-secrets:
-- guess me
-- hang_man_
-- _der Hund_| the dog
-- _good l_uck
-- _3*_7_=21_
-----
+```
+    secrets:
+    - guess me
+    - hang_man_
+    - _der Hund_| the dog
+    - _good l_uck
+    - _3*_7_=21_
+```
 
 ==== Configuration file with custom image
 
 A configuration file may contain a custom image. The image is gradually
 disclosed after each right guess.
 
-----
-secrets:
-- _guess_ me
-- hang_man_
-- good luck
-- _3*_7_=21_
+```
+    secrets:
+    - _guess_ me
+    - hang_man_
+    - good luck
+    - _3*_7_=    21_
 
-image: |1
-      !!!!\\\\
-    '`!_  ||||
-     ` \`-'''|
-       `\   /
-        )\  \
- ejm   /  \  \
-           \|
+    image: |1
+          !!!!\\\\
+        '`!_  ||||
+         ` \`-'''|
+           `\   /
+            )\  \
+     ejm   /  \  \
+               \|
 
-# Author: ejm
-----
+    # Author: ejm
+```
 
 IMPORTANT: ASCII-art lines must start with at least one (invisible) space character.
 
@@ -230,24 +230,24 @@ them separately:
 The following image has a different rewarding mode: The image is gradually
 disclosed after each lost life.
 
-----
-secrets:
-- _guess _me
-- hang_man_
-- _good l_uck
+```
+    secrets:
+    - _guess _me
+    - hang_man_
+    - _good l_uck
 
-traditional: true
-image: |1
-  ______
-  |    |
-  |    O
-  |   /|\
-  |    |
-  |   / \
-__|_____
-|      |___
-|_________|
-----
+    traditional: true
+    image: |1
+      ______
+      |    |
+      |    O
+      |   /|\
+      |    |
+      |   / \
+    __|_____
+    |      |___
+    |_________|
+```
 
 Note: The gallows image is not part of the built-in ASCII-art. If wished for,
 it can be provided through the configuration file.
