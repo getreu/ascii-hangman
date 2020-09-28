@@ -16,6 +16,13 @@ pub const AUTHOR: &str = "(c) Jens Getreu, 2016-2020.";
 /// Title line.
 pub const TITLE: &str = "ASCII-Hangman for Kids\n";
 
+/// The ASCII-art image should not change too often, to keep the
+/// children focused on the words rather then on the image.
+/// The disclosing image should be seen as an additional motivation
+/// that changes only from time to time. This value determines how many
+/// games should start with the same image until it changes.
+pub const CHANGE_IMAGE_MAX: usize = 5;
+
 /// Number of wrong guess allowed.
 pub const LIVES: u8 = 7;
 /// Fallback sample configuration when no configuration file can be found.
@@ -41,6 +48,7 @@ pub struct Backend {
     dict: Dict,
     game: Game,
     image: Image,
+    change_image: Option<usize>,
 }
 
 /// API to interact with all game logic. This is used by the desktop frontend
@@ -82,9 +90,20 @@ impl HangmanBackend for Backend {
         // A dictionary guaranties to have least one secret.
         let secret = dict.get_random_secret().unwrap();
         let game = Game::new(&secret, LIVES, dict.is_empty());
-        let mut image = Image::from(&config).or_else(|_| Image::new())?;
+        // We assume, that the config file comes with a custom image (`game.change_image = None`).
+        let mut change_image = None;
+        let mut image = Image::from(&config).or_else(|_| {
+            // We use our built-in images (first game).
+            change_image = Some(0);
+            Image::new()
+        })?;
         image.update(&game);
-        Ok(Self { dict, game, image })
+        Ok(Self {
+            dict,
+            game,
+            image,
+            change_image,
+        })
     }
 
     fn process_user_input(&mut self, inp: &str) {
@@ -94,6 +113,17 @@ impl HangmanBackend for Backend {
                 // there is at least one secret left.
                 let secret = self.dict.get_random_secret().unwrap();
                 self.game = Game::new(&secret, LIVES, self.dict.is_empty());
+                // We change the image if we have guessed already enough.
+                if let Some(n) = self.change_image {
+                    if n == CHANGE_IMAGE_MAX - 1 {
+                        if let Ok(new_image) = Image::new() {
+                            self.image = new_image;
+                        };
+                        self.change_image = Some(0);
+                    } else {
+                        self.change_image = Some(n + 1);
+                    };
+                };
                 self.image.update(&self.game);
             }
 
