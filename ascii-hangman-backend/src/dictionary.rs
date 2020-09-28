@@ -53,20 +53,19 @@ pub enum ConfigParseError {
     meant to be in (erroneous) YAML format."]]
     NotInProprietaryFormat,
     #[error(
-        "Syntax error: Please follow example:\n\
+        "Syntax error: Please follow the example below.\n\
+         (The custom image is optional, it's lines start with a space.):\n\
+             \t------------------------------\n\
              \tsecrets: \n\
              \t- guess me\n\
              \t- \"guess me: with colon\"\n\
              \t- line| break\n\
              \t- _disclose _partly\n\
              \n\
-             \t # The following is optional.\n\
-             \ttraditional: false\n\
-             \t # Optional ASCII-art lines start with 1 space ' '.\n\
-
              \timage: |1\n\
-             \t   ::\n\
-             \t C|__|\n\n\
+             \t   :\n\
+             \t  |_|>\n\
+             \t------------------------------\n\
              {0}"
     )]
     NotInYamlFormat(#[from] serde_yaml::Error),
