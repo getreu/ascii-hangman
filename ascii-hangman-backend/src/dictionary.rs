@@ -92,7 +92,7 @@ pub struct Dict {
 impl Dict {
     /// First try ot parse YAML, if it fails try the depreciated proprietary format and populate the dictionary
     /// with secrets.
-    pub fn from(lines: &str) -> Result<Self, ConfigParseError> {
+    pub fn from_formatted(lines: &str) -> Result<Self, ConfigParseError> {
         // If both return an error, return the first one here.
         Self::from_yaml(&lines).or_else(|e| Self::from_proprietary(&lines).or(Err(e)))
     }
@@ -214,7 +214,7 @@ hang_man_
 _good l_uck
 :traditional-rewarding
 ";
-        let dict = Dict::from(&config).unwrap();
+        let dict = Dict::from_formatted(&config).unwrap();
 
         let expected = Dict {
             secrets: vec![
@@ -226,7 +226,7 @@ _good l_uck
         assert_eq!(dict, expected);
 
         let config: &str = "guess me";
-        let dict = Dict::from(&config);
+        let dict = Dict::from_formatted(&config);
         let expected = Ok(Dict {
             secrets: vec!["guess me".to_string()],
             // this is default
