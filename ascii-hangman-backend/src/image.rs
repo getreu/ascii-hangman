@@ -2585,7 +2585,8 @@ impl Image {
     #[inline]
     /// This constructor takes a pure ASCII, non-escaped, multiline image string.
     pub fn from(image: &str, rewarding_scheme: RewardingScheme) -> Result<Self, ConfigParseError> {
-        let mut v: Vec<ImChar> = Vec::new();
+        let mut ascii: Vec<ImChar> = Vec::new();
+        let mut signature: Vec<ImChar> = Vec::new();
 
         for (y, line) in image.lines().enumerate() {
             let mut ii: Vec<_> = line
@@ -2598,15 +2599,15 @@ impl Image {
                     code: c,
                 })
                 .collect();
-            v.append(&mut ii);
+            ascii.append(&mut ii);
         }
 
         // find dimensions
-        let dimension = if !v.is_empty() {
+        let dimension = if !ascii.is_empty() {
             let mut x_max = 0;
             let mut y_max = 0;
 
-            for i in &v {
+            for i in &ascii {
                 let &ImChar { point: (x, y), .. } = i;
                 if x > x_max {
                     x_max = x
@@ -2622,19 +2623,19 @@ impl Image {
         };
 
         // order points
-        let v_len = v.len();
+        let v_len = ascii.len();
         if v_len <= BIG_IMAGE {
-            v.sort(); // Sort algorithm, see "impl Ord for ImageChar"
+            ascii.sort(); // Sort algorithm, see "impl Ord for ImageChar"
         } else {
             let mut rng = thread_rng();
-            (&mut v).shuffle(&mut rng); // points appear randomly.
+            (&mut ascii).shuffle(&mut rng); // points appear randomly.
         }
 
-        if v.is_empty() {
+        if ascii.is_empty() {
             Err(ConfigParseError::NoImageData)
         } else {
             Ok(Self {
-                ichars: v,
+                ichars: ascii,
                 dimension,
                 visible_points: v_len,
                 rewarding_scheme,
