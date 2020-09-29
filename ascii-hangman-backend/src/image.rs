@@ -33,10 +33,15 @@ const UNHIDE_WHEN_GUESSED_CHAR_IDENTIFIER: &str = "success-rewarding";
 const BIG_IMAGE: usize = 60; // sort algorithm <-> random algorithm
 
 /// When disclosing an image, the signature is shown last.
+/// `str` must be at least 3 characters an not longer
+/// than 10!
+#[cfg(not(test))]
 const IMAGE_KNOWN_SIGNATURES: &[&str] = &[
     " VK", "VK ", "hjw", " ac", "ac ", "jgs", "snd", "mrf", "hjw", "DR J", "fsc", "ejm", "ejm98",
     " hh", "hh ", "jrei", "b'ger", "wtx", "fsc", "Asik", "Phs",
 ];
+#[cfg(test)]
+const IMAGE_KNOWN_SIGNATURES: &[&str] = &["jens", "lis"];
 
 /// A collection of built-in images from whom one is chosen at the start of the game.
 // first char of image lines must be '|'
@@ -2591,10 +2596,32 @@ impl Image {
     /// This constructor takes a pure ASCII, non-escaped, multiline image string.
     pub fn from(image: &str, rewarding_scheme: RewardingScheme) -> Result<Self, ConfigParseError> {
         let mut ascii: Vec<ImChar> = Vec::new();
-        let mut signature: Vec<ImChar> = Vec::new();
+        // TODO
+        let mut _signature: Vec<ImChar> = Vec::new();
+
+        // Create a string of `' '` with length of longest `IMAGE_KNOWN_SIGNATURES`.
+        let mut spaces = String::new();
+        let longest = IMAGE_KNOWN_SIGNATURES
+            .iter()
+            .map(|s| s.len())
+            .max()
+            .unwrap();
+        for _ in 0..longest {
+            spaces.push(' ');
+        }
 
         for (y, line) in image.lines().enumerate() {
-            let mut ii: Vec<_> = line
+            let mut ascii_line = line.to_owned();
+            // TODO
+            let _signature_line = String::new();
+            for sig in IMAGE_KNOWN_SIGNATURES {
+                // `spaces` has the same length than `sig`.
+                let short_spaces = &spaces[..sig.len()];
+                debug_assert_eq!(sig.len(), short_spaces.len());
+                ascii_line = ascii_line.replace(sig, short_spaces);
+            }
+
+            let mut ii: Vec<_> = ascii_line
                 .char_indices()
                 // consider only chars != ' '
                 .filter(|&(_, c)| c != ' ')
@@ -2679,7 +2706,9 @@ impl Image {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
+    use super::DEFAULT_REWARDING_SCHEME;
+    use super::{ImChar, Image, DEFAULT_IMAGES, IMAGE_KNOWN_SIGNATURES};
+    use crate::dictionary::ConfigParseError;
 
     /// Test image parsing of configuration file data
     #[test]
@@ -2895,6 +2924,70 @@ mod tests {
                 .count(),
             320 // Number of built in images!
         )
+    }
+    /// Test if `IMAGE_KNOWN_SIGNATURES[i].len()` is in (3.=10).
+    #[test]
+    fn test_image_known_signatures() {
+        for sig in IMAGE_KNOWN_SIGNATURES {
+            assert!(sig.len() <= 10);
+            assert!(sig.len() >= 3);
+        }
+    }
+
+    #[test]
+    fn disclose_signature_last() {
+        let image_str = "jensA\nBlisC";
+        let image = Image::from(&image_str, DEFAULT_REWARDING_SCHEME).unwrap();
+        //println!("{:?}",image);
+        let expected = Image {
+            ichars: [
+                // ImChar {
+                //     point: (0, 0),
+                //     code: 'j', // was `j`
+                // },
+                ImChar {
+                    point: (0, 1),
+                    code: 'B',
+                },
+                // ImChar {
+                //     point: (1, 0),
+                //     code: 'e',
+                // },
+                // ImChar {
+                //     point: (1, 1),
+                //     code: 'i',
+                // },
+                // ImChar {
+                //     point: (2, 0),
+                //     code: 'n',
+                // },
+                // ImChar {
+                //     point: (2, 1),
+                //     code: 'i',
+                // },
+                // ImChar {
+                //     point: (3, 0),
+                //     code: 's',
+                // },
+                // ImChar {
+                //     point: (3, 1),
+                //     code: 's',
+                // },
+                ImChar {
+                    point: (4, 0),
+                    code: 'A',
+                },
+                ImChar {
+                    point: (4, 1),
+                    code: 'C',
+                },
+            ]
+            .to_vec(),
+            dimension: (5, 2),
+            visible_points: 3,
+            rewarding_scheme: DEFAULT_REWARDING_SCHEME,
+        };
+        assert_eq!(image, expected);
     }
 
     /// test game modifier spelling
