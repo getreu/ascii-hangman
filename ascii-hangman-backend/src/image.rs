@@ -2459,8 +2459,6 @@ impl Image {
             traditional: Option<bool>,
         }
 
-        let mut v: Vec<ImChar> = Vec::new();
-
         let input = input.trim_start_matches('\u{feff}');
 
         let raw: RawImage = serde_yaml::from_str(&input)?;
@@ -2484,59 +2482,7 @@ impl Image {
             ),
         };
 
-        for (y, line) in image.lines().enumerate() {
-            let mut ii: Vec<_> = line
-                .char_indices()
-                // consider only chars != ' '
-                .filter(|&(_, c)| c != ' ')
-                // save in ImChar object
-                .map(|(x, c)| ImChar {
-                    point: ((x) as u8, y as u8),
-                    code: c,
-                })
-                .collect();
-            v.append(&mut ii);
-        }
-
-        // find dimensions
-        let dimension = if !v.is_empty() {
-            let mut x_max = 0;
-            let mut y_max = 0;
-
-            for i in &v {
-                let &ImChar { point: (x, y), .. } = i;
-                if x > x_max {
-                    x_max = x
-                };
-                if y > y_max {
-                    y_max = y
-                };
-            }
-            // we know there is at least one char
-            (x_max + 1, y_max + 1)
-        } else {
-            (0, 0)
-        };
-
-        // order points
-        let v_len = v.len();
-        if v_len <= BIG_IMAGE {
-            v.sort(); // Sort algorithm, see "impl Ord for ImageChar"
-        } else {
-            let mut rng = thread_rng();
-            (&mut v).shuffle(&mut rng); // points appear randomly.
-        }
-
-        if v.is_empty() {
-            Err(ConfigParseError::NoImageData)
-        } else {
-            Ok(Self {
-                ichars: v,
-                dimension,
-                visible_points: v_len,
-                rewarding_scheme,
-            })
-        }
+        Self::from(&image, rewarding_scheme)
     }
 
     /// Constructor reading image data from proprietary configuration files.
@@ -2594,6 +2540,66 @@ impl Image {
         }
 
         file_syntax_test1?;
+
+        // find dimensions
+        let dimension = if !v.is_empty() {
+            let mut x_max = 0;
+            let mut y_max = 0;
+
+            for i in &v {
+                let &ImChar { point: (x, y), .. } = i;
+                if x > x_max {
+                    x_max = x
+                };
+                if y > y_max {
+                    y_max = y
+                };
+            }
+            // we know there is at least one char
+            (x_max + 1, y_max + 1)
+        } else {
+            (0, 0)
+        };
+
+        // order points
+        let v_len = v.len();
+        if v_len <= BIG_IMAGE {
+            v.sort(); // Sort algorithm, see "impl Ord for ImageChar"
+        } else {
+            let mut rng = thread_rng();
+            (&mut v).shuffle(&mut rng); // points appear randomly.
+        }
+
+        if v.is_empty() {
+            Err(ConfigParseError::NoImageData)
+        } else {
+            Ok(Self {
+                ichars: v,
+                dimension,
+                visible_points: v_len,
+                rewarding_scheme,
+            })
+        }
+    }
+
+    #[inline]
+    /// This constructor takes a pure ASCII, non-escaped, multiline image string.
+    pub fn from(image: &str, rewarding_scheme: RewardingScheme) -> Result<Self, ConfigParseError> {
+        let mut v: Vec<ImChar> = Vec::new();
+
+        for (y, line) in image.lines().enumerate() {
+            let mut ii: Vec<_> = line
+                .char_indices()
+                // consider only chars != ' '
+                .filter(|&(_, c)| c != ' ')
+                // save in ImChar object
+                .map(|(x, c)| ImChar {
+                    point: ((x) as u8, y as u8),
+                    code: c,
+                })
+                .collect();
+            v.append(&mut ii);
+        }
 
         // find dimensions
         let dimension = if !v.is_empty() {
