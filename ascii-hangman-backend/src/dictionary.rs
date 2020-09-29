@@ -121,6 +121,9 @@ impl Dict {
 
     /// Parse the old configuration data format.
     fn from_proprietary(lines: &str) -> Result<Self, ConfigParseError> {
+        // remove BOM
+        let lines = lines.trim_start_matches("\u{feff}");
+
         if lines
             .lines()
             .any(|s| s.trim().starts_with("secrets") || s.trim().starts_with("image:"))
@@ -132,7 +135,7 @@ impl Dict {
 
         let wordlist =
           // remove Unicode BOM if present (\u{feff} has in UTF8 3 bytes).
-          if lines.starts_with('\u{feff}') { &lines[3..] } else { &lines[..] }
+          lines
             // interpret identifier line
             .lines()
             .enumerate()
