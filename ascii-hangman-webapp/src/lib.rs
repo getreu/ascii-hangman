@@ -278,6 +278,7 @@ impl Component for Model {
             }
             Scene::GameOver => html! { <>
                 {header()}
+                <div> {"You can now close this window."}</div>
                 <div> <label>{ "Bye bye!" } </label>
                 <p/>
                     <button onclick=self.link.callback(|_| Msg::SwitchTo(Scene::ConfigureGame))>{ "No, Continue Playing" }</button>
