@@ -1,5 +1,6 @@
 //! This module provides the backend API for the game logic
 
+mod ascii_art;
 mod dictionary;
 pub mod game;
 mod image;
