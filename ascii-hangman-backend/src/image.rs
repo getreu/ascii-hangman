@@ -2612,8 +2612,7 @@ impl Image {
 
         for (y, line) in image.lines().enumerate() {
             let mut ascii_line = line.to_owned();
-            // TODO
-            let _signature_line = String::new();
+            let signature_line = String::new();
             for sig in IMAGE_KNOWN_SIGNATURES {
                 // `spaces` has the same length than `sig`.
                 let short_spaces = &spaces[..sig.len()];
@@ -2632,6 +2631,15 @@ impl Image {
                 })
                 .collect();
             ascii.append(&mut ii);
+        }
+
+        // order points
+        let v_len = ascii.len();
+        if v_len <= BIG_IMAGE {
+            ascii.sort(); // Sort algorithm, see "impl Ord for ImageChar"
+        } else {
+            let mut rng = thread_rng();
+            (&mut ascii).shuffle(&mut rng); // points appear randomly.
         }
 
         // find dimensions
@@ -2653,15 +2661,6 @@ impl Image {
         } else {
             (0, 0)
         };
-
-        // order points
-        let v_len = ascii.len();
-        if v_len <= BIG_IMAGE {
-            ascii.sort(); // Sort algorithm, see "impl Ord for ImageChar"
-        } else {
-            let mut rng = thread_rng();
-            (&mut ascii).shuffle(&mut rng); // points appear randomly.
-        }
 
         if ascii.is_empty() {
             Err(ConfigParseError::NoImageData)
