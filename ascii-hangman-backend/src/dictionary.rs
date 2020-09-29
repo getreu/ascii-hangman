@@ -147,8 +147,8 @@ impl Dict {
                         } else {
                              // Lines starting alphanumerically are secret strings also.
                              // We can safely unwrap here since all empty lines had been filtered.
-                             let c = l.trim().chars().next().unwrap();
-                             if c.is_alphanumeric() || c == CONF_LINE_SECRET_MODIFIER__VISIBLE {
+                             let c = l.trim_end().chars().next().unwrap();
+                             if c.is_alphabetic() || c.is_digit(10) || c == CONF_LINE_SECRET_MODIFIER__VISIBLE {
                                 l.trim().to_string()
                              } else {
                                  // we only save the first error
