@@ -102,10 +102,10 @@ impl HangmanBackend for Backend {
         // A dictionary guaranties to have least one secret.
         let secret = dict.get_random_secret().unwrap();
         let game = Game::new(&secret, LIVES, dict.is_empty());
-        // We assume, that the config file comes with a custom image (`game.change_image = None`).
+        // We assume, that the configuration file comes with a custom image.
         let mut change_image = None;
         let mut image = Image::from_formatted(&config).or_else(|_| {
-            // We use our built-in images (first game).
+            // We use our built-in images (first game = 0).
             change_image = Some(0);
             Image::new()
         })?;
@@ -121,13 +121,14 @@ impl HangmanBackend for Backend {
     fn process_user_input(&mut self, inp: &str) {
         match self.game.state {
             State::Victory => {
-                // Start a new game. As we did not get a `State::VictoryGameOver` we know
-                // there is at least one secret left.
+                // Start a new game. As long as we do not get a `State::VictoryGameOver`, we know
+                // that there is at least one secret left.
                 let secret = self.dict.get_random_secret().unwrap();
                 self.game = Game::new(&secret, LIVES, self.dict.is_empty());
-                // We change the image if we have guessed already enough.
+                // We change the image, when we have guessed a certain number of times.
                 if let Some(n) = self.change_image {
                     if n == CHANGE_IMAGE_MAX - 1 {
+                        // Switch to the next image.
                         if let Ok(new_image) = Image::new() {
                             self.image = new_image;
                         };
@@ -151,8 +152,7 @@ impl HangmanBackend for Backend {
             }
             State::Ongoing => {
                 self.game.guess(inp.chars().next().unwrap_or(' '));
-                // In case we lost, all secrets will be disclosed. Prevent disclosing the image in
-                // that case.
+                // `guess()` changes the game state:
                 self.image.update(&self.game);
             }
         }

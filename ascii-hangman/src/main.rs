@@ -88,42 +88,42 @@ current working directory. Multiple `[FILE]`s are concatenated.
 Example:
 
 ```
-   secrets:
-    - guess me
-    - \"guess me: with colon
-    - line| break
-    - _disclose _partly
+secrets:
+ - guess me
+ - "guess me: with colon"
+ - line| break
+ - _disclose _partly
 
-     # The following is optional.
-    traditional: false
-     # Optional ASCII-art lines start with 1 space ' '.
+  # The following is optional.
+ traditional: false
+  # Optional ASCII-art lines start with 1 space ' '.
 
-    image: |1
-       ::
-     C|__|
+ image: |1
+    ::
+  C|__|
 ```
 
 A traditional (not built-in) configuration could look like this:
 
 ```
-    secrets:
-    - guess me
-    - _good l_uck
-    - "_der Hund:_| the dog"
-    - _3*_7_=21_
+secrets:
+- guess me
+- _good l_uck
+- "_der Hund:_| the dog"
+- _3*_7_=21_
 
-    traditional: true
+traditional: true
 
-    image: |1
-      ______
-      |    |
-      |    O
-      |   /|\
-      |    |
-      |   / \
-    __|_____
-    |      |___
-    |_________|
+image: |1
+  ______
+  |    |
+  |    O
+  |   /|\
+  |    |
+  |   / \
+__|_____
+|      |___
+|_________|
 
 ```
 
