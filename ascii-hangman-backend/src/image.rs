@@ -32,6 +32,12 @@ const UNHIDE_WHEN_GUESSED_CHAR_IDENTIFIER: &str = "success-rewarding";
 /// This is just big enough that the gallow image stays small.
 const BIG_IMAGE: usize = 60; // sort algorithm <-> random algorithm
 
+/// When disclosing an image, the signature is shown last.
+const IMAGE_KNOWN_SIGNATURES: &[&str] = &[
+    " VK", "VK ", "hjw", " ac", "ac ", "jgs", "snd", "mrf", "hjw", "DR J", "fsc", "ejm", "ejm98",
+    " hh", "hh ", "jrei", "b'ger", "wtx", "fsc", "Asik", "Phs",
+];
+
 /// A collection of built-in images from whom one is chosen at the start of the game.
 // first char of image lines must be '|'
 const DEFAULT_IMAGES: &[&str] = &[
@@ -80,10 +86,9 @@ const DEFAULT_IMAGES: &[&str] = &[
   (")                 \'
    `-j                |
      `-._(           /
-        |_\  |--^.  /
+ hjw    |_\  |--^.  /
        /_]'|_| /_)_/
           /_]'  /_]'
-# Author: hjw
 "#,
     r#"image: |1
          _
@@ -116,7 +121,7 @@ const DEFAULT_IMAGES: &[&str] = &[
    ()    \  (   \/
  <)-`\()  `._`._ \
    <).>=====<<==`'====
-    C-'`(>
+    C-'`(>          hjw
 # Author: hjw
 "#,
     r#"image: |1
@@ -153,7 +158,7 @@ const DEFAULT_IMAGES: &[&str] = &[
  {K ||
   | PP
   | ||
-  (__\\
+  (__\\  ac
 # Author: ac
 "#,
     r#"image: |1
@@ -403,7 +408,7 @@ const DEFAULT_IMAGES: &[&str] = &[
     (:   ':    ;)
      \\   '"  ./
       '"      '"
-# DR J
+                DR J
 "#,
     r#"image: |1
       __/\__
