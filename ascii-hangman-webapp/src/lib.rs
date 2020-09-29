@@ -7,7 +7,7 @@
 use ascii_hangman_backend::game::State;
 use ascii_hangman_backend::Backend;
 use ascii_hangman_backend::HangmanBackend;
-use ascii_hangman_backend::{AUTHOR, CONF_TEMPLATE, TITLE, VERSION};
+use ascii_hangman_backend::{AUTHOR, CONF_TEMPLATE, CONF_TEMPLATE_SHORT, TITLE, VERSION};
 use wasm_bindgen::prelude::*;
 use yew::events::KeyboardEvent;
 use yew::prelude::*;
@@ -106,7 +106,7 @@ impl Component for Model {
                     self.state.config_text = val;
                 }
                 Msg::ConfigTextDelete => {
-                    self.state.config_text.clear();
+                    self.state.config_text = CONF_TEMPLATE_SHORT.to_string();
                 }
                 Msg::SwitchTo(Scene::Playground(app)) => {
                     new_scene = Some(Scene::Playground(app));

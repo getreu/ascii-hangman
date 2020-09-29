@@ -25,8 +25,9 @@ pub const CHANGE_IMAGE_MAX: usize = 5;
 
 /// Number of wrong guess allowed.
 pub const LIVES: u8 = 7;
-/// Fallback sample configuration when no configuration file can be found.
-pub const CONF_TEMPLATE: &str = "# Add own secrets here, one per line:\r
+/// Fallback sample configuration when the desktop application finds no configuration.
+/// This is also place holder and default when the web application starts.
+pub const CONF_TEMPLATE: &str = "# Add own secrets here; one per line.\r
 \r
 secrets:\r
 - guess me\r
@@ -40,6 +41,16 @@ secrets:\r
 #image: |1\r
 #   ::\r
 # C|__|\r
+";
+
+/// Configuration template. This short version is used in the web application.
+pub const CONF_TEMPLATE_SHORT: &str = "# Replace the sample secrets with your own; one per line.\r
+\r
+secrets:\r
+- guess me\r
+- _good l_uck\r
+- \"_der Hund:_| the dog\"\r
+- _3*_7_=21_\r
 ";
 
 /// State of the application.
