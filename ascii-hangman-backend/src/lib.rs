@@ -103,7 +103,7 @@ impl HangmanBackend for Backend {
         let game = Game::new(&secret, LIVES, dict.is_empty());
         // We assume, that the config file comes with a custom image (`game.change_image = None`).
         let mut change_image = None;
-        let mut image = Image::from(&config).or_else(|_| {
+        let mut image = Image::from_formatted(&config).or_else(|_| {
             // We use our built-in images (first game).
             change_image = Some(0);
             Image::new()

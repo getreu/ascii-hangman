@@ -2446,7 +2446,7 @@ impl Image {
 
     /// First try ot parse YAML, if it fails try the depreciated proprietary format and
     /// read the image data.
-    pub fn from(input: &str) -> Result<Self, ConfigParseError> {
+    pub fn from_formatted(input: &str) -> Result<Self, ConfigParseError> {
         // If both return an error, return the first one here.
         Self::from_yaml(&input).or_else(|e| Self::from_proprietary(&input).or(Err(e)))
     }
