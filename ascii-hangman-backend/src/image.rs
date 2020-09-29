@@ -33,12 +33,12 @@ const UNHIDE_WHEN_GUESSED_CHAR_IDENTIFIER: &str = "success-rewarding";
 const BIG_IMAGE: usize = 60; // sort algorithm <-> random algorithm
 
 /// When disclosing an image, the signature is shown last.
-/// `str` must be at least 3 characters an not longer
-/// than 10!
+/// `str` must have at least 3 characters. Otherwise we would get
+/// too many false positives.
 #[cfg(not(test))]
 const IMAGE_KNOWN_SIGNATURES: &[&str] = &[
     " VK", "VK ", "hjw", " ac", "ac ", "jgs", "snd", "mrf", "hjw", "DR J", "fsc", "ejm", "ejm98",
-    " hh", "hh ", "jrei", "b'ger", "wtx", "fsc", "Asik", "Phs",
+    " hh", "hh ", "jrei", "b'ger", "wtx", "fsc", "Asik", "Phs", "Sher",
 ];
 #[cfg(test)]
 const IMAGE_KNOWN_SIGNATURES: &[&str] = &["jens", "lis"];
@@ -2596,8 +2596,7 @@ impl Image {
     /// This constructor takes a pure ASCII, non-escaped, multiline image string.
     pub fn from(image: &str, rewarding_scheme: RewardingScheme) -> Result<Self, ConfigParseError> {
         let mut ascii: Vec<ImChar> = Vec::new();
-        // TODO
-        let mut _signature: Vec<ImChar> = Vec::new();
+        let mut signature: Vec<ImChar> = Vec::new();
 
         // Create a string of `' '` with length of longest `IMAGE_KNOWN_SIGNATURES`.
         let mut spaces = String::new();
@@ -2612,14 +2611,15 @@ impl Image {
 
         for (y, line) in image.lines().enumerate() {
             let mut ascii_line = line.to_owned();
-            let signature_line = String::new();
             for sig in IMAGE_KNOWN_SIGNATURES {
                 // `spaces` has the same length than `sig`.
                 let short_spaces = &spaces[..sig.len()];
                 debug_assert_eq!(sig.len(), short_spaces.len());
                 ascii_line = ascii_line.replace(sig, short_spaces);
             }
+            debug_assert_eq!(line.len(), ascii_line.len());
 
+            // Generate `ImChar` pixel from `ascii_line`.
             let mut ii: Vec<_> = ascii_line
                 .char_indices()
                 // consider only chars != ' '
@@ -2631,18 +2631,46 @@ impl Image {
                 })
                 .collect();
             ascii.append(&mut ii);
+
+            // Check what we have changed and generate
+            // `signature_line`.
+            let mut signature_line = String::new();
+            for (l, a) in line.chars().zip(ascii_line.chars()) {
+                if l == a {
+                    // Nothing changed here.
+                    signature_line.push(' ');
+                } else {
+                    signature_line.push(l);
+                }
+            }
+            debug_assert_eq!(signature_line.len(), ascii_line.len());
+
+            // Generate `ImChar` pixel from `signature_line`.
+            let mut ii: Vec<_> = signature_line
+                .char_indices()
+                // consider only chars != ' '
+                .filter(|&(_, c)| c != ' ')
+                // save in ImChar object
+                .map(|(x, c)| ImChar {
+                    point: ((x) as u8, y as u8),
+                    code: c,
+                })
+                .collect();
+            signature.append(&mut ii);
         }
 
-        // order points
-        let v_len = ascii.len();
-        if v_len <= BIG_IMAGE {
+        // Order or shuffle pixel in `ascii`
+        if ascii.len() <= BIG_IMAGE {
             ascii.sort(); // Sort algorithm, see "impl Ord for ImageChar"
         } else {
             let mut rng = thread_rng();
             (&mut ascii).shuffle(&mut rng); // points appear randomly.
         }
 
-        // find dimensions
+        // Append `signatures` at the end of `ascii`.
+        ascii.append(&mut signature);
+
+        // Find the dimensions of the whole.
         let dimension = if !ascii.is_empty() {
             let mut x_max = 0;
             let mut y_max = 0;
@@ -2656,11 +2684,14 @@ impl Image {
                     y_max = y
                 };
             }
-            // we know there is at least one char
+            // We know that there is at least one char.
             (x_max + 1, y_max + 1)
         } else {
             (0, 0)
         };
+
+        // Find the number of pixels.
+        let visible_points = ascii.len();
 
         if ascii.is_empty() {
             Err(ConfigParseError::NoImageData)
@@ -2668,7 +2699,7 @@ impl Image {
             Ok(Self {
                 ichars: ascii,
                 dimension,
-                visible_points: v_len,
+                visible_points,
                 rewarding_scheme,
             })
         }
@@ -2924,11 +2955,11 @@ mod tests {
             320 // Number of built in images!
         )
     }
-    /// Test if `IMAGE_KNOWN_SIGNATURES[i].len()` is in (3.=10).
+    /// Test if `IMAGE_KNOWN_SIGNATURES[i].len()` is >= 3.
+    /// Otherwise we will have too many false positives.
     #[test]
     fn test_image_known_signatures() {
         for sig in IMAGE_KNOWN_SIGNATURES {
-            assert!(sig.len() <= 10);
             assert!(sig.len() >= 3);
         }
     }
@@ -2940,38 +2971,11 @@ mod tests {
         //println!("{:?}",image);
         let expected = Image {
             ichars: [
-                // ImChar {
-                //     point: (0, 0),
-                //     code: 'j', // was `j`
-                // },
+                // This is the ASCII part of the image.
                 ImChar {
                     point: (0, 1),
                     code: 'B',
                 },
-                // ImChar {
-                //     point: (1, 0),
-                //     code: 'e',
-                // },
-                // ImChar {
-                //     point: (1, 1),
-                //     code: 'i',
-                // },
-                // ImChar {
-                //     point: (2, 0),
-                //     code: 'n',
-                // },
-                // ImChar {
-                //     point: (2, 1),
-                //     code: 'i',
-                // },
-                // ImChar {
-                //     point: (3, 0),
-                //     code: 's',
-                // },
-                // ImChar {
-                //     point: (3, 1),
-                //     code: 's',
-                // },
                 ImChar {
                     point: (4, 0),
                     code: 'A',
@@ -2980,10 +2984,39 @@ mod tests {
                     point: (4, 1),
                     code: 'C',
                 },
+                // From here on, we see only signatures.
+                ImChar {
+                    point: (0, 0),
+                    code: 'j', // was `j`
+                },
+                ImChar {
+                    point: (1, 0),
+                    code: 'e', // was `j`
+                },
+                ImChar {
+                    point: (2, 0),
+                    code: 'n',
+                },
+                ImChar {
+                    point: (3, 0),
+                    code: 's',
+                },
+                ImChar {
+                    point: (1, 1),
+                    code: 'l',
+                },
+                ImChar {
+                    point: (2, 1),
+                    code: 'i',
+                },
+                ImChar {
+                    point: (3, 1),
+                    code: 's',
+                },
             ]
             .to_vec(),
             dimension: (5, 2),
-            visible_points: 3,
+            visible_points: 10,
             rewarding_scheme: DEFAULT_REWARDING_SCHEME,
         };
         assert_eq!(image, expected);
