@@ -59,7 +59,7 @@ impl Component for Model {
 
     fn create(_: Self::Properties, link: ComponentLink<Self>) -> Self {
         let state = GuiState {
-            config_text: String::from(CONF_TEMPLATE),
+            config_text: String::from(CONF_TEMPLATE_SHORT),
             guess: String::new(),
         };
 
