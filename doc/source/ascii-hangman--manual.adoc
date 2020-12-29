@@ -111,18 +111,19 @@ otherwise type, e.g.:
 
 == ASCII-Hangman configuration
 
-_ASCII-Hangman_ needs a custom list of secrets it can choose secrets to let the
-user guess.  This list is provided by a configuration file with a very simple
-syntax explained below. When you start the desktop version for the first time,
-a sample configuration file, named `ascii-hangman-words.txt`, is created.
-Adding own secrets to this file can be done with any text editor. Next time
-_ASCII-Hangman_ starts, it will read the modified list of secrets.
+_ASCII-Hangman_ needs a custom list of secrets, from which it selects
+randomly those the user guesses. This list is provided by a configuration
+file, which has a very simple syntax explained below. When you start the
+desktop version of _ASCII-Hangman_ for the first time, a sample configuration
+file, named `ascii-hangman-words.txt`, is created. Adding own secrets to this
+file can be done with any text editor. Next time _ASCII-Hangman_ starts, it
+will read the modified list of secrets.
 
 The Web-App version of _ASCII-Hangman_ works similar. Here the program starts
 with a configuration page allowing you to enter the list of secrets directly
-without external editor. If you wish, you can download a prepared list of
-secrets from a file on your disk. Note, it is possible to select more than one
-file in the file selector dialogue.
+without external editor. If you wish, you can upload a prepared list of
+secrets from a file on your hard disk. Note, it is also possible to select
+more than one file in the file selector dialogue.
 
 
 === Linux configuration
@@ -154,7 +155,7 @@ editor. Add own secrets, one per line.
 
 . Start the game
 +
-Double-click on `ascii-hangman.exe`.
+Double-click again on `ascii-hangman.exe`.
 
 
 === Synopsis and syntax
@@ -166,6 +167,9 @@ back into some backward-compatibility mode, where it tries to parse the file
 according to the former proprietary format. This way you can continue using
 your old configuration files without modification.
 
+NOTE: Please update your configuration files to the new YAML format, as the
+backward-compatibility mode will be dropped in the future to simplify
+maintenance.
 
 include::../../../ascii-hangman/src/main.rs[lines="60..104"]
 
@@ -184,7 +188,8 @@ secrets:
 - 3*7=21
 ```
 
-NOTE: When a string contains a colon `:`, it must be enclosed by double quotes!
+NOTE: When a string contains a colon, as in `der Hund: the dog`, it must be
+enclosed by double quotes `"der Hund: the dog"`!
 
 ==== Simple configuration file with hints
 
@@ -196,12 +201,16 @@ secrets:
 - _good l_uck
 - _3*_7_=21_
 ```
-NOTE: The pipe character `|` indicates a hard linebreak within a string. 
+
+NOTE: Substrings enclosed by underscores, as in `\_good l\_`, are visible from the
+start of the game.
+
+NOTE: The pipe character `|` indicates a hard line break within a string.
 
 ==== Configuration file with custom image
 
-A configuration file may contain a custom image. The image is gradually
-disclosed after each right guess.
+A configuration file may contain a custom image. Just like with built in
+ASCII art, the image is gradually disclosed after each right guess.
 
 ```
 secrets:
@@ -222,7 +231,8 @@ image: |1
 # Author: ejm
 ```
 
-IMPORTANT: ASCII-art lines must start with at least one (invisible) space character.
+IMPORTANT: ASCII-art lines, the lines after the `image: |1` statement,  must
+start with at least one (invisible) space character.
 
 It is also possible to split the word list and the image into two files and load
 them separately:
@@ -231,8 +241,8 @@ them separately:
 
 ==== Configuration file with traditional gallows image
 
-The following image has a different rewarding mode: The image is gradually
-disclosed after each lost life.
+The following image has a different rewarding mode: `traditional: true`. In
+this mode the image is gradually disclosed after each lost life.
 
 ```
 secrets:
@@ -253,8 +263,8 @@ image: |1
  |_________|
 ```
 
-Note: The gallows image is not part of the built-in ASCII-art. If wished for,
-it can be provided through the configuration file.
+NOTE: The gallows image is not part of the built-in ASCII-art. If wished for,
+it must be provided within the configuration file.
 
 
 == Play the game in the classroom
@@ -267,8 +277,8 @@ The game is designed for classroom usage, but can be played alone as well.
 
 *  Browser with Internet access - or -
 
-*  Windows or Linux Computer with the `ascii-hangman.exe` (Windows) or
-   `Ascii-Hangman` (MacOs and Linux) binary installed.
+*  Windows, Mac or Linux computer with the `ascii-hangman.exe` (Windows) or
+`Ascii-Hangman` (MacOs and Linux) binary downloaded.
 
 === Prepare a configuration file with secret words
 
@@ -277,7 +287,7 @@ a lesson in class:
 
 The aim of the game is to consolidate recently learned vocabulary.
 For this purpose the class composes a vocabulary list of words or expressions,
-hereafter referred to as list of secrets words.
+hereafter referred to as “list of secrets”.
 
 *  The class composes the list of secrets together with the teacher.
    To optimize the learning progress, it is most useful to involve the pupils
@@ -330,7 +340,7 @@ in the guesses the group calls in loudly.
 All desktop versions of _ASCII-Hangman_ run locally on your computer and do not
 collect or transfer any data.
 
-This applies to the web application version of _ASCII-Hangman_ also: due to its
+The same applies to the web application version of _ASCII-Hangman_ too: due to its
 Web-Assembly-technology, the program runs - once started - entirely in your
 Web-Browser's sandbox and never connects to the Internet.
 
