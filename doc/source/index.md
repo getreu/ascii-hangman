@@ -7,7 +7,7 @@ https://crates.io/crates/ascii-hangman)
 [![Documentation](https://docs.rs/ascii-hangman/badge.svg)](
 https://docs.rs/ascii-hangman)
 [![License](https://img.shields.io/badge/license-MIT%2FApache--2.0-blue.svg)](
-https://github.com/getreu/ascii-hangman)
+https://gitlab.com/getreu/ascii-hangman)
 
 A little game designed for primary kids to revise vocabulary in classroom.
 Setting up the vocabulary list is part of the learning process.
@@ -88,7 +88,9 @@ Developer documentation:
 
 Repository:
 
-* [ASCII-Hangman on Github](https://github.com/getreu/ascii-hangman)
+* [ASCII-Hangman on Gitlab](https://gitlab.com/getreu/ascii-hangman)
+
+* [ASCII-Hangman on Github (mirror)](https://github.com/getreu/ascii-hangman)
 
 
 ## Distribution
