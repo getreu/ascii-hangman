@@ -14,7 +14,7 @@ checksum = "33954243bd79057c2de7338850b85983a44588021f8a5fee574a8888c6de4344"
 
 [[package]]
 name = "ascii-hangman"
-version = "5.6.0"
+version = "5.7.0"
 dependencies = [
  "ascii-hangman-backend",
  "crossterm",
@@ -24,7 +24,7 @@ dependencies = [
 
 [[package]]
 name = "ascii-hangman-backend"
-version = "5.6.0"
+version = "5.7.0"
 dependencies = [
  "getrandom",
  "rand",
@@ -36,7 +36,7 @@ dependencies = [
 
 [[package]]
 name = "ascii-hangman-webapp"
-version = "5.6.0"
+version = "5.7.0"
 dependencies = [
  "ascii-hangman-backend",
  "js-sys",
