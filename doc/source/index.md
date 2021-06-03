@@ -90,7 +90,7 @@ Repository:
 
 * [ASCII-Hangman on Gitlab](https://gitlab.com/getreu/ascii-hangman)
 
-* [ASCII-Hangman on Github (mirror)](https://github.com/getreu/ascii-hangman)
+* [ASCII-Hangman on Github (mirror)](https://gitlab.com/getreu/ascii-hangman)
 
 
 ## Distribution

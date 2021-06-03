@@ -31,7 +31,6 @@ pub struct GuiState {
 
 pub struct Model {
     link: ComponentLink<Self>,
-    reader: ReaderService,
     // Disable debugging code.
     //console: ConsoleService,
     filereader_tasks: Vec<ReaderTask>,
@@ -65,7 +64,6 @@ impl Component for Model {
 
         Model {
             link,
-            reader: ReaderService::new(),
             // Disable debugging code.
             //console: ConsoleService::new(),
             filereader_tasks: vec![],
@@ -129,7 +127,7 @@ impl Component for Model {
                     for file in files.into_iter() {
                         let task = {
                             let callback = self.link.callback(Msg::Loaded);
-                            self.reader.read_file(file, callback).unwrap()
+                            ReaderService::read_file(file, callback).unwrap()
                         };
                         self.filereader_tasks.push(task);
                     }
@@ -193,7 +191,7 @@ impl Component for Model {
                         placeholder=CONF_TEMPLATE
                         cols=80
                         rows=25
-                        value=&self.state.config_text
+                        value=self.state.config_text.clone()
                         oninput=self.link.callback(|e: InputData| Msg::ConfigTextUpdate(e.value)) />
                     </div>
                     <div class="upload-container"> { "or load secrets from files: "}
@@ -223,13 +221,13 @@ impl Component for Model {
             Scene::Playground(ref app) => {
                 let secret = app.render_secret();
                 let (cols, rows) = dimensions(&secret);
-                let secret = secret.trim_end_matches("\n");
+                let secret = secret.trim_end_matches("\n").to_string();
                 let image = app.render_image();
-                let image = image.trim_end_matches("\n");
+                let image = image.trim_end_matches("\n").to_string();
                 html! { <>
                     {header()}
                     <div class="ascii-hangman-wasm">
-                            <textarea class=("image")
+                            <textarea class="image"
                                 placeholder="Image"
                                 cols=format!("{}", &app.get_image_dimension().0)
                                 rows=format!("{}", &app.get_image_dimension().1)
@@ -246,9 +244,9 @@ impl Component for Model {
                         </th>
                         </tr>
                         </table>
-                            <textarea class=("secret")
-                                cols=cols+1
-                                rows=rows
+                            <textarea class="secret"
+                                cols=format!("{}", cols+1)
+                                rows=format!("{}", rows)
                                 value=secret
                                 readonly=true
                             />
@@ -258,7 +256,7 @@ impl Component for Model {
                                 type="text"
                                 autofocus=true
                                 size=1
-                                value=self.state.guess
+                                value=self.state.guess.clone()
                                 oninput=self.link.callback(|e: InputData| Msg::UpdateGuess(e.value))
                                 onkeypress=self.link.callback(|e: KeyboardEvent| {
                                    if e.key() == "Enter" { Msg::Guess } else { Msg::Nope }

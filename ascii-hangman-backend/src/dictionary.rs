@@ -111,7 +111,7 @@ impl Dict {
             1 => Some(self.secrets.swap_remove(0)),
             _ => {
                 let mut rng = rand::thread_rng();
-                let i = rng.gen_range(0, &self.secrets.len() - 1);
+                let i = rng.gen_range(0..self.secrets.len());
                 Some(self.secrets.swap_remove(i))
             }
         }
