@@ -160,16 +160,9 @@ Double-click again on `ascii-hangman.exe`.
 
 === Synopsis and syntax
 
-Newer versions of _ASCII-Hangman_ expect their configuration file in
-https://en.wikipedia.org/wiki/YAML[YAML] format. However, when _ASCII-Hangman_
-does not find a line starting with the word `secrets` or `image:`, it falls
-back into some backward-compatibility mode, where it tries to parse the file
-according to the former proprietary format. This way you can continue using
-your old configuration files without modification.
+_ASCII-Hangman_ expects its configuration file in
+https://en.wikipedia.org/wiki/YAML[YAML] format:
 
-NOTE: Please update your configuration files to the new YAML format, as the
-backward-compatibility mode will be dropped in the future to simplify
-maintenance.
 
 include::../../../ascii-hangman/src/main.rs[lines="60..104"]
 

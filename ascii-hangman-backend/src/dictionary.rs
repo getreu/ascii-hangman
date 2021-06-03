@@ -1,26 +1,18 @@
 //! This module deals with configuration data including the management of the list of secrets
 
 #![allow(clippy::filter_map)]
-use crate::image::CONF_LINE_IDENTIFIER__CONTROL;
-use crate::image::CONF_LINE_IDENTIFIER__IMAGE;
 use rand::Rng;
 use thiserror::Error;
 //use serde::Deserialize;
 use serde_derive::Deserialize;
 
-/// Tags comment lines in the configuration file.
-pub const CONF_LINE_IDENTIFIER__COMMENT: char = '#';
-
-/// Optionally tags secret strings in config-file. Can be omitted.
-pub const CONF_LINE_IDENTIFIER__WORD: char = '-';
-
 /// A tag to enclose parts of the secret to be visible from the start, e.g.
 /// "guess_-me_" will be displayed in the game as "_ _ _ _ _ - m e"
-pub const CONF_LINE_SECRET_MODIFIER__VISIBLE: char = '_';
+pub const CONF_LINE_SECRET_MODIFIER_VISIBLE: char = '_';
 
 /// A tag to insert a linebreak when the secret is displayed.
-pub const CONF_LINE_SECRET_MODIFIER__LINEBREAK1: char = '\n';
-pub const CONF_LINE_SECRET_MODIFIER__LINEBREAK2: char = '|';
+pub const CONF_LINE_SECRET_MODIFIER_LINEBREAK1: char = '\n';
+pub const CONF_LINE_SECRET_MODIFIER_LINEBREAK2: char = '|';
 
 // Custom error type used expressing potential syntax errors when parsing the configuration file.
 #[derive(Error, Debug)]
@@ -90,15 +82,8 @@ pub struct Dict {
 }
 
 impl Dict {
-    /// First try ot parse YAML, if it fails try the depreciated proprietary format and populate the dictionary
-    /// with secrets.
-    pub fn from_formatted(lines: &str) -> Result<Self, ConfigParseError> {
-        // If both return an error, return the first one here.
-        Self::from_yaml(&lines).or_else(|e| Self::from_proprietary(&lines).or(Err(e)))
-    }
-
     /// Parse configuration file as toml data.
-    pub fn from_yaml(lines: &str) -> Result<Self, ConfigParseError> {
+    pub fn from(lines: &str) -> Result<Self, ConfigParseError> {
         // Trim BOM
         let lines = lines.trim_start_matches('\u{feff}');
 
@@ -117,62 +102,6 @@ impl Dict {
         let dict: Dict = serde_yaml::from_str(&lines)?;
 
         Ok(dict)
-    }
-
-    /// Parse the old configuration data format.
-    fn from_proprietary(lines: &str) -> Result<Self, ConfigParseError> {
-        // remove BOM
-        let lines = lines.trim_start_matches("\u{feff}");
-
-        if lines
-            .lines()
-            .any(|s| s.trim().starts_with("secrets") || s.trim().starts_with("image:"))
-        {
-            return Err(ConfigParseError::NotInProprietaryFormat {});
-        };
-
-        let mut file_syntax_test2: Result<(), ConfigParseError> = Ok(());
-
-        let wordlist =
-          // remove Unicode BOM if present (\u{feff} has in UTF8 3 bytes).
-          lines
-            // interpret identifier line
-            .lines()
-            .enumerate()
-            .filter(|&(_,l)|!( l.trim().is_empty() ||
-                          l.starts_with(CONF_LINE_IDENTIFIER__COMMENT) ||
-                          l.starts_with(CONF_LINE_IDENTIFIER__CONTROL) ||
-                          l.starts_with(CONF_LINE_IDENTIFIER__IMAGE)
-                        )
-            )
-            .map(|(n,l)| if l.starts_with(CONF_LINE_IDENTIFIER__WORD) {
-                             l[1..].trim().to_string()
-                        } else {
-                             // Lines starting alphanumerically are secret strings also.
-                             // We can safely unwrap here since all empty lines had been filtered.
-                             let c = l.trim_end().chars().next().unwrap();
-                             if c.is_alphabetic() || c.is_digit(10) || c == CONF_LINE_SECRET_MODIFIER__VISIBLE {
-                                l.trim().to_string()
-                             } else {
-                                 // we only save the first error
-                                 if file_syntax_test2.is_ok() {
-                                    file_syntax_test2 = Err(ConfigParseError::LineIdentifier {
-                                        line_number: n+1, line: l.to_string() });
-                                 };
-                                // This will never be used but we have to return something
-                                "".to_string()
-                             }
-                        }
-            )
-            .collect::<Vec<String>>();
-
-        file_syntax_test2?;
-
-        if wordlist.is_empty() {
-            return Err(ConfigParseError::NoSecretString {});
-        }
-
-        Ok(Dict { secrets: wordlist })
     }
 
     /// Chooses randomly one secret from the dictionary and removes the secret from list
@@ -208,16 +137,17 @@ mod tests {
 
     /// parse all 3 data types in configuration file format
     #[test]
-    fn test_new_proprietary() {
+    fn test_from() {
         let config: &str = "
 #  comment
+secrets:
+- guess me
+- hang_man_
+- _good l_uck
 
-guess me
-hang_man_
-_good l_uck
-:traditional-rewarding
+traditional: true
 ";
-        let dict = Dict::from_formatted(&config).unwrap();
+        let dict = Dict::from(&config).unwrap();
 
         let expected = Dict {
             secrets: vec![
@@ -226,73 +156,39 @@ _good l_uck
                 "_good l_uck".to_string(),
             ],
         };
-        assert_eq!(dict, expected);
 
-        let config: &str = "guess me";
-        let dict = Dict::from_formatted(&config);
-        let expected = Ok(Dict {
-            secrets: vec!["guess me".to_string()],
-            // this is default
-        });
         assert_eq!(dict, expected);
-
-        // indent of comments is not allowed
-        let config = "\n\n\n   # comment";
-        let dict = Dict::from_proprietary(&config);
-        let expected = Err(ConfigParseError::LineIdentifier {
-            line_number: 4,
-            line: "   # comment".to_string(),
-        });
-        assert_eq!(dict, expected);
-
-        // configuration must define at least one secret
-        let config = "# nothing but comment";
-        let dict = Dict::from_proprietary(&config);
-        let expected = Err(ConfigParseError::NoSecretString {});
-        assert_eq!(dict, expected);
-
-        let config = "one secret\n\n :traditional-rewarding";
-        let dict = Dict::from_proprietary(&config);
-        let expected = Err(ConfigParseError::LineIdentifier {
-            line_number: 3,
-            line: " :traditional-rewarding".to_string(),
-        });
-        assert_eq!(dict, expected);
-    }
-
-    #[test]
-    fn test_new_toml() {
         let config = "# comment\nsecrets:\n  - guess me\n";
-        let dict = Dict::from_yaml(&config);
+        let dict = Dict::from(&config);
         let expected = Ok(Dict {
             secrets: vec!["guess me".to_string()],
         });
         assert_eq!(dict, expected);
 
         let config = "# comment\nsecrets:\n- guess me\n";
-        let dict = Dict::from_yaml(&config);
+        let dict = Dict::from(&config);
         let expected = Ok(Dict {
             secrets: vec!["guess me".to_string()],
         });
         assert_eq!(dict, expected);
 
         let config = "# comment\nsecrets:\n- 222\n";
-        let dict = Dict::from_yaml(&config);
+        let dict = Dict::from(&config);
         let expected = Ok(Dict {
             secrets: vec!["222".to_string()],
         });
         assert_eq!(dict, expected);
 
         let config = "sxxxecrets:";
-        let dict = Dict::from_yaml(&config).unwrap_err();
+        let dict = Dict::from(&config).unwrap_err();
         assert!(matches!(dict, ConfigParseError::YamlSecretsLineMissing));
 
         let config = "  - guess me\nsecrets:\n";
-        let dict = Dict::from_yaml(&config).unwrap_err();
+        let dict = Dict::from(&config).unwrap_err();
         assert!(matches!(dict, ConfigParseError::YamlSecretsLineMissing));
 
         let config = "# comment\nsecrets:\n   guess me\n";
-        let dict = Dict::from_yaml(&config).unwrap_err();
+        let dict = Dict::from(&config).unwrap_err();
         assert!(matches!(dict, ConfigParseError::NotInYamlFormat(_)));
     }
 }
