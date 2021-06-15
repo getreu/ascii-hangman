@@ -54,7 +54,7 @@ https://github.com/getreu/ascii-hangman[getreu/ascii-hangman].
 The project's webpage is on
 http://blog.getreu.net/projects/ascii-hangman/[getreu.net].
 There you also find a
-https://blog.getreu.net/_downloads/ascii-hangman.pdf[
+https://blog.getreu.net/_downloads/ascii-hangman--manual.pdf[
 pdf rendition] of this document and compiled
 https://blog.getreu.net/_downloads/ascii-hangman.zip[binaries].
 
@@ -324,8 +324,8 @@ whole group of learners. Vary them according to your needs.
 
 
 Alternatively, as activation activity, the game can be played in a more
-disorganized manner: First the group chooses a game master.  he will then type
-in the guesses the group calls in loudly.
+disorganized manner: First the group chooses a game master.  He or she will then
+type in the guesses the group calls in loudly.
 
 
 == Data privacy statement
