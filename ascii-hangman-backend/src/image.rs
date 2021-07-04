@@ -1,3 +1,4 @@
+
 //! This module contains all the logic dealing with images:
 //! Parsing the config file data, shuffling pixels of big images,
 //! ordering pixels of small images and sorting the signatures to the end.
@@ -301,7 +302,7 @@ impl Image {
                     signature_line.push(l);
                 }
             }
-            debug_assert_eq!(signature_line.len(), ascii_line.len());
+            debug_assert_eq!(signature_line.chars().count(), ascii_line.chars().count());
 
             // Generate `ImChar` pixel from `signature_line`.
             let mut ii: Vec<_> = signature_line
