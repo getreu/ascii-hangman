@@ -1,5 +1,7 @@
 ---
 title: ASCII-Hangman - hangman game for children with ASCII-art rewarding
+author: Jens Getreu
+no_filename_sync: true
 ---
 
 [![Cargo](https://img.shields.io/crates/v/ascii-hangman.svg)](
@@ -48,12 +50,12 @@ Highlights:
 
 - simple, non distracting user interface,
 - setting up word lists is part of the learning process,
-- visual non distracting reward system with 50 built-in ASCII-art images,
+- visual non distracting reward system with more than 300 built-in ASCII-art images,
 - no built in traditional gallows image,
 - designed for group learning in classroom,
 - fully configurable:
-  * design own ASCII-art (depending on the learning subject) and associate it
-    to a word list,
+  * design your own ASCII-art (depending on the learning subject) and associate it
+    with your word list,
   * provide the user with hints by disclosing some characters from the start,
 - web-application: play without installation,
 - desktop versions: play without network access,
