@@ -12,7 +12,7 @@ use crate::game::State;
 use crate::image::Image;
 
 pub const VERSION: Option<&'static str> = option_env!("CARGO_PKG_VERSION");
-pub const AUTHOR: &str = "(c) Jens Getreu, 2016-2020.";
+pub const AUTHOR: &str = "(c) Jens Getreu, 2016-2021.";
 
 /// Title line.
 pub const TITLE: &str = "ASCII-Hangman for Kids\n";

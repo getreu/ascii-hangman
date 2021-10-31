@@ -1,6 +1,6 @@
 [package]
 name = "ascii-hangman-backend"
-version = "5.7.0"
+version = "5.7.1"
 authors = ["Jens Getreu <getreu@web.de>"]
 edition = "2021"
 readme = "../README.md"
@@ -26,17 +26,17 @@ ASCII-art is gradually disclosed.
 '''
 
 [dependencies]
-thiserror = "1.0.25"
-serde = "1.0.126"
-serde_yaml = "0.8.17"
-serde_derive = "1.0.126"
+thiserror = "1.0.30"
+serde = "1.0.130"
+serde_yaml = "0.8.21"
+serde_derive = "1.0.130"
 
 [target.'cfg(target_arch = "wasm32")'.dependencies]
-rand = { version = "0.8.3", features = ["getrandom"] }
+rand = { version = "0.8.4", features = ["getrandom"] }
 # This has to fit the version required by `rand` above!
 getrandom = { version = "0.2.3", features = ["js"] }
 
 
 # this is what we need for the console application
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies]
-rand = "0.8.3"
+rand = "0.8.4"

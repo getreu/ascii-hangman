@@ -132,7 +132,7 @@ install.  Just follow the link and enjoy playing:
 
   - Package for Debian and Ubuntu:
 
-    [x86_64-unknown-linux-gnu/debian/ascii-hangman_5.7.0_amd64.deb](https://blog.getreu.net/projects/ascii-hangman/_downloads/x86_64-unknown-linux-gnu/debian/ascii-hangman_5.7.0_amd64.deb)
+    [x86_64-unknown-linux-gnu/debian/ascii-hangman_5.7.1_amd64.deb](https://blog.getreu.net/projects/ascii-hangman/_downloads/x86_64-unknown-linux-gnu/debian/ascii-hangman_5.7.1_amd64.deb)
 
 
 * Zipfile with all binaries and documentation:
