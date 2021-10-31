@@ -59,8 +59,8 @@ impl Ord for ImChar {
     fn cmp(&self, other: &Self) -> Ordering {
         fn weight(ic: &ImChar) -> isize {
             let &ImChar { point: (x, y), .. } = ic;
-            // points near the lower left corner are light
-            x as isize - y as isize
+            // points near the upper left corner are light
+            (x as isize * x as isize) + (y as isize * y as isize)
         }
         weight(self).cmp(&weight(other))
     }
@@ -319,31 +319,40 @@ mod tests {
     fn test_image_parser_syntax() {
         let config: &str = r#"image: |1
  ab
- cd"#;
+ c e
+ df"#;
         let image = Image::from_yaml(&config);
         //println!("{:?}",image);
         let expected = Ok(Image {
             ichars: [
                 ImChar {
-                    point: (0, 1),
-                    code: 'c',
-                },
-                ImChar {
                     point: (0, 0),
                     code: 'a',
-                },
-                ImChar {
-                    point: (1, 1),
-                    code: 'd',
                 },
                 ImChar {
                     point: (1, 0),
                     code: 'b',
                 },
+                ImChar {
+                    point: (0, 1),
+                    code: 'c',
+                },
+                ImChar {
+                    point: (0, 2),
+                    code: 'd',
+                },
+                ImChar {
+                    point: (2, 1),
+                    code: 'e',
+                },
+                ImChar {
+                    point: (1, 2),
+                    code: 'f',
+                },
             ]
             .to_vec(),
-            dimension: (2, 2),
-            visible_points: 4,
+            dimension: (3, 3),
+            visible_points: 6,
             rewarding_scheme: DEFAULT_REWARDING_SCHEME,
         });
 
@@ -354,23 +363,23 @@ mod tests {
     #[test]
     fn test_image_parser_syntax_ignore() {
         let config: &str = r#"image: |1
- bc
- a
+ ab
+ c
 # Comment"#;
         let image = Image::from_yaml(&config).unwrap();
         //println!("{:?}",image);
         let expected = Image {
             ichars: [
                 ImChar {
-                    point: (0, 1),
+                    point: (0, 0),
                     code: 'a',
                 },
                 ImChar {
-                    point: (0, 0),
+                    point: (1, 0),
                     code: 'b',
                 },
                 ImChar {
-                    point: (1, 0),
+                    point: (0, 1),
                     code: 'c',
                 },
             ]
@@ -401,15 +410,11 @@ mod tests {
     fn test_yaml_image_parser_disclose() {
         //
         // Test yaml.
-        let config: &str = "image: |1\n abcde\n f";
+        let config: &str = "image: |1\n abdef\n c";
         let mut image = Image::from_yaml(&config).unwrap();
         //println!("{:?}",image);
         let expected = Image {
             ichars: [
-                ImChar {
-                    point: (0, 1),
-                    code: 'f',
-                },
                 ImChar {
                     point: (0, 0),
                     code: 'a',
@@ -419,16 +424,20 @@ mod tests {
                     code: 'b',
                 },
                 ImChar {
-                    point: (2, 0),
+                    point: (0, 1),
                     code: 'c',
                 },
                 ImChar {
-                    point: (3, 0),
+                    point: (2, 0),
                     code: 'd',
                 },
                 ImChar {
-                    point: (4, 0),
+                    point: (3, 0),
                     code: 'e',
+                },
+                ImChar {
+                    point: (4, 0),
+                    code: 'f',
                 },
             ]
             .to_vec(),
@@ -450,32 +459,32 @@ mod tests {
 
     #[test]
     fn disclose_signature_last() {
-        let image_str = "image: |1\n jensA\n BlisC";
+        let image_str = "image: |1\n jensB\n AlisC";
         let image = Image::from_yaml(&image_str).unwrap();
         //println!("{:?}",image);
         let expected = Image {
             ichars: [
-                // This is the ASCII part of the image.
+                // These are regular image chars.
                 ImChar {
                     point: (0, 1),
+                    code: 'A',
+                },
+                ImChar {
+                    point: (4, 0),
                     code: 'B',
                 },
                 ImChar {
                     point: (4, 1),
                     code: 'C',
                 },
-                ImChar {
-                    point: (4, 0),
-                    code: 'A',
-                },
-                // From here on, we see only signatures.
+                // These chars are signature chars.
                 ImChar {
                     point: (0, 0),
-                    code: 'j', // was `j`
+                    code: 'j',
                 },
                 ImChar {
                     point: (1, 0),
-                    code: 'e', // was `j`
+                    code: 'e',
                 },
                 ImChar {
                     point: (2, 0),
