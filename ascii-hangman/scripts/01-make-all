@@ -2,7 +2,7 @@
 
 ./11-test
 ./12-make-targets
-./13-make-cross-compile
+./13-make-win-cross-compile
 ./15-build-packages
 
 
