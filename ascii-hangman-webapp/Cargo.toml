@@ -1,6 +1,6 @@
 [package]
 name = "ascii-hangman-webapp"
-version = "5.7.1"
+version = "5.7.2"
 authors = ["Jens Getreu <getreu@web.de>"]
 edition = "2021"
 readme = "README.md"
@@ -26,8 +26,8 @@ ASCII-art is gradually disclosed.
 '''
 
 [dependencies]
-#ascii-hangman-backend = { version = "5.7.1", path = "../ascii-hangman-backend" }
-ascii-hangman-backend = "5.7.1"
+#ascii-hangman-backend = { version = "5.7.2", path = "../ascii-hangman-backend" }
+ascii-hangman-backend = "5.7.2"
 thiserror = "1.0.30"
 yew-macro = "0.18.0"
 yew = "0.18.0"
