@@ -45,11 +45,13 @@ impl fmt::Display for ImChar {
     }
 }
 
+/// Delegate the comparison to `Ord`.
 impl PartialOrd for ImChar {
     fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
         Some(self.cmp(other))
     }
 }
+
 /// Ord enables us to v.sort() the image characters.
 impl Ord for ImChar {
     /// Compares to ImChar.
@@ -101,13 +103,6 @@ impl Image {
     pub fn new() -> Result<Self, ConfigParseError> {
         let mut rng = thread_rng();
         Self::from_yaml((DEFAULT_IMAGES).choose(&mut rng).unwrap())
-    }
-
-    /// First try ot parse YAML, if it fails try the depreciated proprietary format and
-    /// read the image data.
-    pub fn from_formatted(input: &str) -> Result<Self, ConfigParseError> {
-        // If both return an error, return the first one here.
-        Self::from_yaml(input)
     }
 
     /// Constructor reading image data from YAML configuration files.

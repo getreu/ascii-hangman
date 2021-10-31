@@ -18,7 +18,7 @@ checksum = "33954243bd79057c2de7338850b85983a44588021f8a5fee574a8888c6de4344"
 name = "ascii-hangman"
 version = "5.7.1"
 dependencies = [
- "ascii-hangman-backend",
+ "ascii-hangman-backend 5.7.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "crossterm",
  "rand",
  "thiserror",
@@ -37,10 +37,24 @@ dependencies = [
 ]
 
 [[package]]
+name = "ascii-hangman-backend"
+version = "5.7.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "fc9a86e9f59a163becff47617a8101b3192d00c9f9ed197bdb8d91391fe17e5a"
+dependencies = [
+ "getrandom",
+ "rand",
+ "serde",
+ "serde_derive",
+ "serde_yaml",
+ "thiserror",
+]
+
+[[package]]
 name = "ascii-hangman-webapp"
 version = "5.7.1"
 dependencies = [
- "ascii-hangman-backend",
+ "ascii-hangman-backend 5.7.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "js-sys",
  "thiserror",
  "wasm-bindgen",
