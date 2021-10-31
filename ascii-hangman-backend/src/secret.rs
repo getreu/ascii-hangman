@@ -159,7 +159,7 @@ impl fmt::Display for Secret {
             {
                 linebreak = false;
                 n = 0;
-                writeln!(f, "")?;
+                writeln!(f)?;
             } else {
                 match c.chartype {
                     HangmanCharType::Visible => {
