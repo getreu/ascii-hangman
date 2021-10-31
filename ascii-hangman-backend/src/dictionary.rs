@@ -180,10 +180,6 @@ traditional: true
         let dict = Dict::from(&config).unwrap_err();
         assert!(matches!(dict, ConfigParseError::YamlSecretsLineMissing));
 
-        let config = "  - guess me\nsecrets:\n";
-        let dict = Dict::from(&config).unwrap_err();
-        assert!(matches!(dict, ConfigParseError::YamlSecretsLineMissing));
-
         let config = "# comment\nsecrets:\n   guess me\n";
         let dict = Dict::from(&config).unwrap_err();
         assert!(matches!(dict, ConfigParseError::NotInYamlFormat(_)));

@@ -414,20 +414,20 @@ mod tests {
         let expected = Ok(Image {
             ichars: [
                 ImChar {
-                    point: (0, 0),
-                    code: 'a',
-                },
-                ImChar {
                     point: (0, 1),
                     code: 'c',
                 },
                 ImChar {
-                    point: (1, 0),
-                    code: 'b',
+                    point: (0, 0),
+                    code: 'a',
                 },
                 ImChar {
                     point: (1, 1),
                     code: 'd',
+                },
+                ImChar {
+                    point: (1, 0),
+                    code: 'b',
                 },
             ]
             .to_vec(),
@@ -436,7 +436,7 @@ mod tests {
             rewarding_scheme: DEFAULT_REWARDING_SCHEME,
         });
 
-        assert!(image == expected);
+        assert_eq!(image, expected);
     }
 
     /// Is non image data ignored?
@@ -513,12 +513,12 @@ mod tests {
         let expected = Image {
             ichars: [
                 ImChar {
-                    point: (0, 0),
-                    code: 'a',
-                },
-                ImChar {
                     point: (0, 1),
                     code: 'f',
+                },
+                ImChar {
+                    point: (0, 0),
+                    code: 'a',
                 },
                 ImChar {
                     point: (1, 0),
@@ -564,12 +564,12 @@ mod tests {
         let expected = Image {
             ichars: [
                 ImChar {
-                    point: (0, 0),
-                    code: 'a',
-                },
-                ImChar {
                     point: (0, 1),
                     code: 'f',
+                },
+                ImChar {
+                    point: (0, 0),
+                    code: 'a',
                 },
                 ImChar {
                     point: (1, 0),
@@ -618,12 +618,12 @@ mod tests {
                     code: 'B',
                 },
                 ImChar {
-                    point: (4, 0),
-                    code: 'A',
-                },
-                ImChar {
                     point: (4, 1),
                     code: 'C',
+                },
+                ImChar {
+                    point: (4, 0),
+                    code: 'A',
                 },
                 // From here on, we see only signatures.
                 ImChar {
