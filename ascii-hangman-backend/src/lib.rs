@@ -98,13 +98,13 @@ pub trait HangmanBackend {
 
 impl HangmanBackend for Backend {
     fn new(config: &str) -> Result<Self, ConfigParseError> {
-        let mut dict = Dict::from(&config)?;
+        let mut dict = Dict::from(config)?;
         // A dictionary guaranties to have least one secret.
         let secret = dict.get_random_secret().unwrap();
         let game = Game::new(&secret, LIVES, dict.is_empty());
         // We assume, that the configuration file comes with a custom image.
         let mut change_image = None;
-        let mut image = Image::from_formatted(&config).or_else(|_| {
+        let mut image = Image::from_formatted(config).or_else(|_| {
             // We use our built-in images (first game = 0).
             change_image = Some(0);
             Image::new()

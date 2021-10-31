@@ -11,6 +11,7 @@ use std::fs::File;
 use std::io;
 use std::io::prelude::*;
 use std::io::Write;
+use std::path::Path;
 use std::path::PathBuf;
 use std::process;
 
@@ -142,7 +143,7 @@ const CONF_DEMO: &str = "secrets:\n - \"_Demo: add own words to config file and 
 // ------------------ MAIN ---------------------------------------------
 
 /// Reads the configuration file.
-pub fn read_config(pathstr: &PathBuf) -> Result<String, io::Error> {
+pub fn read_config(pathstr: &Path) -> Result<String, io::Error> {
     let mut f = File::open(pathstr)?;
     let mut s = String::new();
     f.read_to_string(&mut s)?;
@@ -150,7 +151,7 @@ pub fn read_config(pathstr: &PathBuf) -> Result<String, io::Error> {
 }
 
 /// Writes a sample configuration file on disk. Called when no configuration file can be found.
-pub fn write_config_template(pathstr: &PathBuf) -> Result<(), io::Error> {
+pub fn write_config_template(pathstr: PathBuf) -> Result<(), io::Error> {
     let mut file = File::create(&pathstr)?;
     file.write_all(CONF_TEMPLATE.as_bytes())?;
     Ok(())
@@ -192,10 +193,10 @@ fn main() {
     let mut config: String = String::new();
     for conf_file_path in &conf_file_paths {
         let path = conf_file_path;
-        let c = match read_config(&path) {
+        let c = match read_config(path) {
             Ok(s) => s,
             Err(_) => {
-                match write_config_template(&path) {
+                match write_config_template(path.to_path_buf()) {
                     Ok(_) => {
                         eprintln!(
                             "As no config-file :\n\
