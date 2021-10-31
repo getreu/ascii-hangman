@@ -1,4 +1,3 @@
-
 //! This module contains all the logic dealing with images:
 //! Parsing the config file data, shuffling pixels of big images,
 //! ordering pixels of small images and sorting the signatures to the end.
@@ -47,7 +46,7 @@ pub enum RewardingScheme {
     UnhideWhenGuessedChar,
 }
 /// One character of the ASCII art image.
-#[derive(PartialOrd, Eq, PartialEq, Debug, Copy, Clone)] //omitting Ord
+#[derive(Eq, PartialEq, Debug, Copy, Clone)] //omitting Ord
 pub struct ImChar {
     pub point: (u8, u8),
     pub code: char,
@@ -60,6 +59,11 @@ impl fmt::Display for ImChar {
     }
 }
 
+impl PartialOrd for ImChar {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        Some(self.cmp(other))
+    }
+}
 /// Ord enables us to v.sort() the image characters.
 impl Ord for ImChar {
     /// Compares to ImChar.
@@ -70,7 +74,7 @@ impl Ord for ImChar {
             // points near the lower left corner are light
             x as isize - y as isize
         }
-        weight(&self).cmp(&weight(&other))
+        weight(self).cmp(&weight(other))
     }
 }
 
@@ -110,14 +114,14 @@ impl Image {
     /// Returns a random built-in image.
     pub fn new() -> Result<Self, ConfigParseError> {
         let mut rng = thread_rng();
-        Self::from_yaml((&DEFAULT_IMAGES).choose(&mut rng).unwrap())
+        Self::from_yaml((DEFAULT_IMAGES).choose(&mut rng).unwrap())
     }
 
     /// First try ot parse YAML, if it fails try the depreciated proprietary format and
     /// read the image data.
     pub fn from_formatted(input: &str) -> Result<Self, ConfigParseError> {
         // If both return an error, return the first one here.
-        Self::from_yaml(&input).or_else(|e| Self::from_proprietary(&input).or(Err(e)))
+        Self::from_yaml(input).or_else(|e| Self::from_proprietary(input).or(Err(e)))
     }
 
     /// Constructor reading image data from YAML configuration files.
@@ -130,7 +134,7 @@ impl Image {
 
         let input = input.trim_start_matches('\u{feff}');
 
-        let raw: RawImage = serde_yaml::from_str(&input)?;
+        let raw: RawImage = serde_yaml::from_str(input)?;
 
         let (image, rewarding_scheme) = match raw {
             RawImage { image: None, .. } => return Err(ConfigParseError::NoImageData),
