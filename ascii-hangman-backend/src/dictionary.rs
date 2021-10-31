@@ -1,6 +1,6 @@
 //! This module deals with configuration data including the management of the list of secrets
 
-#![allow(clippy::filter_map)]
+#![allow(clippy::manual_filter_map)]
 use rand::Rng;
 use thiserror::Error;
 //use serde::Deserialize;
@@ -61,7 +61,7 @@ pub enum ConfigParseError {
              {0}"
     )]
     NotInYamlFormat(#[from] serde_yaml::Error),
-    #[error["First line must be: `secrets:` (no spaces allowed before)."]]
+    #[error["No line: `secrets:` found (no spaces allowed before)."]]
     YamlSecretsLineMissing,
 }
 
@@ -87,19 +87,16 @@ impl Dict {
         // Trim BOM
         let lines = lines.trim_start_matches('\u{feff}');
 
-        for l in lines
+        if !lines
             .lines()
             .filter(|s| !s.trim_start().starts_with('#'))
             .filter(|s| s.trim() != "")
+            .any(|s| s.trim_end() == "secrets:")
         {
-            if l.trim_end() == "secrets:" {
-                break;
-            } else {
-                return Err(ConfigParseError::YamlSecretsLineMissing);
-            }
+            return Err(ConfigParseError::YamlSecretsLineMissing);
         }
 
-        let dict: Dict = serde_yaml::from_str(&lines)?;
+        let dict: Dict = serde_yaml::from_str(lines)?;
 
         Ok(dict)
     }
