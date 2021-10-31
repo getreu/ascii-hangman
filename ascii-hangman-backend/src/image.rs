@@ -13,22 +13,8 @@ use serde_derive::Deserialize;
 use std::cmp::{Ord, Ordering};
 use std::fmt;
 
-/// Identifier tagging image data in configuration files.
-pub const CONF_LINE_IDENTIFIER__IMAGE: char = '|';
-
-/// Tags control common lines in the configuration file.
-pub const CONF_LINE_IDENTIFIER__CONTROL: char = ':';
-
 /// Default game mode. Can be changed in the configuration file.
 const DEFAULT_REWARDING_SCHEME: RewardingScheme = RewardingScheme::UnhideWhenGuessedChar;
-
-/// Keyword in the configuration file to switch rewarding scheme in the enum `RewardingScheme`
-/// to `UnHideWhenLostLife`
-const UNHIDE_WHEN_LOST_LIVE_IDENTIFIER: &str = "traditional-rewarding";
-
-/// Keyword in the configuration file to switch rewarding scheme in the enum `RewardingScheme`
-/// to `UnHideWhenGuessedChar`
-const UNHIDE_WHEN_GUESSED_CHAR_IDENTIFIER: &str = "success-rewarding";
 
 /// Threshold to decide from how many characters on the images is considered to be "big".
 /// Big images are disclosed with another algorithm.
@@ -121,7 +107,7 @@ impl Image {
     /// read the image data.
     pub fn from_formatted(input: &str) -> Result<Self, ConfigParseError> {
         // If both return an error, return the first one here.
-        Self::from_yaml(input).or_else(|e| Self::from_proprietary(input).or(Err(e)))
+        Self::from_yaml(input)
     }
 
     /// Constructor reading image data from YAML configuration files.
@@ -141,7 +127,7 @@ impl Image {
             RawImage {
                 image: Some(i),
                 traditional: None,
-            } => (i, RewardingScheme::UnhideWhenGuessedChar),
+            } => (i, DEFAULT_REWARDING_SCHEME),
             RawImage {
                 image: Some(i),
                 traditional: Some(r),
@@ -156,103 +142,6 @@ impl Image {
         };
 
         Self::from(&image, rewarding_scheme)
-    }
-
-    /// Constructor reading image data from proprietary configuration files.
-    pub fn from_proprietary(string: &str) -> Result<Self, ConfigParseError> {
-        let mut v: Vec<ImChar> = Vec::new();
-        let mut rewarding_scheme = DEFAULT_REWARDING_SCHEME;
-        let mut file_syntax_test1: Result<(), ConfigParseError> = Ok(());
-
-        for (y, line) in string
-            // split in lines
-            .lines()
-            .enumerate()
-            .filter(|&(n, l)| {
-                if l.starts_with(CONF_LINE_IDENTIFIER__CONTROL) {
-                    if l[1..].trim() == UNHIDE_WHEN_LOST_LIVE_IDENTIFIER {
-                        rewarding_scheme = RewardingScheme::UnhideWhenLostLife;
-                        false
-                    } else if l[1..].trim() == UNHIDE_WHEN_GUESSED_CHAR_IDENTIFIER {
-                        rewarding_scheme = RewardingScheme::UnhideWhenGuessedChar;
-                        false
-                    } else {
-                        // we only save the first error
-                        if file_syntax_test1.is_ok() {
-                            file_syntax_test1 = Err(ConfigParseError::GameModifier {
-                                line_number: n + 1,
-                                line: l.to_string(),
-                            });
-                        };
-                        false
-                    }
-                } else {
-                    true
-                }
-            })
-            .map(|(_, l)| l)
-            // consider only lines starting with '|'
-            .filter(|&l| l.starts_with(CONF_LINE_IDENTIFIER__IMAGE))
-            .enumerate()
-        //.inspect(|&(n,l)| println!("line {:?}: {:?} ", n,l))
-        {
-            let mut ii: Vec<_> = line
-                .char_indices()
-                // skip first char '|'
-                .skip(1)
-                // consider only chars != ' '
-                .filter(|&(_, c)| c != ' ')
-                // save in ImChar object
-                .map(|(x, c)| ImChar {
-                    // subtract the char we have skipped before
-                    point: ((x - 1) as u8, y as u8),
-                    code: c,
-                })
-                .collect();
-            v.append(&mut ii);
-        }
-
-        file_syntax_test1?;
-
-        // find dimensions
-        let dimension = if !v.is_empty() {
-            let mut x_max = 0;
-            let mut y_max = 0;
-
-            for i in &v {
-                let &ImChar { point: (x, y), .. } = i;
-                if x > x_max {
-                    x_max = x
-                };
-                if y > y_max {
-                    y_max = y
-                };
-            }
-            // we know there is at least one char
-            (x_max + 1, y_max + 1)
-        } else {
-            (0, 0)
-        };
-
-        // order points
-        let v_len = v.len();
-        if v_len <= BIG_IMAGE {
-            v.sort(); // Sort algorithm, see "impl Ord for ImageChar"
-        } else {
-            let mut rng = thread_rng();
-            (&mut v).shuffle(&mut rng); // points appear randomly.
-        }
-
-        if v.is_empty() {
-            Err(ConfigParseError::NoImageData)
-        } else {
-            Ok(Self {
-                ichars: v,
-                dimension,
-                visible_points: v_len,
-                rewarding_scheme,
-            })
-        }
     }
 
     #[inline]
@@ -403,13 +292,40 @@ mod tests {
     use super::{ImChar, Image};
     use crate::dictionary::ConfigParseError;
 
+    #[test]
+    fn test_image_from() {
+        let config: &str = r#"
+>o)
+(_>   <o)
+      (_>
+"#;
+        let expected: &str = "         \n>o)      \n(_>   <o)\n      (_>\n";
+        let image = Image::from(
+            &config,
+            crate::image::RewardingScheme::UnhideWhenGuessedChar,
+        )
+        .unwrap();
+
+        assert!(image.visible_points > 0);
+        assert_eq!(format!("{}", image), expected);
+    }
+
+    #[test]
+    fn test_image_yaml_error() {
+        let config: &str = "this is no image";
+        let image = Image::from_yaml(&config).unwrap_err();
+        //println!("{:?}",image);
+
+        assert!(matches!(image, ConfigParseError::NotInYamlFormat(_)));
+    }
+
     /// Test image parsing of configuration file data
     #[test]
     fn test_image_parser_syntax() {
-        let config: &str = r#"
-|ab
-|cd"#;
-        let image = Image::from_proprietary(&config);
+        let config: &str = r#"image: |1
+ ab
+ cd"#;
+        let image = Image::from_yaml(&config);
         //println!("{:?}",image);
         let expected = Ok(Image {
             ichars: [
@@ -442,25 +358,30 @@ mod tests {
     /// Is non image data ignored?
     #[test]
     fn test_image_parser_syntax_ignore() {
-        let config: &str = r#"
-|/\
-\/"#;
-        let image = Image::from_proprietary(&config).unwrap();
+        let config: &str = r#"image: |1
+ bc
+ a
+# Comment"#;
+        let image = Image::from_yaml(&config).unwrap();
         //println!("{:?}",image);
         let expected = Image {
             ichars: [
                 ImChar {
+                    point: (0, 1),
+                    code: 'a',
+                },
+                ImChar {
                     point: (0, 0),
-                    code: '/',
+                    code: 'b',
                 },
                 ImChar {
                     point: (1, 0),
-                    code: '\\',
+                    code: 'c',
                 },
             ]
             .to_vec(),
-            dimension: (2, 1),
-            visible_points: 2,
+            dimension: (2, 2),
+            visible_points: 3,
             rewarding_scheme: DEFAULT_REWARDING_SCHEME,
         };
 
@@ -468,21 +389,7 @@ mod tests {
     }
 
     #[test]
-    fn test_image_renderer() {
-        let config: &str = r#"
-|>o)
-|(_>   <o)
-|      (_>
-"#;
-        let expected: &str = ">o)      \n(_>   <o)\n      (_>\n";
-        let image = Image::from_proprietary(&config).unwrap();
-
-        assert!(image.visible_points > 0);
-        assert_eq!(format!("{}", image), expected);
-    }
-
-    #[test]
-    fn test_image_renderer_yaml() {
+    fn test_image_from_yaml() {
         let config: &str = r#"image: |1
  >o)
  (_>   <o)
@@ -493,65 +400,6 @@ mod tests {
 
         assert!(image.visible_points > 0);
         assert_eq!(format!("{}", image), expected);
-    }
-
-    #[test]
-    fn test_image_parser_built_in_image() {
-        let config: &str = "this is no image";
-        let image = Image::from_yaml(&config).unwrap_err();
-        //println!("{:?}",image);
-
-        assert!(matches!(image, ConfigParseError::NotInYamlFormat(_)));
-    }
-
-    /// disclose image progressively
-    #[test]
-    fn test_proprietery_image_parser_disclose() {
-        let config: &str = "|abcde\n|f";
-        let mut image = Image::from_proprietary(&config).unwrap();
-        //println!("{:?}",image);
-        let expected = Image {
-            ichars: [
-                ImChar {
-                    point: (0, 1),
-                    code: 'f',
-                },
-                ImChar {
-                    point: (0, 0),
-                    code: 'a',
-                },
-                ImChar {
-                    point: (1, 0),
-                    code: 'b',
-                },
-                ImChar {
-                    point: (2, 0),
-                    code: 'c',
-                },
-                ImChar {
-                    point: (3, 0),
-                    code: 'd',
-                },
-                ImChar {
-                    point: (4, 0),
-                    code: 'e',
-                },
-            ]
-            .to_vec(),
-            dimension: (5, 2),
-            visible_points: 6,
-            rewarding_scheme: DEFAULT_REWARDING_SCHEME,
-        };
-        assert_eq!(image, expected);
-
-        image.hide((6, 6));
-        assert_eq!(image.visible_points, 1);
-
-        image.hide((2, 6));
-        assert_eq!(image.visible_points, 4);
-
-        image.hide((0, 6));
-        assert_eq!(image.visible_points, 6);
     }
 
     #[test]
@@ -607,8 +455,8 @@ mod tests {
 
     #[test]
     fn disclose_signature_last() {
-        let image_str = "jensA\nBlisC";
-        let image = Image::from(&image_str, DEFAULT_REWARDING_SCHEME).unwrap();
+        let image_str = "image: |1\n jensA\n BlisC";
+        let image = Image::from_yaml(&image_str).unwrap();
         //println!("{:?}",image);
         let expected = Image {
             ichars: [
@@ -661,17 +509,5 @@ mod tests {
             rewarding_scheme: DEFAULT_REWARDING_SCHEME,
         };
         assert_eq!(image, expected);
-    }
-
-    /// test game modifier spelling
-    #[test]
-    fn test_image_parser_error_misspelled() {
-        let config = "\n\n:traditional-rewardXing";
-        let dict = Image::from_proprietary(&config);
-        let expected = Err(ConfigParseError::GameModifier {
-            line_number: 3,
-            line: ":traditional-rewardXing".to_string(),
-        });
-        assert_eq!(dict, expected);
     }
 }
